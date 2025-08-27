@@ -1,7 +1,7 @@
-import cron from "cron";
-import https from "https";
+const { CronJob } = require("cron");
+const https = require("https");
 
-const job = new cron.CronJob("*/14 * * * *", function () {
+const job = new CronJob("*/14 * * * *", function () {
   https
     .get('https://expensemeter-backend.onrender.com', (res) => {
       if (res.statusCode === 200) console.log("✅ GET request sent successfully");
@@ -10,7 +10,7 @@ const job = new cron.CronJob("*/14 * * * *", function () {
     .on("error", (e) => console.error("Error while sending request", e));
 });
 
-export default job;
+module.exports = job;
 
 
 // CRON JOB EXPLANATION:
