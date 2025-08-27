@@ -5,9 +5,13 @@ const path = require('path');
 const routes = require('./routes');
 require('dotenv').config();
 const verifyCors = require("./middlewares/VerifyCors");
+const job = require("./utils/cron");
 
 const app = express();
 app.use(express.json());
+
+if (process.env.NODE_ENV === "production")
+  job.start();
 
 app.use(verifyCors)
 
