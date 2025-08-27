@@ -15,11 +15,11 @@ const dbURI = process.env.NODE_ENV === "production"
   ? process.env.MONGODB_URI_PRODUCTION
   : process.env.MONGODB_URI_LOCAL;
 
-// mongoose.connect(dbURI)
-//   .then(() => console.log("MongoDB connected"))
-//   .catch((err) => {
-//     console.error("MongoDB connection error:", err);
-//   });
+mongoose.connect(dbURI)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
 
 app.use('/', routes);
 
@@ -29,7 +29,8 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const HOST = process.env.HOST || "0.0.0.0"; // add this
+app.listen(PORT, HOST, () => {
   console.log(`Server is running on port ${PORT}`);
 });
         
