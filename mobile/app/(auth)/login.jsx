@@ -31,6 +31,7 @@ const Login = () => {
         password: formData.password,
       });
       await AsyncStorage.setItem("token", response.data.jwtToken);
+      await AsyncStorage.setItem("user", JSON.stringify(response.data.data));
       router.replace("/(tabs)");
     } catch (error) {
       console.log(error.response.data);

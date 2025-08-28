@@ -35,7 +35,9 @@ const createSettingsStyles = () => {
     section: {
         borderRadius: 20,
         padding: 24,
-        shadowColor: "#000",
+        shadowColor: colors.shadow,
+        borderWidth: 1,
+        borderColor: colors.border,
         shadowOffset: {
           width: 0,
           height: 4,

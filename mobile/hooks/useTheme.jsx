@@ -14,6 +14,8 @@ const lightColors = {
   warning: "#f59e0b",
   danger: "#bb2124",
   shadow: "#000000",
+  expense: "#E74C3C",
+  income: "#2ECC71",
   gradients: {
     background: ["#f8fafc", "#e2e8f0"],
     surface: ["#ffffff", "#f8fafc"],
@@ -42,6 +44,8 @@ const darkColors = {
   warning: "#fbbf24",
   danger: "#bb2124",
   shadow: "#000000",
+  expense: "#E74C3C",
+  income: "#2ECC71",
   gradients: {
     background: ["#0f172a", "#1e293b"],
     surface: ["#1e293b", "#334155"],

@@ -4,3 +4,7 @@ export const AUTH_ROUTES = {
   REGISTER: "/users/register",
   LOGIN: "/users/login",
 };
+
+export const USER_ROUTES = {
+  GET_USER_BY_ID: "/users/:id",
+};

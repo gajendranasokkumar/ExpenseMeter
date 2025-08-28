@@ -5,14 +5,17 @@ import { ThemeProvider } from "../hooks/useTheme";
 import useTheme from "../hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
+import { UserProvider } from "../context/userContext";
 
 const RootLayout = () => {
   return (
-    <ThemeProvider>
-      <SafeScreen>
-        <Layout />
-      </SafeScreen>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider>
+        <SafeScreen>
+          <Layout />
+        </SafeScreen>
+      </ThemeProvider>
+    </UserProvider>
   );
 };
 
