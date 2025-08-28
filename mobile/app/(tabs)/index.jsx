@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createHomeStyles from "../../styles/home.styles";
@@ -10,7 +10,8 @@ import HomeStats from "../../components/HomeStats";
 const Home = () => {
   const { colors } = useTheme();
   const styles = createHomeStyles();
-  const { user } = useUser();
+  const { user } = useUser();  
+
   return (
     <LinearGradient colors={colors.gradients.background} style={{ flex: 1 }}>
       <View style={styles.content}>

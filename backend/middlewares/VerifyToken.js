@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET); // Assuming 'Bearer <token>' 
-    console.log(decoded);
+    // console.log(decoded);
        
     req.user = decoded.role;
     next();

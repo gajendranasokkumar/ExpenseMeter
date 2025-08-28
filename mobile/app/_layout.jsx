@@ -6,14 +6,17 @@ import useTheme from "../hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
 import { UserProvider } from "../context/userContext";
+import { TransactionsProvider } from "../context/transactionsContext";
 
 const RootLayout = () => {
   return (
     <UserProvider>
       <ThemeProvider>
-        <SafeScreen>
-          <Layout />
-        </SafeScreen>
+        <TransactionsProvider>
+          <SafeScreen>
+            <Layout />
+          </SafeScreen>
+        </TransactionsProvider>
       </ThemeProvider>
     </UserProvider>
   );

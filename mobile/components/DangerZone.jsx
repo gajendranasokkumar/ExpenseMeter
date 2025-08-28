@@ -7,13 +7,14 @@ import createSettingsStyles from "../styles/settings.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import useTransations from "../hooks/useTransations";
 
 const DangerZone = () => {
   const { colors } = useTheme();
   const styles = createSettingsStyles();
 
   const [clearing, setClearing] = useState(false);
-
+  const { deleteAllTransactions } = useTransations();
   const handleClearStorage = async () => {
     if (clearing) return;
 
@@ -43,6 +44,18 @@ const DangerZone = () => {
           <ActivityIndicator color={colors.text} />
         ) : (
           <Text style={styles.settingText}>Logout</Text>
+        )}
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={deleteAllTransactions}
+        activeOpacity={0.8}
+        style={styles.clearButton}
+        disabled={clearing}
+      >
+        {clearing ? (
+          <ActivityIndicator color={colors.text} />
+        ) : (
+          <Text style={styles.settingText}>Delete All Transactions</Text>
         )}
       </TouchableOpacity>
     </LinearGradient>
