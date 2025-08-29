@@ -17,14 +17,17 @@ class TransactionController {
 
   async createTransaction(req, res) {
     try {
-      const { title, amount, category, user_id } = req.body;
+      const { title, amount, category, user_id, date } = req.body;
       if (!title || user_id === undefined || !category || amount === undefined) {
         return res.status(400).json({ message: 'All fields are required' });
+      }
+      if (!date) {
+        return res.status(400).json({ message: 'date is required' });
       }
       if (typeof amount !== 'number' || Number.isNaN(amount)) {
         return res.status(400).json({ message: 'amount must be a number' });
       }
-      const transaction = await transactionService.createTransaction({ title, amount, category, user_id });
+      const transaction = await transactionService.createTransaction({ title, amount, category, user_id, date });
       return res.status(201).json(transaction);
     } catch (error) {
       return res.status(400).json({ message: error.message });

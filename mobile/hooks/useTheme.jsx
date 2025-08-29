@@ -31,6 +31,7 @@ const lightColors = {
   backgrounds: {
     input: "#ffffff",
     editInput: "#ffffff",
+    error: "#fcbdbd",
   },
   statusBarStyle: "dark",
 };
@@ -63,6 +64,7 @@ const darkColors = {
   backgrounds: {
     input: "#1e293b",
     editInput: "#0f172a",
+    error: "#fcbdbd",
   },
   statusBarStyle: "light",
 };

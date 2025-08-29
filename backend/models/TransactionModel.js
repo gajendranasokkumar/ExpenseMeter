@@ -26,6 +26,10 @@ const transactionSchema = new mongoose.Schema(
       trim: true,
       maxlength: 100,
     },
+    date: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );

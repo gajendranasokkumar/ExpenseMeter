@@ -59,7 +59,7 @@ const SingleTransaction = ({ transaction, onDelete }) => {
         <View style={styles.transactionCenter}>
           <Text style={styles.transactionCenterTitle}>{transaction.title}</Text>
           <Text style={styles.transactionCenterDate}>
-            {formatDate(transaction.created_at)}
+            {formatDate(transaction.date)}
           </Text>
         </View>
         <View style={styles.transactionRight}>

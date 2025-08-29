@@ -21,8 +21,8 @@ const getTransactionsByUserId = async (userId, { page = 1, limit = 10 } = {}) =>
   return { items, total, page: pageNumber, limit: pageSize, totalPages };
 };
 
-const createTransaction = async ({ title, amount, category, user_id }) => {
-  const transaction = await Transaction.create({ title, amount, category, user_id });
+const createTransaction = async ({ title, amount, category, user_id, date }) => {
+  const transaction = await Transaction.create({ title, amount, category, user_id, date });
   return transaction;
 };
 
