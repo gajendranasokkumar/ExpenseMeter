@@ -35,28 +35,31 @@ const HomeStats = () => {
   }
 
   return (
-    <View style={styles.statsContainer}>
-        <View style={styles.mainBalanceContainer}>
-            <Text style={styles.mainBalanceTitle}>Main Balance</Text>
-            <Text style={styles.mainBalanceValue}>$ {summary.balance}</Text>
-        </View>
-        <View style={styles.expensesContainer}>
-            <View style={styles.expensesHeader}>
-                <Text style={styles.expensesTitle}>
-                    <Ionicons name="arrow-down-circle-outline" size={14} color={colors.textMuted} />
-                    {" Income"}
-                </Text>
-                <Text style={[styles.expensesValue, { color: colors.income }]}>+ ${summary.income}</Text>
-            </View>
-            <View style={styles.expensesHeader2}>
-                <Text style={styles.expensesTitle}>
-                    <Ionicons name="arrow-up-circle-outline" size={14} color={colors.textMuted} />
-                    {" Expenses"}
-                </Text>
-                <Text style={[styles.expensesValue, { color: colors.expense }]}>- ${formarExpenseAmount(summary.expenses)}</Text>
-            </View>
-        </View>
-    </View>
+    <>
+      <View style={styles.statsContainer}>
+          <View style={styles.mainBalanceContainer}>
+              <Text style={styles.mainBalanceTitle}>Main Balance</Text>
+              <Text style={styles.mainBalanceValue}>$ {summary.balance}</Text>
+          </View>
+          <View style={styles.expensesContainer}>
+              <View style={styles.expensesHeader}>
+                  <Text style={styles.expensesTitle}>
+                      <Ionicons name="arrow-down-circle-outline" size={14} color={colors.textMuted} />
+                      {" Income"}
+                  </Text>
+                  <Text style={[styles.expensesValue, { color: colors.income }]}>+ ${summary.income}</Text>
+              </View>
+              <View style={styles.expensesHeader2}>
+                  <Text style={styles.expensesTitle}>
+                      <Ionicons name="arrow-up-circle-outline" size={14} color={colors.textMuted} />
+                      {" Expenses"}
+                  </Text>
+                  <Text style={[styles.expensesValue, { color: colors.expense }]}>- ${formarExpenseAmount(summary.expenses)}</Text>
+              </View>
+          </View>
+      </View>
+      <View style={styles.afterElement} />
+    </>
   )
 }
 

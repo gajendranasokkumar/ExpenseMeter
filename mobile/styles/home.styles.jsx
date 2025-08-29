@@ -117,7 +117,14 @@ const createHomeStyles = () => {
       alignItems: "center",
       gap: 5,
     },
-
+    afterElement: {
+      height: 10,
+      width: "90%",
+      backgroundColor: colors.border,
+      alignSelf: "center",
+      borderBottomRightRadius: 10,
+      borderBottomLeftRadius: 10,
+    },
   });
 };
 
