@@ -15,14 +15,20 @@ const DangerZone = () => {
 
   const [clearing, setClearing] = useState(false);
   const { deleteAllTransactions } = useTransations();
+
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.replace("/(auth)/login");
+  };
+
   const handleClearStorage = async () => {
     if (clearing) return;
 
     setClearing(true);
     try {
-      await AsyncStorage.clear();
-      Alert.alert("Done", "Successfully logged out.", [
-        { text: "OK", onPress: () => router.replace("/(auth)/login") },
+      Alert.alert("Logout", "Are you sure you want to logout?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Ok", onPress: () => handleLogout() },
       ]);
     } catch (e) {
       Alert.alert("Error", "Failed to logout. Please try again.");
