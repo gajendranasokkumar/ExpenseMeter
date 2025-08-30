@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const createProfileStyles = () => {
+const createBanksStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -12,4 +12,4 @@ const createProfileStyles = () => {
   });
 };
 
-export default createProfileStyles;
+export default createBanksStyles;

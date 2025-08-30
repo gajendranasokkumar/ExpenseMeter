@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import createHistoryStyles from "../styles/history.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
+import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 
 const SingleTransaction = ({ transaction, onDelete }) => {
   const styles = createHistoryStyles();
@@ -65,11 +66,11 @@ const SingleTransaction = ({ transaction, onDelete }) => {
         <View style={styles.transactionRight}>
           {transaction.amount > 0 ? (
             <Text style={[styles.transactionRightAmount, { color: colors.incomeMuted }]}>
-              + {transaction.amount}
+              + {formatAmountDisplay(transaction.amount)}
             </Text>
           ) : (
             <Text style={[styles.transactionRightAmount, { color: colors.expenseMuted }]}>
-              - {Math.abs(transaction.amount)}
+              - {formatAmountDisplay(Math.abs(transaction.amount))}
             </Text>
           )}
         </View>

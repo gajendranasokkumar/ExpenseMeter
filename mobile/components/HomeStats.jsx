@@ -6,6 +6,7 @@ import useTheme from '../hooks/useTheme';
 import { useUser } from '../context/userContext';
 import api from '../utils/api';
 import { useFocusEffect } from '@react-navigation/native'
+import { formatAmountDisplay } from '../utils/formatAmountDisplay';
 
 const HomeStats = () => {
   const [summary, setSummary] = useState({ balance: 0, income: 0, expenses: 0 });
@@ -39,7 +40,7 @@ const HomeStats = () => {
       <View style={styles.statsContainer}>
           <View style={styles.mainBalanceContainer}>
               <Text style={styles.mainBalanceTitle}>Main Balance</Text>
-              <Text style={styles.mainBalanceValue}>$ {summary.balance}</Text>
+              <Text style={styles.mainBalanceValue}>{formatAmountDisplay(summary.balance)}</Text>
           </View>
           <View style={styles.expensesContainer}>
               <View style={styles.expensesHeader}>
@@ -47,14 +48,14 @@ const HomeStats = () => {
                       <Ionicons name="arrow-down-circle-outline" size={14} color={colors.textMuted} />
                       {" Income"}
                   </Text>
-                  <Text style={[styles.expensesValue, { color: colors.income }]}>+ ${summary.income}</Text>
+                  <Text style={[styles.expensesValue, { color: colors.income }]}>+ {formatAmountDisplay(summary.income)}</Text>
               </View>
               <View style={styles.expensesHeader2}>
                   <Text style={styles.expensesTitle}>
                       <Ionicons name="arrow-up-circle-outline" size={14} color={colors.textMuted} />
                       {" Expenses"}
                   </Text>
-                  <Text style={[styles.expensesValue, { color: colors.expense }]}>- ${formarExpenseAmount(summary.expenses)}</Text>
+                  <Text style={[styles.expensesValue, { color: colors.expense }]}>- {formatAmountDisplay(formarExpenseAmount(summary.expenses))}</Text>
               </View>
           </View>
       </View>

@@ -16,6 +16,7 @@ import api from "../../utils/api";
 import { useUser } from "../../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import SingleTransaction from "../../components/SingleTransaction";
+import { TRANSACTION_ROUTES } from "../../constants/api";
 
 const Transactions = () => {
   const { colors } = useTheme();
@@ -75,7 +76,7 @@ const Transactions = () => {
 
   const handleDelete = async (transactionId) => {
     try {
-      await api.delete(`/transactions/${transactionId}`);
+      await api.delete(`${TRANSACTION_ROUTES.DELETE_TRANSACTION.replace(":id", transactionId)}`);
       fetchTransactions(1); // refresh after delete
     } catch (error) {
       Alert.alert("Error", error.response?.data?.message || "Something went wrong");

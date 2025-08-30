@@ -33,7 +33,9 @@ const DangerZone = () => {
 
   return (
     <LinearGradient colors={colors.gradients.surface} style={styles.section}>
-      <Text style={styles.sectionTitleDanger}>Danger Zone</Text>
+      <View style={styles.profileSectionHeader}>
+        <Text style={styles.sectionTitleDanger}>Danger Zone</Text>
+      </View>
       <TouchableOpacity
         onPress={handleClearStorage}
         activeOpacity={0.8}

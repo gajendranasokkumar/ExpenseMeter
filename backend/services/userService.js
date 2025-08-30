@@ -76,15 +76,11 @@ const getUserById = async (id) => {
     return user;
 }
 
-const updateUserById = async (id, name, email, password) => {
-    if (!name || !email || !password) {
-        throw new Error("Name, email and password are required");
+const updateUserById = async (id, name, email, avatar = "") => {
+    if (!name || !email) {
+        throw new Error("Name and email are required");
     }
-    if (password.length < 8) {
-        throw new Error("Password must be at least 8 characters long");
-    }
-    const hashedPassword = bcrypt.hashSync(password, 10);   
-    const user = await userModel.findByIdAndUpdate(id, { name, email, password: hashedPassword }, { new: true });
+    const user = await userModel.findByIdAndUpdate(id, { name, email, avatar }, { new: true });
     if (!user) {
         throw new Error("User not found");
     }

@@ -67,17 +67,14 @@ class UserController {
     
     async updateUserById(req, res) {
         const userData = req.body;
-        if (!userData.name || !userData.email || !userData.password) {
-            return res.status(400).json({ message: "Name, email and password are required" });
-        }
-        if (userData.password.length < 8) {
-            return res.status(400).json({ message: "Password must be at least 8 characters long" });
+        if (!userData.name || !userData.email) {
+            return res.status(400).json({ message: "Name and email are required" });
         }
         if (!req.params.id) {
             return res.status(400).json({ message: "Id is required" });
         }
         try {
-            const user = await userService.updateUserById(req.params.id, userData.name, userData.email, userData.password);
+            const user = await userService.updateUserById(req.params.id, userData.name, userData.email, userData.avatar);
             res.status(200).json(user);
         } catch (error) {
             res.status(400).json({ message: error.message });

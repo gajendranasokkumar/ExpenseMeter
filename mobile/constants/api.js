@@ -7,4 +7,8 @@ export const AUTH_ROUTES = {
 
 export const USER_ROUTES = {
   GET_USER_BY_ID: "/users/:id",
+  UPDATE_USER_BY_ID: "/users/:id",
+  DELETE_TRANSACTION: "/transactions/:id",
+  DELETE_ALL_TRANSACTIONS: "/transactions/user/:id",
+  CREATE_TRANSACTION: "/transactions",
 };

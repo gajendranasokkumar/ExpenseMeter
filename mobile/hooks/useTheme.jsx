@@ -18,6 +18,7 @@ const lightColors = {
   income: "#2ECC71",
   expenseMuted: "#eb6354",
   incomeMuted: "#42c77a",
+  orange: "#d48a0d",
   gradients: {
     background: ["#f8fafc", "#e2e8f0"],
     surface: ["#ffffff", "#f8fafc"],
@@ -51,6 +52,7 @@ const darkColors = {
   income: "#2ECC71",
   expenseMuted: "#eb6354",
   incomeMuted: "#42c77a",
+  orange: "#d48a0d",
   gradients: {
     background: ["#0f172a", "#1e293b"],
     surface: ["#1e293b", "#334155"],

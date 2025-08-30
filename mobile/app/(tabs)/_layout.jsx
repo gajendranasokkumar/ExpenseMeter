@@ -64,20 +64,20 @@ const TabsLayout = () => {
         }}
       />
       <Tabs.Screen
+        name="banks"
+        options={{
+          title: "Banks",
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "card" : "card-outline"} size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? "settings" : "settings-outline"} size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color} />
           ),
         }}
       />

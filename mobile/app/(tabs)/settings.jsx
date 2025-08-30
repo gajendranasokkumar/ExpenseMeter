@@ -5,6 +5,7 @@ import useTheme from "../../hooks/useTheme";
 import createSettingsStyles from "../../styles/settings.styles";
 import Preferences from "../../components/Preferences";
 import DangerZone from "../../components/DangerZone";
+import ProfileSection from "../../components/ProfileSection";
 
 const Settings = () => {
   const { colors } = useTheme();
@@ -20,7 +21,8 @@ const Settings = () => {
           <Text style={styles.title}>Settings</Text>
         </View>
 
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <ProfileSection />
           <Preferences />
           <DangerZone />
         </ScrollView>

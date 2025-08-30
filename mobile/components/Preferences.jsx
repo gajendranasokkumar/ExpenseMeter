@@ -14,7 +14,9 @@ const Preferences = () => {
       colors={colors.gradients.surface}
       style={styles.section}
     >
-      <Text style={styles.sectionTitle}>Preferences</Text>
+      <View style={styles.profileSectionHeader}>
+        <Text style={styles.sectionTitle}>Preferences</Text>
+      </View>
 
       {/* DARK MODE */}
       <View style={styles.settingItem}>
