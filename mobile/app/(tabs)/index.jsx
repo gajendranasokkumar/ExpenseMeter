@@ -9,12 +9,37 @@ import HomeStats from "../../components/HomeStats";
 import BudgetSummary from "../../components/BudgetSummary";
 import CurrentMonth from "../../components/CurrentMonth";
 import NotificationModal from "../../components/NotificationModal";
+import api from "../../utils/api";
+import { NOTIFICATION_ROUTES } from "../../constants/api";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 const Home = () => {
   const { colors } = useTheme();
   const styles = createHomeStyles();
   const { user } = useUser();  
   const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  
+  const fetchNotifications = async () => {
+    try {
+      const response = await api.get(`${NOTIFICATION_ROUTES.GET_UNREAD_NOTIFICATIONS_BY_USER_ID.replace(":id", user?._id)}`);
+      setNotificationCount(response.data.length);
+    } catch (error) {
+      // ignore error
+      console.log(error);
+    } 
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchNotifications();
+    }, [fetchNotifications])
+  );
+
+  fetchNotifications();
+
 
   return (
     <LinearGradient colors={colors.gradients.background} style={{ flex: 1 }}>
@@ -35,9 +60,11 @@ const Home = () => {
           </View>
           <View style={styles.headerRight}>
             <NotificationModal visible={isNotificationModalVisible} onClose={() => setIsNotificationModalVisible(false)} />
-            <TouchableOpacity onPress={() => setIsNotificationModalVisible(true)}>
+            <TouchableOpacity onPress={() => {
+              setIsNotificationModalVisible(true);
+            }}>
               <Ionicons name="notifications-outline" size={24} style={styles.notificationIcon} />
-              <View style={styles.notificationIconText} />
+              {notificationCount > 0 && <View style={styles.notificationIconText} />}
             </TouchableOpacity>
           </View>
         </View>

@@ -20,3 +20,14 @@ export const TRANSACTION_ROUTES = {
   DELETE_TRANSACTION: "/transactions/:id",
   DELETE_ALL_TRANSACTIONS: "/transactions/user/:id",
 };
+
+export const NOTIFICATION_ROUTES = {
+  GET_NOTIFICATIONS: "/notifications",
+  GET_NOTIFICATIONS_BY_USER_ID: "/notifications/:id",
+  GET_UNREAD_NOTIFICATIONS_BY_USER_ID: "/notifications/:id/new",
+  CREATE_NOTIFICATION: "/notifications",
+  DELETE_NOTIFICATION: "/notifications/:id",
+  DELETE_ALL_NOTIFICATIONS: "/notifications",
+  UPDATE_NOTIFICATION_BY_ID: "/notifications/:id",
+  UPDATE_ALL_NOTIFICATIONS: "/notifications",
+};

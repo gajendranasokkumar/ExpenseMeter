@@ -304,13 +304,70 @@ const createHomeStyles = () => {
     },
     notificationModalContentFooter: {
       padding: 10,
-      borderTopWidth: 1,
-      borderColor: colors.border,
     },
     notificationModalContentFooterText: {
       fontSize: 16,
       color: colors.textMuted,
       textAlign: "center",
+    },
+    notificationItemContainer: {
+      padding: 10,
+      marginBottom: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      borderRadius: 5,
+    },
+    newNotificationItemContainer: {
+      borderLeftWidth: 3,
+      borderLeftColor: colors.primary,
+      backgroundColor: colors.bg,
+    },
+    notificationItemTitle: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    notificationItemMessage: {
+      fontSize: 14,
+      color: colors.textMuted,
+      marginBottom: 3,
+    },
+    notificationItemCreatedAt: {
+      fontSize: 12,
+      color: colors.textMuted,
+      textAlign: "right",
+    },
+    info: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginBottom: 16,
+      padding: 16,
+      paddingVertical: 8,
+      backgroundColor: colors.bg,
+      borderRadius: 8,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.warning,
+    },
+    infoText: {
+      color: colors.textMuted,
+      fontSize: 12,
+    },
+    infoIcon: {
+      color: colors.warning,
+    },
+    deleteAllButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      marginBottom: 16,
+      backgroundColor: colors.danger,
+      padding: 10,
+      borderRadius: 8,
+    },
+    deleteAllButtonText: {
+      color: colors.text,
+      fontSize: 14,
     },
   });
 };
