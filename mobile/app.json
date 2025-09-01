@@ -4,7 +4,7 @@
     "slug": "expense-meter",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/react-logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "expense-meter",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,22 +13,23 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/react-logo.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#000000"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.expensemeter"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/react-logo.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/react-logo.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#0f172a"
@@ -37,6 +38,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "495cc958-3d3c-4ca7-847c-2ba0dfdd691b"
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ import { Link, router } from "expo-router";
 import { API_URL, AUTH_ROUTES } from "../../constants/api";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUser } from "../../context/userContext";
 
 const Login = () => {
   const styles = createAuthStyles();
@@ -16,6 +17,7 @@ const Login = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useUser();
   const handleLogin = async () => {
     setErrorMessage("");
 
@@ -32,6 +34,7 @@ const Login = () => {
       });
       await AsyncStorage.setItem("token", response.data.jwtToken);
       await AsyncStorage.setItem("user", JSON.stringify(response.data.data));
+      setUser(response.data.data);
       router.replace("/(tabs)");
     } catch (error) {
       console.log(error.response.data);
