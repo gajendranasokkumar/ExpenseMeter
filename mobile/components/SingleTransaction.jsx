@@ -27,6 +27,24 @@ const SingleTransaction = ({ transaction, onDelete }) => {
         return "document-text-outline";
       case "other":
         return "ellipsis-horizontal";
+      case "travel":
+        return "globe-outline";
+      case "clothes":
+        return "shirt-outline";
+      case "house rent":
+        return "home-outline";
+      case "other bills":
+        return "document-text-outline";
+      case "education":
+        return "school-outline";
+      case "medical":
+        return "medkit-outline";
+      case "petrol / gas":
+        return "car-sport-outline";
+      case "loan":
+        return "cash-outline";
+      case "investment":
+        return "cash-outline";
       default:
         return "wallet-outline";
     }

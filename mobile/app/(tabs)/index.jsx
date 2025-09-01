@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createHomeStyles from "../../styles/home.styles";
@@ -8,11 +8,13 @@ import { useUser } from "../../context/userContext";
 import HomeStats from "../../components/HomeStats";
 import BudgetSummary from "../../components/BudgetSummary";
 import CurrentMonth from "../../components/CurrentMonth";
+import NotificationModal from "../../components/NotificationModal";
 
 const Home = () => {
   const { colors } = useTheme();
   const styles = createHomeStyles();
   const { user } = useUser();  
+  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
 
   return (
     <LinearGradient colors={colors.gradients.background} style={{ flex: 1 }}>
@@ -32,7 +34,11 @@ const Home = () => {
             <Text style={styles.headerTitle}>{user?.name || "User"}</Text>
           </View>
           <View style={styles.headerRight}>
-            <Ionicons name="notifications-outline" size={24} style={styles.notificationIcon} />
+            <NotificationModal visible={isNotificationModalVisible} onClose={() => setIsNotificationModalVisible(false)} />
+            <TouchableOpacity onPress={() => setIsNotificationModalVisible(true)}>
+              <Ionicons name="notifications-outline" size={24} style={styles.notificationIcon} />
+              <View style={styles.notificationIconText} />
+            </TouchableOpacity>
           </View>
         </View>
         <HomeStats />

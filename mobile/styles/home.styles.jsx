@@ -5,6 +5,7 @@ const { width, height } = Dimensions.get("window");
 
 const createHomeStyles = () => {
   const { colors } = useTheme();
+
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -55,6 +56,24 @@ const createHomeStyles = () => {
       backgroundColor: colors.surface,
       borderRadius: 10,
       padding: 10,
+      position: "relative",
+    },
+    notificationIconText: {
+      fontSize: 10,
+      height: 12,
+      width: 12,
+      position: "absolute",
+      top: -2,
+      right: -2,
+      backgroundColor: colors.danger,
+      borderRadius: 10,
+      padding: 1,
+      zIndex: 1,
+      shadowColor: colors.danger,
+      shadowOffset: { width: 2, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
     },
     addButton: {
       backgroundColor: colors.primary,
@@ -229,7 +248,70 @@ const createHomeStyles = () => {
       backgroundColor: colors.primary,
       borderRadius: 50,
     },
-    
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.3)",
+      justifyContent: "flex-end",
+    },
+    notificationModal: {
+      height: height * 0.9,
+      width: "100%",
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: -4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
+      borderTopLeftRadius: 50,
+      borderTopRightRadius: 50,
+    },
+    notificationModalContent: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 25,
+      borderTopRightRadius: 25,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: 20,
+    },
+    notificationModalContentHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingBottom: 10,
+      borderBottomWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 10,
+    },
+    notificationModalContentHeaderTitle: {
+      fontSize: 20,
+      color: colors.text,
+    },
+    notificationModalContentHeaderClose: {
+      padding: 5,
+      borderRadius: 10,
+      backgroundColor: colors.backgrounds.error,
+    },
+    notificationModalContentEmptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 15,
+    },
+    notificationModalContentEmpty: {
+      fontSize: 16,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
+    notificationModalContentFooter: {
+      padding: 10,
+      borderTopWidth: 1,
+      borderColor: colors.border,
+    },
+    notificationModalContentFooterText: {
+      fontSize: 16,
+      color: colors.textMuted,
+      textAlign: "center",
+    },
   });
 };
 

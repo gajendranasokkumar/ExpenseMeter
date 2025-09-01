@@ -71,16 +71,46 @@ const AddTransaction = () => {
       color: "orange"
     },
     {
-      name: "Rent",
+      name: "Petrol / Gas",
+      unselectedIcon: "car-sport-outline",
+      selectedIcon: "car-sport",
+      color: "burlywood"
+    },
+    {
+      name: "Medical",
+      unselectedIcon: "medkit-outline",
+      selectedIcon: "medkit",
+      color: "peachpuff"
+    },
+    {
+      name: "Clothes",
+      unselectedIcon: "shirt-outline",
+      selectedIcon: "shirt",
+      color: "lightcoral"
+    },
+    {
+      name: "House Rent",
       unselectedIcon: "home-outline",
       selectedIcon: "home",
       color: "pink"
     },
     {
-      name: "Bills",
+      name: "Other Bills",
       unselectedIcon: "document-text-outline",
       selectedIcon: "document-text",
       color: "lightgray"
+    },
+    {
+      name: "Education",
+      unselectedIcon: "school-outline",
+      selectedIcon: "school",
+      color: "lightgreen"
+    },
+    {
+      name: "Travel",
+      unselectedIcon: "globe-outline",
+      selectedIcon: "globe",
+      color: "orange"
     },
     {
       name: "Other",
