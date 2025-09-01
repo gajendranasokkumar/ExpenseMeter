@@ -1,4 +1,4 @@
-const Transaction = require('../models/TransactionModel');
+const Transaction = require('../models/Transaction.model');
 // let summarycount = 0;
 // let tracscount = 0;
 
