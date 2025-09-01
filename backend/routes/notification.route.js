@@ -3,7 +3,7 @@ const router = express.Router();
 const notificationController = require('../controllers/notificationController');
 const verifyToken = require('../middlewares/VerifyToken');
 
-// router.use(verifyToken);
+router.use(verifyToken);
 
 router.post('/', notificationController.createNotification);
 router.get('/:id', notificationController.getNotificationsByUserId);
