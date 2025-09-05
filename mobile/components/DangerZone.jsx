@@ -13,7 +13,8 @@ const DangerZone = () => {
   const { colors } = useTheme();
   const styles = createSettingsStyles();
 
-  const [clearing, setClearing] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
   const { deleteAllTransactions } = useTransations();
 
   const handleLogout = async () => {
@@ -21,10 +22,10 @@ const DangerZone = () => {
     router.replace("/(auth)/login");
   };
 
-  const handleClearStorage = async () => {
-    if (clearing) return;
+  const handleLogoutPress = async () => {
+    if (loggingOut) return;
 
-    setClearing(true);
+    setLoggingOut(true);
     try {
       Alert.alert("Logout", "Are you sure you want to logout?", [
         { text: "Cancel", style: "cancel" },
@@ -33,7 +34,7 @@ const DangerZone = () => {
     } catch (e) {
       Alert.alert("Error", "Failed to logout. Please try again.");
     } finally {
-      setClearing(false);
+      setLoggingOut(false);
     }
   };
 
@@ -43,12 +44,12 @@ const DangerZone = () => {
         <Text style={styles.sectionTitleDanger}>Danger Zone</Text>
       </View>
       <TouchableOpacity
-        onPress={handleClearStorage}
+        onPress={handleLogoutPress}
         activeOpacity={0.8}
         style={styles.clearButton}
-        disabled={clearing}
+        disabled={loggingOut}
       >
-        {clearing ? (
+        {loggingOut ? (
           <ActivityIndicator color={colors.text} />
         ) : (
           <Text style={styles.settingText}>Logout</Text>
@@ -58,9 +59,9 @@ const DangerZone = () => {
         onPress={deleteAllTransactions}
         activeOpacity={0.8}
         style={styles.clearButton}
-        disabled={clearing}
+        disabled={loggingOut}
       >
-        {clearing ? (
+        {loggingOut ? (
           <ActivityIndicator color={colors.text} />
         ) : (
           <Text style={styles.settingText}>Delete All Transactions</Text>

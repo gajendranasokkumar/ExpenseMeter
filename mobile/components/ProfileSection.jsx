@@ -8,7 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from "expo-file-system";
 import api from "../utils/api";
-import { USER_ROUTES } from "../constants/api";
+import { USER_ROUTES } from "../constants/endPoints";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileSection = () => {

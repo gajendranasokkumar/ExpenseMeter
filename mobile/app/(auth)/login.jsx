@@ -4,7 +4,7 @@ import createAuthStyles from "../../styles/auth.styles";
 import ReactLogo from "../../assets/images/react-logo.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Link, router } from "expo-router";
-import { API_URL, AUTH_ROUTES } from "../../constants/api";
+import { API_URL, AUTH_ROUTES } from "../../constants/endPoints";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../../context/userContext";

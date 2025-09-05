@@ -1,11 +1,11 @@
-import { 
-  View, 
-  Text, 
-  FlatList, 
-  RefreshControl, 
-  Alert, 
-  ActivityIndicator, 
-  TouchableOpacity
+import {
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useCallback } from "react";
 import useTheme from "../../hooks/useTheme";
@@ -16,17 +16,30 @@ import api from "../../utils/api";
 import { useUser } from "../../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import SingleTransaction from "../../components/SingleTransaction";
-import { TRANSACTION_ROUTES } from "../../constants/api";
+import { TRANSACTION_ROUTES } from "../../constants/endPoints";
+import { BUDGET_ROUTES } from "../../constants/endPoints";
+import SingleBudget from "../../components/SingleBudget";
 
 const Transactions = () => {
   const { colors } = useTheme();
   const styles = createHistoryStyles();
-  const [refreshing, setRefreshing] = useState(false);
+  // Transaction states
+  const [transactionsRefreshing, setTransactionsRefreshing] = useState(false);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsLoadingMore, setTransactionsLoadingMore] = useState(false);
   const [transactions, setTransactions] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
+  const [transactionsPage, setTransactionsPage] = useState(1);
+  const [transactionsTotalPages, setTransactionsTotalPages] = useState(1);
+
+  // Budget states
+  const [budgetsRefreshing, setBudgetsRefreshing] = useState(false);
+  const [budgetsLoading, setBudgetsLoading] = useState(false);
+  const [budgetsLoadingMore, setBudgetsLoadingMore] = useState(false);
+  const [budgets, setBudgets] = useState([]);
+  const [budgetsPage, setBudgetsPage] = useState(1);
+  const [budgetsTotalPages, setBudgetsTotalPages] = useState(1);
+
+  const [activeScreen, setActiveScreen] = useState("transactions");
   const { user } = useUser();
   const userId = user?._id;
 
@@ -35,11 +48,11 @@ const Transactions = () => {
       try {
         if (!userId) return;
 
-        if (pageToFetch === 1 && !isRefreshing) setLoading(true);
-        else if (pageToFetch > 1) setLoadingMore(true);
+        if (pageToFetch === 1 && !isRefreshing) setTransactionsLoading(true);
+        else if (pageToFetch > 1) setTransactionsLoadingMore(true);
 
         const response = await api.get(
-          `/transactions/user/${userId}?page=${pageToFetch}`
+          `${TRANSACTION_ROUTES.GET_TRANSACTIONS_BY_USER_ID.replace(":id", userId)}?page=${pageToFetch}`
         );
 
         const items = response.data.items || [];
@@ -50,14 +63,53 @@ const Transactions = () => {
           setTransactions((prev) => [...prev, ...items]);
         }
 
-        setPage(response.data.page);
-        setTotalPages(response.data.totalPages);
+        setTransactionsPage(response.data.page);
+        setTransactionsTotalPages(response.data.totalPages);
       } catch (error) {
-        Alert.alert("Error", error.response?.data?.message || "Something went wrong");
+        Alert.alert(
+          "Error",
+          error.response?.data?.message || "Something went wrong"
+        );
       } finally {
-        setLoading(false);
-        setLoadingMore(false);
-        setRefreshing(false);
+        setTransactionsLoading(false);
+        setTransactionsLoadingMore(false);
+        setTransactionsRefreshing(false);
+      }
+    },
+    [userId]
+  );
+
+  const fetchBudgets = useCallback(
+    async (pageToFetch = 1, isRefreshing = false) => {
+      try {
+        if (!userId) return;
+
+        if (pageToFetch === 1 && !isRefreshing) setBudgetsLoading(true);
+        else if (pageToFetch > 1) setBudgetsLoadingMore(true);
+
+        const response = await api.get(
+          `${BUDGET_ROUTES.GET_BUDGETS_BY_USER_ID.replace(":id", userId)}?page=${pageToFetch}`
+        );
+
+        const items = response.data.items || [];
+
+        if (isRefreshing || pageToFetch === 1) {
+          setBudgets(items);
+        } else {
+          setBudgets((prev) => [...prev, ...items]);
+        }
+
+        setBudgetsPage(response.data.page);
+        setBudgetsTotalPages(response.data.totalPages);
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          error.response?.data?.message || "Something went wrong"
+        );
+      } finally {
+        setBudgetsLoading(false);
+        setBudgetsLoadingMore(false);
+        setBudgetsRefreshing(false);
       }
     },
     [userId]
@@ -66,93 +118,272 @@ const Transactions = () => {
   useFocusEffect(
     useCallback(() => {
       fetchTransactions(1);
-    }, [fetchTransactions])
+      fetchBudgets(1);
+    }, [fetchTransactions, fetchBudgets])
   );
 
-  const onRefresh = () => {
-    setRefreshing(true);
+  const onRefreshTransactions = () => {
+    setTransactionsRefreshing(true);
     fetchTransactions(1, true);
   };
 
-  const handleDelete = async (transactionId) => {
+  const onRefreshBudgets = () => {
+    setBudgetsRefreshing(true);
+    fetchBudgets(1, true);
+  };
+
+  const handleDeleteTransaction = async (transactionId) => {
     try {
-      await api.delete(`${TRANSACTION_ROUTES.DELETE_TRANSACTION.replace(":id", transactionId)}`);
+      await api.delete(
+        `${TRANSACTION_ROUTES.DELETE_TRANSACTION.replace(":id", transactionId)}`
+      );
       fetchTransactions(1); // refresh after delete
     } catch (error) {
-      Alert.alert("Error", error.response?.data?.message || "Something went wrong");
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   };
+
+  const handleDeleteBudget = async (budgetId) => {
+    try {
+      await api.delete(
+        `${BUDGET_ROUTES.DELETE_BUDGET.replace(":id", budgetId)}`
+      );
+      fetchBudgets(1); // refresh after delete
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  };
+
+  const renderLoading = () => (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
+
+  const renderTransactionHistory = () => (
+    <FlatList
+      contentContainerStyle={{ flexGrow: 1 }}
+      ListHeaderComponent={
+        <>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Transactions</Text>
+            <View style={styles.headerButton}>
+              <TouchableOpacity>
+                <Ionicons
+                  name="options-outline"
+                  size={24}
+                  style={styles.optionsIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.info}>
+            <Ionicons
+              name="information-circle"
+              size={16}
+              style={styles.infoIcon}
+            />
+            <Text style={styles.infoText}>
+              Long press a transaction to delete it.
+            </Text>
+          </View>
+        </>
+      }
+      style={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={transactionsRefreshing} onRefresh={onRefreshTransactions} />
+      }
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyIconContainer}>
+            <Ionicons
+              name="wallet-outline"
+              size={60}
+              color={colors.textMuted}
+            />
+            <Text style={styles.emptyText}>No transactions found</Text>
+          </View>
+        </View>
+      }
+      ListFooterComponent={
+        transactionsLoadingMore ? (
+          <View style={{ padding: 20, alignItems: "center" }}>
+            <ActivityIndicator size="small" color={colors.primary} />
+          </View>
+        ) : transactions.length > 0 ? (
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>End of transactions history</Text>
+          </View>
+        ) : null
+      }
+      data={transactions}
+      renderItem={({ item }) => (
+        <SingleTransaction transaction={item} onDelete={handleDeleteTransaction} />
+      )}
+      keyExtractor={(item) => item._id.toString()}
+      showsVerticalScrollIndicator={false}
+      onEndReached={() => {
+        if (!transactionsLoadingMore && transactionsPage < transactionsTotalPages) {
+          fetchTransactions(transactionsPage + 1);
+        }
+      }}
+      onEndReachedThreshold={0.1}
+    />
+  );
+
+  const renderBudgetHistory = () => (
+    <FlatList
+      contentContainerStyle={{ flexGrow: 1 }}
+      ListHeaderComponent={
+        <>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Budgets</Text>
+            <View style={styles.headerButton}>
+              <TouchableOpacity>
+                <Ionicons
+                  name="options-outline"
+                  size={24}
+                  style={styles.optionsIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.info}>
+            <Ionicons
+              name="information-circle"
+              size={16}
+              style={styles.infoIcon}
+            />
+            <Text style={styles.infoText}>
+              Long press a budget to delete it.
+            </Text>
+          </View>
+        </>
+      }
+      style={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={budgetsRefreshing} onRefresh={onRefreshBudgets} />
+      }
+      ListEmptyComponent={
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyIconContainer}>
+            <Ionicons
+              name="calendar-outline"
+              size={60}
+              color={colors.textMuted}
+            />
+            <Text style={styles.emptyText}>No budgets found</Text>
+          </View>
+        </View>
+      }
+      ListFooterComponent={
+        budgetsLoadingMore ? (
+          <View style={{ padding: 20, alignItems: "center" }}>
+            <ActivityIndicator size="small" color={colors.primary} />
+          </View>
+        ) : budgets.length > 0 ? (
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>End of budgets history</Text>
+          </View>
+        ) : null
+      }
+      data={budgets}
+      renderItem={({ item }) => (
+        <SingleBudget budget={item} onDelete={handleDeleteBudget} />
+      )}
+      keyExtractor={(item) => item._id.toString()}
+      showsVerticalScrollIndicator={false}
+      onEndReached={() => {
+        if (!budgetsLoadingMore && budgetsPage < budgetsTotalPages) {
+          fetchBudgets(budgetsPage + 1);
+        }
+      }}
+      onEndReachedThreshold={0.1}
+    />
+  );
 
   return (
     <LinearGradient colors={colors.gradients.background} style={{ flex: 1 }}>
       <View style={styles.content}>
-        {loading && transactions.length === 0 ? (
-          // Initial loading indicator
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <ActivityIndicator size="large" color={colors.primary} />
-          </View>
-        ) : (
-          <FlatList
-            contentContainerStyle={{ flexGrow: 1 }}
-            ListHeaderComponent={
-              <> 
-              <View style={styles.header}>
-                <Text style={styles.headerTitle}>Transactions</Text>
-                <View style={styles.headerButton}>
-                  <TouchableOpacity>
-                    <Ionicons name="options-outline" size={24} style={styles.optionsIcon} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.info}>
-                <Ionicons name="information-circle" size={16} style={styles.infoIcon} />
-                <Text style={styles.infoText}>
-                Long press a transaction to delete it.
-                </Text>
-              </View>
-              </>
-            }
-            style={{ flex: 1 }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <View style={styles.emptyIconContainer}>
-                  <Ionicons
-                    name="wallet-outline"
-                    size={60}
-                    color={colors.textMuted}
-                  />
-                  <Text style={styles.emptyText}>No transactions found</Text>
-                </View>
-              </View>
-            }
-            ListFooterComponent={
-              loadingMore ? (
-                <View style={{ padding: 20, alignItems: "center" }}>
-                  <ActivityIndicator size="small" color={colors.primary} />
-                </View>
-              ) : transactions.length > 0 ? (
-                <View style={styles.footer}>
-                  <Text style={styles.footerText}>End of transactions history</Text>
-                </View>
-              ) : null
-            }
-            data={transactions}
-            renderItem={({ item }) => (
-              <SingleTransaction transaction={item} onDelete={handleDelete} />
-            )}
-            keyExtractor={(item) => item._id.toString()}
-            showsVerticalScrollIndicator={false}
-            onEndReached={() => {
-              if (!loadingMore && page < totalPages) {
-                fetchTransactions(page + 1);
+        <View style={styles.controlsContainer}>
+        <TouchableOpacity
+            style={[
+              styles.controls,
+              activeScreen === "transactions" && {
+                borderColor: colors.primary,
+              },
+            ]}
+            onPress={() => setActiveScreen("transactions")}
+          >
+            <Ionicons
+              name={
+                activeScreen === "transactions"
+                  ? "wallet"
+                  : "wallet-outline"
               }
-            }}
-            onEndReachedThreshold={0.1}
-          />
-        )}
+              size={24}
+              style={styles.controlsIcon}
+              color={
+                activeScreen === "transactions"
+                  ? colors.primary
+                  : colors.textMuted
+              }
+            />
+            <Text
+              style={[
+                styles.controlsTitle,
+                activeScreen === "transactions" && { color: colors.primary },
+              ]}
+            >
+              Transactions
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.controls,
+              activeScreen === "budgets" && {
+                borderColor: colors.primary,
+              },
+            ]}
+            onPress={() => setActiveScreen("budgets")}
+          >
+            <Ionicons
+              name={
+                activeScreen === "budgets"
+                  ? "calendar"
+                  : "calendar-outline"
+              }
+              size={24}
+              style={styles.controlsIcon}
+              color={
+                activeScreen === "budgets"
+                  ? colors.primary
+                  : colors.textMuted
+              }
+            />
+            <Text
+              style={[
+                styles.controlsTitle,
+                activeScreen === "budgets" && { color: colors.primary },
+              ]}
+            >
+              Budgets
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {(activeScreen === "transactions" && transactionsLoading) || (activeScreen === "budgets" && budgetsLoading) 
+          ? renderLoading() 
+          : activeScreen === "transactions" 
+            ? renderTransactionHistory() 
+            : renderBudgetHistory()}
+
       </View>
     </LinearGradient>
   );

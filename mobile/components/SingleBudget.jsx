@@ -7,7 +7,7 @@ import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { categories } from "./Categories";
 import { formatDate } from "../utils/formatDate";
 
-const SingleTransaction = ({ transaction, onDelete }) => {
+const SingleBudget = ({ budget, onDelete }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
 
@@ -18,37 +18,31 @@ const SingleTransaction = ({ transaction, onDelete }) => {
 
   return (
     <TouchableOpacity onLongPress={() => {
-      Alert.alert("Delete Transaction", "Are you sure you want to delete this transaction?", [
+      Alert.alert("Delete Budget", "Are you sure you want to delete this budget?", [
         { text: "Cancel", style: "cancel" },
-        { text: "Delete", style: "destructive", onPress: () => onDelete(transaction._id) },
+        { text: "Delete", style: "destructive", onPress: () => onDelete(budget._id) },
       ]);
     }}>
       <View style={styles.transactionContainer}>
         <View style={styles.transactionLeft}>
           <Ionicons
-            name={getIcon(transaction.category.toLowerCase())}
+                name={getIcon(budget.category.toLowerCase())}
             size={24}
             color={
-              transaction.amount > 0 ? colors.incomeMuted : colors.expenseMuted
+              colors.incomeMuted
             }
           />
         </View>
         <View style={styles.transactionCenter}>
-          <Text style={styles.transactionCenterTitle}>{transaction.title}</Text>
+          <Text style={styles.transactionCenterTitle}>{budget.title}</Text>
           <Text style={styles.transactionCenterDate}>
-            {formatDate(transaction.date)}
+            {formatDate(budget.start_date)}
           </Text>
         </View>
         <View style={styles.transactionRight}>
-          {transaction.amount > 0 ? (
             <Text style={[styles.transactionRightAmount, { color: colors.incomeMuted }]}>
-              + {formatAmountDisplay(transaction.amount)}
+              {formatAmountDisplay(budget.amount)}
             </Text>
-          ) : (
-            <Text style={[styles.transactionRightAmount, { color: colors.expenseMuted }]}>
-              - {formatAmountDisplay(Math.abs(transaction.amount))}
-            </Text>
-          )}
         </View>
         {/* <Text>{transaction.category}</Text> */}
       </View>
@@ -56,4 +50,4 @@ const SingleTransaction = ({ transaction, onDelete }) => {
   );
 };
 
-export default SingleTransaction;
+export default SingleBudget;

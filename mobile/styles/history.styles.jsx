@@ -12,6 +12,36 @@ const createHistoryStyles = () => {
       padding: 24,
       paddingBottom: 0,
     },
+    controlsContainer: {
+      flexDirection: "row",
+      gap: 10,
+      marginBottom: 16,
+    },
+    controls: {
+      flex: 1,
+      padding: 15,
+      borderRadius: 100,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    controlsIcon: {
+      marginRight: 5,
+    },
+    controlsTitle: {
+      color: colors.textMuted,
+      fontSize: 16,
+    },
+    controlsActive: {
+      backgroundColor: colors.surface,
+      borderColor: colors.primary,
+    },
+    controlsActiveText: {
+      color: colors.primary,
+    },
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',

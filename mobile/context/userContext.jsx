@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../utils/api";
-import { USER_ROUTES } from "../constants/api";
+import { USER_ROUTES } from "../constants/endPoints";
 
 const UserContext = createContext();
 

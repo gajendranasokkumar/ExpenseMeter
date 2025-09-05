@@ -32,6 +32,7 @@ const HomeStats = () => {
   );
 
   const formarExpenseAmount = (amount) => {
+    if (amount === 0) return 0;
     return amount * -1;
   }
 

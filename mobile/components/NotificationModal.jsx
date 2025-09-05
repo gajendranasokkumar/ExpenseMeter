@@ -14,7 +14,7 @@ import createHomeStyles from "../styles/home.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
 import api from "../utils/api";
-import { NOTIFICATION_ROUTES } from "../constants/api";
+import { NOTIFICATION_ROUTES } from "../constants/endPoints";
 import { useUser } from "../context/userContext";
 import { formatDate } from "../utils/formatDate";
 import { useFocusEffect } from "@react-navigation/native";

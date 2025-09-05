@@ -9,6 +9,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import api from "../../utils/api";
 import { useUser } from "../../context/userContext";
 import { useRouter } from "expo-router";
+import { TRANSACTION_ROUTES } from "../../constants/endPoints";
+import { categories } from "../../components/Categories";
 
 const AddTransaction = () => {
   const { colors } = useTheme();
@@ -32,94 +34,6 @@ const AddTransaction = () => {
     setError("");
   }, [selectedControl, amount, date, selectedCategory ]);
 
-
-  const categories = [
-    {
-      name: "Food",
-      unselectedIcon: "restaurant-outline",
-      selectedIcon: "restaurant",
-      color: "wheat"
-    },
-    {
-      name: "Transport",
-      unselectedIcon: "car-outline",
-      selectedIcon: "car",
-      color: "yellow"
-    },
-    {
-      name: "Entertainment",
-      unselectedIcon: "game-controller-outline",
-      selectedIcon: "game-controller",
-      color: "lightcoral"
-    },
-    {
-      name: "Shopping",
-      unselectedIcon: "cart-outline",
-      selectedIcon: "cart",
-      color: "aqua"
-    },
-    {
-      name: "Salary",
-      unselectedIcon: "cash-outline",
-      selectedIcon: "cash",
-      color: "lightgreen"
-    },
-    {
-      name: "Investment",
-      unselectedIcon: "cash-outline",
-      selectedIcon: "cash",
-      color: "orange"
-    },
-    {
-      name: "Petrol / Gas",
-      unselectedIcon: "car-sport-outline",
-      selectedIcon: "car-sport",
-      color: "burlywood"
-    },
-    {
-      name: "Medical",
-      unselectedIcon: "medkit-outline",
-      selectedIcon: "medkit",
-      color: "peachpuff"
-    },
-    {
-      name: "Clothes",
-      unselectedIcon: "shirt-outline",
-      selectedIcon: "shirt",
-      color: "lightcoral"
-    },
-    {
-      name: "House Rent",
-      unselectedIcon: "home-outline",
-      selectedIcon: "home",
-      color: "pink"
-    },
-    {
-      name: "Other Bills",
-      unselectedIcon: "document-text-outline",
-      selectedIcon: "document-text",
-      color: "lightgray"
-    },
-    {
-      name: "Education",
-      unselectedIcon: "school-outline",
-      selectedIcon: "school",
-      color: "lightgreen"
-    },
-    {
-      name: "Travel",
-      unselectedIcon: "globe-outline",
-      selectedIcon: "globe",
-      color: "orange"
-    },
-    {
-      name: "Other",
-      unselectedIcon: "ellipsis-horizontal-outline",
-      selectedIcon: "ellipsis-horizontal",
-      color: "plum"
-    },
-  ];
-
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -138,7 +52,7 @@ const AddTransaction = () => {
         notes = selectedCategory.name;
       }
       // console.log(notes, amount, category, date, userId);
-      const response = await api.post('/transactions', { title: notes, amount, category, date, user_id: userId });
+      const response = await api.post(TRANSACTION_ROUTES.CREATE_TRANSACTION, { title: notes, amount, category, date, user_id: userId });
       Alert.alert('Success', 'Transaction created successfully');
       router.replace('/history');
     } catch (error) {

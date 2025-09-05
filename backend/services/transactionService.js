@@ -1,4 +1,5 @@
 const Transaction = require('../models/Transaction.model');
+const NotificationService = require('./notificationService');
 // let summarycount = 0;
 // let tracscount = 0;
 
@@ -23,16 +24,23 @@ const getTransactionsByUserId = async (userId, { page = 1, limit = 10 } = {}) =>
 
 const createTransaction = async ({ title, amount, category, user_id, date }) => {
   const transaction = await Transaction.create({ title, amount, category, user_id, date });
+  if(amount > 0) {
+    await NotificationService.createNotification({ user_id, title: 'Income', message: `You have earned ${amount} from ${title}` });
+  } else {
+    await NotificationService.createNotification({ user_id, title: 'Expense', message: `You have spent ${amount} on ${title}` });
+  }
   return transaction;
 };
 
 const deleteTransaction = async (id) => {
   const deleted = await Transaction.findByIdAndDelete(id);
+  await NotificationService.createNotification({ user_id: deleted.user_id, title: 'Transaction Deleted', message: `Transaction ${deleted.title} deleted with amount ${deleted.amount}` });
   return deleted;
 };
 
 const deleteAllTransactionsByUserId = async (userId) => {
   const result = await Transaction.deleteMany({ user_id: userId });
+  await NotificationService.createNotification({ user_id: userId, title: 'All Transactions Deleted', message: `All transactions deleted` });
   return result;
 };
 

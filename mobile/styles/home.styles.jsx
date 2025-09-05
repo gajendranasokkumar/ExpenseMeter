@@ -176,7 +176,7 @@ const createHomeStyles = () => {
       color: colors.text,
     },
     budgetSummaryContainer: {
-      marginTop: 25,
+      marginTop: 35,
     },
     budgetSummaryTitleContainer: {
       flexDirection: "row",
@@ -368,6 +368,47 @@ const createHomeStyles = () => {
     deleteAllButtonText: {
       color: colors.text,
       fontSize: 14,
+    },
+    budgetFailureTitleContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 8,
+      marginTop: 10,
+      borderWidth: 2,
+      borderColor: colors.border,
+      padding: 20,
+      borderRadius: 8,
+      backgroundColor: colors.surface,
+      borderStyle: 'dashed',
+    },
+    budgetFailureTitle: {
+      color: colors.textMuted,
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    budgetFailureTitleButton: {
+      color: colors.primary,
+      fontSize: 16,
+      textAlign: 'center',
+      marginTop: 15,
+      textDecorationLine: 'underline',
+    },
+    remainingBudgetContainer: {
+      marginTop: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      paddingBottom: 15,
+    },
+    remainingBudgetTitle: {
+      marginBottom: 5,
+      fontSize: 14,
+      textAlign: 'center',
+      color: colors.textMuted,
+    },
+    remainingBudgetAmount: {
+      fontSize: 14,
+      color: colors.text,
+      textDecorationLine: 'underline',
     },
   });
 };

@@ -14,6 +14,7 @@ export const USER_ROUTES = {
 
 export const TRANSACTION_ROUTES = {
   GET_TRANSACTIONS: "/transactions",
+  GET_TRANSACTIONS_BY_USER_ID: "/transactions/user/:id",
   GET_TRANSACTION_BY_ID: "/transactions/:id",
   CREATE_TRANSACTION: "/transactions",
   UPDATE_TRANSACTION: "/transactions/:id",
@@ -30,4 +31,18 @@ export const NOTIFICATION_ROUTES = {
   DELETE_ALL_NOTIFICATIONS: "/notifications",
   UPDATE_NOTIFICATION_BY_ID: "/notifications/:id",
   UPDATE_ALL_NOTIFICATIONS: "/notifications",
+};
+
+export const BUDGET_ROUTES = {
+  GET_BUDGETS_BY_USER_ID: "/budgets/user/:id",
+  GET_BUDGETS_BY_USER_ID_AND_CATEGORY_FOR_CURRENT_MONTH: "/budgets/user/:id/category/:category/currentMonth/:currentMonth",
+  GET_BUDGETS_AND_EXPENSES_BY_CATEGORY_FOR_MONTH_AND_YEAR: "/budgets/user/:id/categories-summary",
+  CREATE_BUDGET: "/budgets",
+  UPDATE_BUDGET: "/budgets/:id",
+  GET_ACTIVE_BUDGETS_BY_USER_ID: "/budgets/active/:id",
+  DELETE_BUDGET: "/budgets/:id",
+  DELETE_ALL_BUDGETS: "/budgets/user/:id",
+  GET_BUDGET_SUMMARY_BY_USER_ID: "/budgets/summary/:id",
+  GET_BUDGET_BY_ID: "/budgets/:id",
+  CREATE_MONTHLY_BUDGET_AS_PREVIOUS: "/budgets/user/:id/month/:month",
 };

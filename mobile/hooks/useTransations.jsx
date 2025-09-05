@@ -2,7 +2,7 @@
 import api from '../utils/api';
 import { Alert } from 'react-native';
 import { useUser } from '../context/userContext';
-import { TRANSACTION_ROUTES } from '../constants/api';
+import { TRANSACTION_ROUTES } from '../constants/endPoints';
 
 const useTransations = () => {
   const { user } = useUser();

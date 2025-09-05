@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createHomeStyles from "../../styles/home.styles";
@@ -10,9 +10,10 @@ import BudgetSummary from "../../components/BudgetSummary";
 import CurrentMonth from "../../components/CurrentMonth";
 import NotificationModal from "../../components/NotificationModal";
 import api from "../../utils/api";
-import { NOTIFICATION_ROUTES } from "../../constants/api";
+import { NOTIFICATION_ROUTES } from "../../constants/endPoints";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import CategoriesBudgetSummary from "../../components/CategoriesBudgetSummary";
 
 const Home = () => {
   const { colors } = useTheme();
@@ -43,7 +44,7 @@ const Home = () => {
 
   return (
     <LinearGradient colors={colors.gradients.background} style={{ flex: 1 }}>
-      <View style={styles.content}>
+      <ScrollView style={styles.content}  showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50 }}>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             {
@@ -71,7 +72,8 @@ const Home = () => {
         <HomeStats />
         <CurrentMonth />
         <BudgetSummary />
-      </View>
+        <CategoriesBudgetSummary />
+      </ScrollView>
     </LinearGradient>
   );
 };
