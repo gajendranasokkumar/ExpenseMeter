@@ -22,8 +22,8 @@ const getTransactionsByUserId = async (userId, { page = 1, limit = 10 } = {}) =>
   return { items, total, page: pageNumber, limit: pageSize, totalPages };
 };
 
-const createTransaction = async ({ title, amount, category, user_id, date }) => {
-  const transaction = await Transaction.create({ title, amount, category, user_id, date });
+const createTransaction = async ({ title, amount, category, bank, user_id, date }) => {
+  const transaction = await Transaction.create({ title, amount, category, bank, user_id, date });
   if(amount > 0) {
     await NotificationService.createNotification({ user_id, title: 'Income', message: `You have earned ${amount} from ${title}` });
   } else {

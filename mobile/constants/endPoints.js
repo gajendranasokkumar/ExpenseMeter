@@ -46,3 +46,11 @@ export const BUDGET_ROUTES = {
   GET_BUDGET_BY_ID: "/budgets/:id",
   CREATE_MONTHLY_BUDGET_AS_PREVIOUS: "/budgets/user/:id/month/:month",
 };
+
+export const BANK_ROUTES = {
+  CREATE_BANK: "/banks",
+  GET_ALL_BANKS: "/banks/all",
+  DELETE_BANK: "/banks/:id/user/:userId",
+  PERMANENTLY_DELETE_BANK: "/banks/permanent/:id/user/:userId",
+  GET_BANK_SUMMARY_BY_USER_ID: "/banks/summary/:id",
+};

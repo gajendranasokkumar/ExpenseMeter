@@ -19,7 +19,7 @@ import api from "../../utils/api";
 import { BUDGET_ROUTES } from "../../constants/endPoints";
 import { useUser } from "../../context/userContext";
 import { getCurrentMonth, computeEndDate } from "../../utils/formatDate";
-import { categories } from "../../components/Categories";
+import { categories } from "../../constants/Categories";
 
 const AddBudget = () => {
   const { colors } = useTheme();

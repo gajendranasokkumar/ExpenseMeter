@@ -410,6 +410,11 @@ const createHomeStyles = () => {
       color: colors.text,
       textDecorationLine: 'underline',
     },
+    arrowDownIcon: {
+      marginTop: 10,
+      color: colors.textMuted,
+      alignSelf: "center",
+    },
   });
 };
 

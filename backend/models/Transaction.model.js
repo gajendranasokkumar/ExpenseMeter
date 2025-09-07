@@ -26,6 +26,12 @@ const transactionSchema = new mongoose.Schema(
       trim: true,
       maxlength: 100,
     },
+    bank: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'banks',
+      required: true,
+      index: true,
+    },
     date: {
       type: Date,
       required: true,

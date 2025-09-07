@@ -14,6 +14,7 @@ import { NOTIFICATION_ROUTES } from "../../constants/endPoints";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import CategoriesBudgetSummary from "../../components/CategoriesBudgetSummary";
+import BankSummary from "../../components/BankSummary";
 
 const Home = () => {
   const { colors } = useTheme();
@@ -72,6 +73,8 @@ const Home = () => {
         <HomeStats />
         <CurrentMonth />
         <BudgetSummary />
+        <BankSummary />
+        <Ionicons name="arrow-down-circle" size={50} style={styles.arrowDownIcon} />
         <CategoriesBudgetSummary />
       </ScrollView>
     </LinearGradient>

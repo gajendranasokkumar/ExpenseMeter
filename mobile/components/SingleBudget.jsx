@@ -4,7 +4,7 @@ import createHistoryStyles from "../styles/history.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
-import { categories } from "./Categories";
+import { categories } from "../constants/Categories";
 import { formatDate } from "../utils/formatDate";
 
 const SingleBudget = ({ budget, onDelete }) => {
