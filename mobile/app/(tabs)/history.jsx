@@ -6,6 +6,7 @@ import {
   Alert,
   ActivityIndicator,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Modal,
 } from "react-native";
 import React, { useState, useCallback, useEffect } from "react";
@@ -414,58 +415,62 @@ const Transactions = () => {
       </View>
       {/* Filter Modal */}
       <Modal visible={isFilterVisible} transparent animationType="fade" onRequestClose={() => setIsFilterVisible(false)}>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
-          <View style={{ width: "90%", maxWidth: 420, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
-            <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>Filter by date</Text>
-            <View style={{ gap: 12 }}>
-              <TouchableOpacity onPress={() => setShowStartPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
+        <TouchableWithoutFeedback onPress={() => setIsFilterVisible(false)}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
+            <TouchableWithoutFeedback>
+            <View style={{ width: "90%", maxWidth: 420, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
+              <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>Filter by date</Text>
+              <View style={{ gap: 12 }}>
+                <TouchableOpacity onPress={() => setShowStartPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
+                    <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
+                  <Text style={{ color: colors.text }}>
+                    {startDate ? startDate.toDateString() : "Select start date"}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowEndPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
-                <Text style={{ color: colors.text }}>
-                  {startDate ? startDate.toDateString() : "Select start date"}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowEndPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
-                <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
-                <Text style={{ color: colors.text }}>
-                  {endDate ? endDate.toDateString() : "Select end date"}
-                </Text>
-              </TouchableOpacity>
-              <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
-                <TouchableOpacity onPress={() => { setStartDate(null); setEndDate(null); setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
-                  <Text style={{ color: colors.textMuted }}>Clear</Text>
+                  <Text style={{ color: colors.text }}>
+                    {endDate ? endDate.toDateString() : "Select end date"}
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: 8 }}>
-                  <Text style={{ color: colors.onPrimary }}>Apply</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
+                  <TouchableOpacity onPress={() => { setStartDate(null); setEndDate(null); setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
+                    <Text style={{ color: colors.textMuted }}>Clear</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => { setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: 8 }}>
+                    <Text style={{ color: colors.onPrimary }}>Apply</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
 
-            {showStartPicker && (
-              <DateTimePicker
-                value={startDate || new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowStartPicker(false);
-                  if (date) setStartDate(date);
-                }}
-                maximumDate={endDate || undefined}
-              />
-            )}
-            {showEndPicker && (
-              <DateTimePicker
-                value={endDate || new Date()}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowEndPicker(false);
-                  if (date) setEndDate(date);
-                }}
-                minimumDate={startDate || undefined}
-              />
-            )}
+              {showStartPicker && (
+                <DateTimePicker
+                  value={startDate || new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => {
+                    setShowStartPicker(false);
+                    if (date) setStartDate(date);
+                  }}
+                  maximumDate={endDate || undefined}
+                />
+              )}
+              {showEndPicker && (
+                <DateTimePicker
+                  value={endDate || new Date()}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => {
+                    setShowEndPicker(false);
+                    if (date) setEndDate(date);
+                  }}
+                  minimumDate={startDate || undefined}
+                />
+              )}
+            </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </LinearGradient>
   );
