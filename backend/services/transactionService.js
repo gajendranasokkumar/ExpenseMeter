@@ -3,15 +3,34 @@ const NotificationService = require('./notificationService');
 // let summarycount = 0;
 // let tracscount = 0;
 
-const getTransactionsByUserId = async (userId, { page = 1, limit = 10 } = {}) => {
+const getTransactionsByUserId = async (userId, { page = 1, limit = 10, startDate, endDate } = {}) => {
   const pageNumber = Math.max(parseInt(page) || 1, 1);
   const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 100);
   const filter = { user_id: userId };
+  if (startDate || endDate) {
+    const dateFilter = {};
+    if (startDate) {
+      const d = new Date(startDate);
+      if (!isNaN(d.getTime())) {
+        dateFilter.$gte = d;
+      }
+    }
+    if (endDate) {
+      const end = new Date(endDate);
+      if (!isNaN(end.getTime())) {
+        end.setHours(23, 59, 59, 999);
+        dateFilter.$lte = end;
+      }
+    }
+    if (dateFilter.$gte || dateFilter.$lte) {
+      filter.date = dateFilter;
+    }
+  }
   // console.log("comming transactions ", tracscount++);
 
   const [items, total] = await Promise.all([
     Transaction.find(filter)
-      .sort({ created_at: -1 })
+      .sort({ date: -1, created_at: -1 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean(),

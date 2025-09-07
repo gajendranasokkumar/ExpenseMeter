@@ -172,6 +172,20 @@ const AddBudget = () => {
         isAllCategory: isAllCategory,
       });
       Alert.alert("Success", "Budget created successfully!");
+      setFormData({
+        title: "",
+        amount: "",
+        category: "",
+        period: "monthly",
+        start_date: "",
+        end_date: "",
+      });
+      setStartDate(new Date());
+      setEndDate(new Date());
+      setShowStartDatePicker(false);
+      setShowEndDatePicker(false);
+      setIsAllCategory(false);
+      setIsLoading(false);
       router.back();
     } catch (error) {
       Alert.alert("Error", error.response.data.message);

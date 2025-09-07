@@ -6,8 +6,9 @@ import {
   Alert,
   ActivityIndicator,
   TouchableOpacity,
+  Modal,
 } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createHistoryStyles from "../../styles/history.styles";
@@ -19,6 +20,7 @@ import SingleTransaction from "../../components/SingleTransaction";
 import { TRANSACTION_ROUTES } from "../../constants/endPoints";
 import { BUDGET_ROUTES } from "../../constants/endPoints";
 import SingleBudget from "../../components/SingleBudget";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Transactions = () => {
   const { colors } = useTheme();
@@ -43,6 +45,13 @@ const Transactions = () => {
   const { user } = useUser();
   const userId = user?._id;
 
+  // Date filter state
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
   const fetchTransactions = useCallback(
     async (pageToFetch = 1, isRefreshing = false) => {
       try {
@@ -51,8 +60,12 @@ const Transactions = () => {
         if (pageToFetch === 1 && !isRefreshing) setTransactionsLoading(true);
         else if (pageToFetch > 1) setTransactionsLoadingMore(true);
 
+        const params = new URLSearchParams();
+        params.append("page", pageToFetch);
+        if (startDate) params.append("startDate", startDate.toISOString());
+        if (endDate) params.append("endDate", endDate.toISOString());
         const response = await api.get(
-          `${TRANSACTION_ROUTES.GET_TRANSACTIONS_BY_USER_ID.replace(":id", userId)}?page=${pageToFetch}`
+          `${TRANSACTION_ROUTES.GET_TRANSACTIONS_BY_USER_ID.replace(":id", userId)}?${params.toString()}`
         );
 
         const items = response.data.items || [];
@@ -76,7 +89,7 @@ const Transactions = () => {
         setTransactionsRefreshing(false);
       }
     },
-    [userId]
+    [userId, startDate, endDate]
   );
 
   const fetchBudgets = useCallback(
@@ -87,8 +100,12 @@ const Transactions = () => {
         if (pageToFetch === 1 && !isRefreshing) setBudgetsLoading(true);
         else if (pageToFetch > 1) setBudgetsLoadingMore(true);
 
+        const params = new URLSearchParams();
+        params.append("page", pageToFetch);
+        if (startDate) params.append("startDate", startDate.toISOString());
+        if (endDate) params.append("endDate", endDate.toISOString());
         const response = await api.get(
-          `${BUDGET_ROUTES.GET_BUDGETS_BY_USER_ID.replace(":id", userId)}?page=${pageToFetch}`
+          `${BUDGET_ROUTES.GET_BUDGETS_BY_USER_ID.replace(":id", userId)}?${params.toString()}`
         );
 
         const items = response.data.items || [];
@@ -112,7 +129,7 @@ const Transactions = () => {
         setBudgetsRefreshing(false);
       }
     },
-    [userId]
+    [userId, startDate, endDate]
   );
 
   useFocusEffect(
@@ -121,6 +138,16 @@ const Transactions = () => {
       fetchBudgets(1);
     }, [fetchTransactions, fetchBudgets])
   );
+
+  // Refetch when date filters change (handles Clear/Apply cases)
+  useEffect(() => {
+    if (!userId) return;
+    setTransactionsPage(1);
+    setBudgetsPage(1);
+    fetchTransactions(1, true);
+    fetchBudgets(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate]);
 
   const onRefreshTransactions = () => {
     setTransactionsRefreshing(true);
@@ -174,7 +201,7 @@ const Transactions = () => {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Transactions</Text>
             <View style={styles.headerButton}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
                 <Ionicons
                   name="options-outline"
                   size={24}
@@ -245,7 +272,7 @@ const Transactions = () => {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Budgets</Text>
             <View style={styles.headerButton}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
                 <Ionicons
                   name="options-outline"
                   size={24}
@@ -385,6 +412,61 @@ const Transactions = () => {
             : renderBudgetHistory()}
 
       </View>
+      {/* Filter Modal */}
+      <Modal visible={isFilterVisible} transparent animationType="fade" onRequestClose={() => setIsFilterVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
+          <View style={{ width: "90%", maxWidth: 420, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
+            <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>Filter by date</Text>
+            <View style={{ gap: 12 }}>
+              <TouchableOpacity onPress={() => setShowStartPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
+                <Text style={{ color: colors.text }}>
+                  {startDate ? startDate.toDateString() : "Select start date"}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowEndPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
+                <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
+                <Text style={{ color: colors.text }}>
+                  {endDate ? endDate.toDateString() : "Select end date"}
+                </Text>
+              </TouchableOpacity>
+              <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
+                <TouchableOpacity onPress={() => { setStartDate(null); setEndDate(null); setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
+                  <Text style={{ color: colors.textMuted }}>Clear</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => { setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: 8 }}>
+                  <Text style={{ color: colors.onPrimary }}>Apply</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {showStartPicker && (
+              <DateTimePicker
+                value={startDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowStartPicker(false);
+                  if (date) setStartDate(date);
+                }}
+                maximumDate={endDate || undefined}
+              />
+            )}
+            {showEndPicker && (
+              <DateTimePicker
+                value={endDate || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowEndPicker(false);
+                  if (date) setEndDate(date);
+                }}
+                minimumDate={startDate || undefined}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 };

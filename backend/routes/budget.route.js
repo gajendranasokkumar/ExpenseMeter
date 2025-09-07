@@ -6,11 +6,11 @@ const budgetController = require('../controllers/budgetController');
 // All routes protected
 router.use(verifyToken);
 
+// GET /budgets/user/:userId (must be before :id to avoid shadowing)
+router.get('/user/:userId', budgetController.getBudgetsByUserId);
+
 // GET /budgets/:id
 router.get('/:id', budgetController.getBudgetById);
-
-// GET /budgets/user/:userId
-router.get('/user/:userId', budgetController.getBudgetsByUserId);
 
 // GET /budgets/user/:userId/category/:category
 router.get('/user/:userId/category/:category/currentMonth/:currentMonth', budgetController.getBudgetsByUserIdAndCategoryForCurrentMonth);

@@ -11,10 +11,42 @@ const getBudgetById = async (id) => {
   return budget;
 };
 
-const getBudgetsByUserId = async (userId, { page = 1, limit = 10 } = {}) => {
+const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, endDate } = {}) => {
   const pageNumber = Math.max(parseInt(page) || 1, 1);
   const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 100);
   const filter = { user_id: userId };
+  if (startDate || endDate) {
+    let filterStart = null;
+    let filterEnd = null;
+
+    if (startDate) {
+      const d = new Date(startDate);
+      if (!isNaN(d.getTime())) {
+        filterStart = d;
+      }
+    }
+    if (endDate) {
+      const d = new Date(endDate);
+      if (!isNaN(d.getTime())) {
+        d.setHours(23, 59, 59, 999);
+        filterEnd = d;
+      }
+    }
+
+    if (filterStart && filterEnd) {
+      // Contained within selected window
+      filter.$and = [
+        { start_date: { $gte: filterStart } },
+        { end_date: { $lte: filterEnd } },
+      ];
+    } else if (filterStart) {
+      // Budgets starting on/after the start filter
+      filter.start_date = { $gte: filterStart };
+    } else if (filterEnd) {
+      // Budgets ending on/before the end filter
+      filter.end_date = { $lte: filterEnd };
+    }
+  }
 
   const [items, total] = await Promise.all([
     Budget.find(filter)

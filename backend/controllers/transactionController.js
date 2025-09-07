@@ -4,11 +4,11 @@ class TransactionController {
   async getTransactionsByUserId(req, res) {
     try {
       const { userId } = req.params;
-      const { page, limit } = req.query;
+      const { page, limit, startDate, endDate } = req.query;
       if (!userId) {
         return res.status(400).json({ message: 'userId is required' });
       }
-      const result = await transactionService.getTransactionsByUserId(userId, { page, limit });
+      const result = await transactionService.getTransactionsByUserId(userId, { page, limit, startDate, endDate });
       return res.status(200).json(result);
     } catch (error) {
       return res.status(400).json({ message: error.message });
