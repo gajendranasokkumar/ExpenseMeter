@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import createAuthStyles from "../../styles/auth.styles";
-import ReactLogo from "../../assets/images/react-logo.png";
+import ReactLogo from "../../assets/images/logo.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Link, router } from "expo-router";
 import { API_URL, AUTH_ROUTES } from "../../constants/endPoints";

@@ -10,7 +10,7 @@ import {
 import { router } from "expo-router";
 import createAuthStyles from "../../styles/auth.styles";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import ReactLogo from "../../assets/images/react-logo.png";
+import ReactLogo from "../../assets/images/logo.png";
 import { API_URL, AUTH_ROUTES } from "../../constants/endPoints";
 import axios from "axios";
 
