@@ -1,6 +1,6 @@
 {
   "name": "Expense Meter",
-  "main": "expo-router/entry",
+  "main": "index.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
@@ -41,6 +41,7 @@
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-push-notification": "^8.1.1",
     "react-native-reanimated": "~3.17.4",
     "react-native-reanimated-carousel": "^4.0.3",
     "react-native-safe-area-context": "5.4.0",

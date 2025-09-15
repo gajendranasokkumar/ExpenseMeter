@@ -22,7 +22,13 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0f172a"
       },
-      "package": "com.gajendran2908.mobile"
+      "package": "com.gajendran2908.mobile",
+      "permissions": [
+        "RECEIVE_SMS",
+        "READ_SMS",
+        "VIBRATE",
+        "SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "bundler": "metro",
