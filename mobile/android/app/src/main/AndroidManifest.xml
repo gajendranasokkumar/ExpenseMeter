@@ -33,6 +33,15 @@
         <data android:scheme="exp+mobile"/>
       </intent-filter>
     </activity>
+    <!-- Lightweight dialog-style activity to show SMS details without opening the app UI -->
+    <activity
+      android:name=".SmsPromptActivity"
+      android:exported="false"
+      android:excludeFromRecents="true"
+      android:theme="@style/AppTheme.Dialog"
+      android:taskAffinity=""
+      android:noHistory="true"
+      android:launchMode="singleTop" />
     <receiver
       android:name=".SmsReceiver"
       android:exported="true"
