@@ -61,9 +61,10 @@ public class SmsReceiver extends BroadcastReceiver {
           nm.createNotificationChannel(channel);
         }
 
-        Intent openIntent = new Intent(context, MainActivity.class);
+        // Use deep link so React Native Linking receives the URL even when app is already open
+        Intent openIntent = new Intent(Intent.ACTION_VIEW);
+        openIntent.setData(android.net.Uri.parse("exp+mobile://sms?body=" + android.net.Uri.encode(fullMessage.toString())));
         openIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        openIntent.putExtra("sms_body", fullMessage.toString());
         PendingIntent pi = PendingIntent.getActivity(
           context,
           1001,

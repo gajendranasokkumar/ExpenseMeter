@@ -8,7 +8,7 @@ import SafeScreen from "../components/SafeScreen";
 import { UserProvider } from "../context/userContext";
 import { TransactionsProvider } from "../context/transactionsContext";
 import PushNotification from "react-native-push-notification";
-import { Alert } from "react-native";
+// SMS modal is handled via the /sms route, not here
 
 const RootLayout = () => {
   return (
@@ -44,6 +44,7 @@ const Layout = () => {
     };
     ensureSmsPermissions();
 
+
     PushNotification.createChannel(
       {
         channelId: "sms-events",
@@ -57,15 +58,20 @@ const Layout = () => {
 
     PushNotification.configure({
       onNotification: function (notification) {
-        const message = notification?.message || notification?.userInfo?.body;
-        if (message) {
-          Alert.alert("SMS Received", message);
-        }
+        // Avoid opening modal here; deep link route will handle UI.
+        try {
+          console.log('[PushNotification] onNotification payload:', notification);
+        } catch (_) {}
         notification?.finish && notification.finish();
       },
       popInitialNotification: true,
       requestPermissions: false,
     });
+
+    // No explicit popInitialNotification; deep links handled by router (/sms)
+
+    // Cleanup function
+    return () => {};
   }, []);
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
