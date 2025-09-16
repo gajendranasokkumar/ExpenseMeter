@@ -1,5 +1,8 @@
 import { AppRegistry, Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NativeModules } from 'react-native';
+const { SmsDataModule } = NativeModules;
 
 // Register Headless JS task for background SMS processing
 AppRegistry.registerHeadlessTask('SmsBackgroundTask', () => async (data) => {
@@ -37,6 +40,18 @@ AppRegistry.registerHeadlessTask('SmsBackgroundTask', () => async (data) => {
 
 // Continue with Expo Router entry
 import 'expo-router/entry';
+
+// Bootstrap native auth for modal submissions
+(async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const userJson = await AsyncStorage.getItem('user');
+    const userId = userJson ? JSON.parse(userJson)?._id : null;
+    if (SmsDataModule && (token || userId)) {
+      await SmsDataModule.setAuth({ token, userId });
+    }
+  } catch (e) {}
+})();
 
 
 
