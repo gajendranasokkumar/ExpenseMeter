@@ -13,8 +13,23 @@ import androidx.core.app.NotificationManagerCompat;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.Locale;
 
 public class SmsReceiver extends BroadcastReceiver {
+  private static final Pattern TRANSACTION_PATTERN = Pattern.compile(
+    "(?i)(credited|debited|bank|txn|amount|transaction|spent|purchase|withdrawn|emi|payment|balance(?:\\s+is)?|transfer|upi|neft|imps|rtgs|atm|pos|refund|bill\\s*paid|charge|otp for transaction)",
+    Pattern.CASE_INSENSITIVE
+  );
+
+  private boolean isLikelyTransaction(String body) {
+    if (body == null) return false;
+    String trimmed = body.trim();
+    if (trimmed.isEmpty()) return false;
+    Matcher tx = TRANSACTION_PATTERN.matcher(trimmed);
+    return tx.find();
+  }
   @Override
   public void onReceive(Context context, Intent intent) {
     if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
@@ -37,6 +52,12 @@ public class SmsReceiver extends BroadcastReceiver {
       if (fullMessage.length() == 0) return;
 
       Log.d("SmsReceiver", "From: " + originatingAddress + ", Body: " + fullMessage);
+
+      // Filter: proceed only if SMS looks like a bank/transaction notification
+      if (!isLikelyTransaction(fullMessage.toString())) {
+        Log.d("SmsReceiver", "SMS ignored (not a transaction-related message)");
+        return;
+      }
 
       Intent serviceIntent = new Intent(context, SmsHeadlessService.class);
       serviceIntent.putExtra("from", originatingAddress);
@@ -74,9 +95,9 @@ public class SmsReceiver extends BroadcastReceiver {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
           .setSmallIcon(context.getResources().getIdentifier("ic_launcher", "mipmap", context.getPackageName()))
-          .setContentTitle("Transaction SMS")
-          .setContentText(fullMessage.toString())
-          .setStyle(new NotificationCompat.BigTextStyle().bigText(fullMessage.toString()))
+          .setContentTitle("Transaction Detected")
+          .setContentText("Click to add the new transaction to Expense Meter")
+          .setStyle(new NotificationCompat.BigTextStyle().bigText("Click to add the new transaction to Expense Meter"))
           .setPriority(NotificationCompat.PRIORITY_HIGH)
           .setAutoCancel(true)
           .setContentIntent(pi);

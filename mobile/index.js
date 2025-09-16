@@ -6,9 +6,9 @@ AppRegistry.registerHeadlessTask('SmsBackgroundTask', () => async (data) => {
   try {
     const body = (data?.body || '').toString();
     if (!body) return;
-    const lower = body.toLowerCase();
-    const matches = lower.includes('debited') || lower.includes('credited');
-    if (!matches) return;
+    // Use same keyword filter as native SmsReceiver
+    const TRANSACTION_REGEX = /(credited|debited|bank|txn|amount|transaction|spent|purchase|withdrawn|emi|payment|balance(?:\s+is)?|transfer|upi|neft|imps|rtgs|atm|pos|refund|bill\s*paid|charge|otp for transaction)/i;
+    if (!TRANSACTION_REGEX.test(body)) return;
 
     // Ensure channel exists on Android before sending notification
     if (Platform.OS === 'android') {
@@ -23,8 +23,8 @@ AppRegistry.registerHeadlessTask('SmsBackgroundTask', () => async (data) => {
 
     PushNotification.localNotification({
       channelId: 'sms-events',
-      title: 'Transaction SMS',
-      message: body,
+      title: 'Transaction Detected',
+      message: "Open Expense Meter now",
       playSound: true,
       soundName: 'default',
       importance: 'high',
