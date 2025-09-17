@@ -6,6 +6,9 @@ object TokenStore {
 
     @Volatile
     var userId: String? = null
+
+    @Volatile
+    var apiUrl: String? = null
 }
 
 

@@ -2,6 +2,7 @@ import { AppRegistry, Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeModules } from 'react-native';
+import { API_URL } from './constants/endPoints';
 const { SmsDataModule } = NativeModules;
 
 // Register Headless JS task for background SMS processing
@@ -48,7 +49,7 @@ import 'expo-router/entry';
     const userJson = await AsyncStorage.getItem('user');
     const userId = userJson ? JSON.parse(userJson)?._id : null;
     if (SmsDataModule && (token || userId)) {
-      await SmsDataModule.setAuth({ token, userId });
+      await SmsDataModule.setAuth({ token, userId, apiUrl: API_URL });
     }
   } catch (e) {}
 })();

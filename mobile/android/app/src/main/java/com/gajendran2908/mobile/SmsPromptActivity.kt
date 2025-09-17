@@ -28,18 +28,23 @@ import android.text.TextUtils
 import android.view.ViewGroup
 import android.widget.Spinner
 import android.widget.ArrayAdapter
+import android.widget.ScrollView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 class SmsPromptActivity : Activity() {
+  private var bankSpinnerRef: Spinner? = null
+  private var bankAdapterRef: ArrayAdapter<String>? = null
+  private var bankIdsRef: List<String> = emptyList()
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     // Make window behave like a dialog overlay
     window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
     window.setBackgroundDrawableResource(android.R.color.transparent)
-    window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+    // Avoid layout flags that conflict with SOFT_INPUT_ADJUST_RESIZE
+    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
     val root = LinearLayout(this).apply {
       orientation = LinearLayout.VERTICAL
@@ -108,13 +113,23 @@ class SmsPromptActivity : Activity() {
       setPadding(0, dp(8), 0, dp(8))
     }
 
-    val bankIdInput = EditText(this).apply {
-      hint = "Bank Id"
-      setTextColor(Color.parseColor("#F9FAFB"))
-      setHintTextColor(Color.parseColor("#9CA3AF"))
-      setBackgroundColor(Color.TRANSPARENT)
-      setPadding(0, dp(8), 0, dp(8))
+    // Bank dropdown (populated from backend)
+    val bankSpinner = Spinner(this)
+    this.bankSpinnerRef = bankSpinner
+    val bankAdapter = object : ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, mutableListOf("Loading...")) {
+      override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val v = super.getView(position, convertView, parent)
+        (v as? TextView)?.setTextColor(Color.parseColor("#F9FAFB"))
+        return v
+      }
+      override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val v = super.getDropDownView(position, convertView, parent)
+        (v as? TextView)?.setTextColor(Color.parseColor("#000000"))
+        return v
+      }
     }
+    bankSpinner.adapter = bankAdapter
+    this.bankAdapterRef = bankAdapter
 
     val notesInput = EditText(this).apply {
       hint = "Notes"
@@ -122,6 +137,10 @@ class SmsPromptActivity : Activity() {
       setHintTextColor(Color.parseColor("#9CA3AF"))
       setBackgroundColor(Color.TRANSPARENT)
       setPadding(0, dp(8), 0, dp(8))
+      inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+      isSingleLine = false
+      minLines = 2
+      maxLines = 5
     }
 
     val submit = Button(this).apply {
@@ -153,7 +172,7 @@ class SmsPromptActivity : Activity() {
     card.addView(body)
     card.addView(labeled("Amount", amountInput))
     card.addView(labeled("Category", categoryInput))
-    card.addView(labeled("Bank Id", bankIdInput))
+    card.addView(labeled("Bank", bankSpinner))
     card.addView(labeled("Notes", notesInput))
     card.addView(progress)
     val buttons = LinearLayout(this).apply {
@@ -165,7 +184,11 @@ class SmsPromptActivity : Activity() {
     }
     card.addView(buttons)
 
-    root.addView(card, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+    val scroll = ScrollView(this).apply {
+      isFillViewport = true
+      addView(card, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+    }
+    root.addView(scroll, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT))
 
     setContentView(root)
 
@@ -177,7 +200,8 @@ class SmsPromptActivity : Activity() {
       progress.visibility = View.VISIBLE
       val amountText = amountInput.text?.toString()?.trim()
       val categoryText = categoryInput.text?.toString()?.trim()
-      val bankIdText = bankIdInput.text?.toString()?.trim()
+      val selectedPos = bankSpinner.selectedItemPosition
+      val bankIdText = if (selectedPos >= 0 && selectedPos < bankIdsRef.size) bankIdsRef[selectedPos] else ""
       val notesText = notesInput.text?.toString()?.trim()
 
       if (amountText.isNullOrEmpty() || categoryText.isNullOrEmpty() || bankIdText.isNullOrEmpty()) {
@@ -212,6 +236,9 @@ class SmsPromptActivity : Activity() {
         }
       )
     }
+
+    // Fetch banks for user
+    fetchBanksForUser()
   }
 
   private fun dp(v: Int): Int = (v * resources.displayMetrics.density).toInt()
@@ -251,6 +278,79 @@ class SmsPromptActivity : Activity() {
     } catch (_: Exception) {}
   }
 
+  private fun fetchBanksForUser() {
+    val userId = TokenStore.userId
+    val token = TokenStore.token
+    val apiUrl = TokenStore.apiUrl
+    if (userId.isNullOrEmpty() || token.isNullOrEmpty() || apiUrl.isNullOrEmpty()) return
+    Thread {
+      try {
+        val url = URL("$apiUrl/banks/all")
+        val conn = (url.openConnection() as HttpURLConnection).apply {
+          requestMethod = "POST"
+          setRequestProperty("Content-Type", "application/json")
+          setRequestProperty("Authorization", "Bearer $token")
+          doOutput = true
+          connectTimeout = 15000
+          readTimeout = 15000
+        }
+        val payload = JSONObject().apply { put("userId", userId) }
+        conn.outputStream.use { it.write(payload.toString().toByteArray(StandardCharsets.UTF_8)) }
+        val code = conn.responseCode
+        if (code in 200..299) {
+          val text = conn.inputStream.bufferedReader().readText()
+          val json = JSONObject(text)
+          val data = json.optJSONArray("data")
+          val names = mutableListOf<String>()
+          val ids = mutableListOf<String>()
+          if (data != null) {
+            for (i in 0 until data.length()) {
+              val item = data.optJSONObject(i)
+              val id = item?.optString("_id") ?: continue
+              val name = item.optString("name", id)
+              names.add(name)
+              ids.add(id)
+            }
+          }
+          runOnUiThread {
+            val adapter = bankAdapterRef
+            if (adapter != null) {
+              adapter.clear()
+              if (names.isNotEmpty()) {
+                adapter.addAll(names)
+                bankIdsRef = ids
+              } else {
+                adapter.add("No banks")
+                bankIdsRef = emptyList()
+              }
+              adapter.notifyDataSetChanged()
+              bankSpinnerRef?.setSelection(0)
+            }
+          }
+        }
+        conn.disconnect()
+      } catch (_: Exception) {}
+    }.start()
+  }
+
+  private fun findBankSpinner(): Spinner? {
+    // Since we built the view in-code, traverse to find the first Spinner under the root
+    val root = window?.decorView?.findViewById<View>(android.R.id.content) as? ViewGroup ?: return null
+    return findSpinnerRecursive(root)
+  }
+
+  private fun findSpinnerRecursive(group: ViewGroup): Spinner? {
+    for (i in 0 until group.childCount) {
+      val child = group.getChildAt(i)
+      if (child is Spinner) return child
+      if (child is ViewGroup) {
+        val found = findSpinnerRecursive(child)
+        if (found != null) return found
+      }
+    }
+    return null
+  }
+
   private fun sendTransaction(
     amountText: String,
     category: String,
@@ -263,7 +363,8 @@ class SmsPromptActivity : Activity() {
   ) {
     Thread {
       try {
-        val url = URL("https://expensemeter-backend.onrender.com/transactions")
+        val base = TokenStore.apiUrl ?: "https://expensemeter-backend.onrender.com"
+        val url = URL("$base/transactions")
         val conn = (url.openConnection() as HttpURLConnection).apply {
           requestMethod = "POST"
           setRequestProperty("Content-Type", "application/json")

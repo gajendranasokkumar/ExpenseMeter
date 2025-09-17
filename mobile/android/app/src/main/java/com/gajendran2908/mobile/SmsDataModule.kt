@@ -37,8 +37,10 @@ class SmsDataModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
         try {
             val token = if (data.hasKey("token")) data.getString("token") else null
             val userId = if (data.hasKey("userId")) data.getString("userId") else null
+            val apiUrl = if (data.hasKey("apiUrl")) data.getString("apiUrl") else null
             TokenStore.token = token
             TokenStore.userId = userId
+            TokenStore.apiUrl = apiUrl
             promise.resolve(true)
         } catch (e: Exception) {
             promise.reject("ERROR", e.message, e)
