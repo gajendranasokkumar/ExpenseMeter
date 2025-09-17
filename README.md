@@ -3,7 +3,7 @@
 A comprehensive expense tracking and budget management application built with React Native and Node.js. Track your spending, manage budgets, and gain insights into your financial habits with an intuitive and modern interface.
 
 ![ExpenseMeter](https://img.shields.io/badge/ExpenseMeter-v1.0.0-blue)
-![React Native](https://img.shields.io/badge/React%20Native-0.79.5-61DAFB)
+![React Native](https://img.shields.io/badge/React%20Native-Expo-61DAFB)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-green)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
 
@@ -14,7 +14,7 @@ A comprehensive expense tracking and budget management application built with Re
 - **Budget Planning**: Create and manage budgets for different categories and time periods
 - **Bank Integration**: Track transactions across multiple bank accounts
 - **Category System**: 13 predefined categories including Food, Transport, Entertainment, Shopping, etc.
-- **Real-time Notifications**: Get notified about budget limits and financial insights
+- **Real-time Notifications & SMS Parsing**: Get notified on receipt of transaction-related SMS and add transactions from a native modal
 - **Data Visualization**: Interactive charts and summaries for better financial understanding
 
 ### User Experience
@@ -38,7 +38,7 @@ A comprehensive expense tracking and budget management application built with Re
 - **Navigation**: Expo Router with file-based routing
 - **State Management**: React Context API
 - **Styling**: Custom styled components with theme support
-- **Animations**: React Native Reanimated Carousel
+- **Animations**: React Native Reanimated
 - **Storage**: AsyncStorage for local data persistence
 
 ### Backend (API Server)
@@ -128,7 +128,7 @@ ExpenseMeter/
    ```
 
 6. **Update API Endpoint**
-   Update the API URL in `mobile/utils/api.js`:
+   Update the API URL in `mobile/constants/endPoints.js`:
    ```javascript
    export const API_URL = "http://your-ip-address:3000";
    ```
@@ -137,6 +137,64 @@ ExpenseMeter/
    ```bash
    npx expo start
    ```
+
+### Android Native SMS Ingestion (Expo + custom native code)
+
+This project includes a native Android SMS receiver to detect bank/transaction SMS and prompt a lightweight modal to add a transaction.
+
+- Components:
+  - `SmsReceiver.java`: Listens to `SMS_RECEIVED` and filters messages by transaction keywords/amount patterns before triggering a notification and opening a native modal.
+  - `SmsPromptActivity.kt`: Full-screen dialog-style modal to add a transaction directly (type, amount, bank, category, notes optional). Fetches banks from the backend and signs amount based on Income/Expense selection.
+  - `SmsDataModule.kt` + `SmsDataPackage`: Native bridge for JS to pass `token`, `userId`, and `API_URL` to native (`TokenStore`).
+  - `index.js`: On app start, reads AsyncStorage and calls `SmsDataModule.setAuth({ token, userId, apiUrl })`.
+
+- Permissions (requested at runtime in `mobile/app/_layout.jsx`):
+  - `RECEIVE_SMS`, `READ_SMS` for SMS detection
+  - `POST_NOTIFICATIONS` (Android 13+)
+
+- Build requirements:
+  - You must perform a native build (e.g., `npx expo run:android`) after native changes.
+  - The native module is registered in `MainApplication.kt` via `SmsDataPackage()`.
+
+- Behavior:
+  - Only SMS matching common transaction patterns (keywords like credited/debited/upi/amount, or INR amount regex) will trigger.
+  - The modal shows:
+    - Type toggle: Income/Expense (affects sign of amount)
+    - Amount input (prefilled if parsed from SMS)
+    - Bank dropdown (fetched from backend)
+    - Category chips (horizontally scrollable)
+    - Notes (left blank by default)
+
+### Android Build/Run
+
+- Dev server:
+  ```bash
+  npx expo start
+  ```
+
+- Run on device/emulator with native code:
+  ```bash
+  npx expo run:android --device
+  ```
+
+- Release variant:
+  ```bash
+  npx expo run:android --variant release --device
+  ```
+
+### Troubleshooting
+
+- Native module not found / Not authenticated toast:
+  - Ensure `SmsDataPackage` is registered in `MainApplication.kt` (it is in this repo).
+  - Ensure you are logged in so `token` and `user` (with `_id`) exist in AsyncStorage.
+  - App must be rebuilt after native changes.
+
+- Bank dropdown stuck on “Loading…”:
+  - Confirm backend is reachable via `API_URL` and the token is valid.
+  - Endpoint is `POST /banks/all` with body `{ userId }` (note: POST, not GET).
+
+- Keyboard hides notes:
+  - The modal uses `SOFT_INPUT_ADJUST_RESIZE` and a `ScrollView`. If it still happens on specific devices, consider switching to `SOFT_INPUT_ADJUST_PAN`.
 
 ## 📱 Mobile App Features
 
@@ -189,7 +247,7 @@ ExpenseMeter/
 - `DELETE /budgets/:id` - Delete budget
 
 ### Banks
-- `GET /banks/all` - Get all banks
+- `POST /banks/all` - Get all banks for the logged in user (body: `{ userId }`)
 - `POST /banks` - Add new bank
 - `DELETE /banks/:id` - Delete bank
 
