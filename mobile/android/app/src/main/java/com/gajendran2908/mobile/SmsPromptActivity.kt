@@ -32,6 +32,8 @@ import android.widget.ScrollView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.widget.GridLayout
+import android.widget.HorizontalScrollView
 
 class SmsPromptActivity : Activity() {
   private var bankSpinnerRef: Spinner? = null
@@ -105,13 +107,61 @@ class SmsPromptActivity : Activity() {
       setPadding(0, dp(8), 0, dp(8))
     }
 
-    val categoryInput = EditText(this).apply {
-      hint = "Category"
-      setTextColor(Color.parseColor("#F9FAFB"))
-      setHintTextColor(Color.parseColor("#9CA3AF"))
-      setBackgroundColor(Color.TRANSPARENT)
-      setPadding(0, dp(8), 0, dp(8))
+    // Category horizontal chips
+    val categoryScroll = HorizontalScrollView(this).apply {
+      isHorizontalScrollBarEnabled = false
     }
+    val categoryRow = LinearLayout(this).apply {
+      orientation = LinearLayout.HORIZONTAL
+    }
+    categoryScroll.addView(categoryRow, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+    val categories = listOf(
+      Pair("Food", "#F5DEB3"),
+      Pair("Transport", "#FFFF00"),
+      Pair("Entertainment", "#F08080"),
+      Pair("Shopping", "#00FFFF"),
+      Pair("Salary", "#90EE90"),
+      Pair("Investment", "#FFA500"),
+      Pair("Petrol / Gas", "#DEB887"),
+      Pair("Medical", "#FFDAB9"),
+      Pair("Clothes", "#F08080"),
+      Pair("Rent", "#FFC0CB"),
+      Pair("Other Bills", "#D3D3D3"),
+      Pair("Education", "#90EE90"),
+      Pair("Travel", "#FFA500"),
+      Pair("Other", "#DDA0DD")
+    )
+    var selectedCategoryName: String? = null
+    fun rebuildCategoryRow() {
+      categoryRow.removeAllViews()
+      for ((name, colorHex) in categories) {
+        val item = LinearLayout(this).apply {
+          orientation = LinearLayout.VERTICAL
+          val bg = GradientDrawable().apply {
+            setColor(Color.parseColor("#111827"))
+            cornerRadius = dp(10).toFloat()
+            setStroke(dp(1), if (selectedCategoryName == name) Color.parseColor(colorHex) else Color.parseColor("#334155"))
+          }
+          background = bg
+          setPadding(dp(12), dp(10), dp(12), dp(10))
+        }
+        val tv = TextView(this).apply {
+          text = name
+          setTextColor(if (selectedCategoryName == name) Color.parseColor(colorHex) else Color.parseColor("#9CA3AF"))
+          setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+        }
+        item.addView(tv)
+        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+          setMargins(dp(6), dp(6), dp(6), dp(6))
+        }
+        item.setOnClickListener {
+          selectedCategoryName = name
+          rebuildCategoryRow()
+        }
+        categoryRow.addView(item, lp)
+      }
+    }
+    rebuildCategoryRow()
 
     // Bank dropdown (populated from backend)
     val bankSpinner = Spinner(this)
@@ -171,7 +221,7 @@ class SmsPromptActivity : Activity() {
     card.addView(titleRow)
     card.addView(body)
     card.addView(labeled("Amount", amountInput))
-    card.addView(labeled("Category", categoryInput))
+    card.addView(labeled("Category", categoryScroll))
     card.addView(labeled("Bank", bankSpinner))
     card.addView(labeled("Notes", notesInput))
     card.addView(progress)
@@ -199,7 +249,7 @@ class SmsPromptActivity : Activity() {
       submit.isEnabled = false
       progress.visibility = View.VISIBLE
       val amountText = amountInput.text?.toString()?.trim()
-      val categoryText = categoryInput.text?.toString()?.trim()
+      val categoryText = selectedCategoryName?.trim()
       val selectedPos = bankSpinner.selectedItemPosition
       val bankIdText = if (selectedPos >= 0 && selectedPos < bankIdsRef.size) bankIdsRef[selectedPos] else ""
       val notesText = notesInput.text?.toString()?.trim()
