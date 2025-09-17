@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Expense Meter",
-    "slug": "mobile",
+    "slug": "expensemeter",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -53,8 +53,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d25fbd77-dc60-4827-88b6-fb92d8be1fae"
+        "projectId": "92b2bdf5-e8f8-4546-be3f-5af5aa2e09d9"
       }
-    }
+    },
+    "owner": "expensemeter"
   }
 }
