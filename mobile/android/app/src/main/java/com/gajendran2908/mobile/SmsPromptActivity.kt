@@ -97,6 +97,54 @@ class SmsPromptActivity : Activity() {
       setPadding(0, dp(12), 0, dp(12))
     }
 
+    // Income / Expense toggle
+    var selectedType: String? = null // "income" | "expense"
+    val toggleRow = LinearLayout(this).apply {
+      orientation = LinearLayout.HORIZONTAL
+    }
+    fun makeToggleButton(label: String, activeColor: String): LinearLayout {
+      return LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        val bg = GradientDrawable().apply {
+          setColor(Color.parseColor("#111827"))
+          cornerRadius = dp(10).toFloat()
+          setStroke(dp(1), Color.parseColor("#334155"))
+        }
+        background = bg
+        setPadding(dp(12), dp(10), dp(12), dp(10))
+        val tv = TextView(this@SmsPromptActivity).apply {
+          text = label
+          setTextColor(Color.parseColor("#9CA3AF"))
+          setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+        }
+        addView(tv)
+      }
+    }
+    val incomeBtn = makeToggleButton("Income", "#86EFAC")
+    val expenseBtn = makeToggleButton("Expense", "#FCA5A5")
+    fun styleToggle(btn: LinearLayout, isActive: Boolean, activeColorHex: String) {
+      val g = (btn.background as GradientDrawable)
+      g.setStroke(dp(1), Color.parseColor(if (isActive) activeColorHex else "#334155"))
+      (btn.getChildAt(0) as? TextView)?.setTextColor(Color.parseColor(if (isActive) activeColorHex else "#9CA3AF"))
+    }
+    fun updateToggleStyles() {
+      styleToggle(incomeBtn, selectedType == "income", "#86EFAC")
+      styleToggle(expenseBtn, selectedType == "expense", "#FCA5A5")
+    }
+    incomeBtn.setOnClickListener {
+      selectedType = "income"
+      updateToggleStyles()
+    }
+    expenseBtn.setOnClickListener {
+      selectedType = "expense"
+      updateToggleStyles()
+    }
+    val lpToggle = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+      setMargins(0, 0, dp(8), 0)
+    }
+    toggleRow.addView(incomeBtn, lpToggle)
+    toggleRow.addView(expenseBtn, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+
     // Form fields
     val amountInput = EditText(this).apply {
       hint = "Amount (e.g., 123.45)"
@@ -220,8 +268,9 @@ class SmsPromptActivity : Activity() {
 
     card.addView(titleRow)
     card.addView(body)
+    card.addView(labeled("Type", toggleRow, false))
     card.addView(labeled("Amount", amountInput))
-    card.addView(labeled("Category", categoryScroll))
+    card.addView(labeled("Category", categoryScroll, false))
     card.addView(labeled("Bank", bankSpinner))
     card.addView(labeled("Notes", notesInput))
     card.addView(progress)
@@ -242,8 +291,8 @@ class SmsPromptActivity : Activity() {
 
     setContentView(root)
 
-    // Prefill from SMS when possible
-    prefillFromSms(message, amountInput, notesInput)
+    // Prefill only amount from SMS; keep notes empty
+    prefillAmountFromSms(message, amountInput)
 
     submit.setOnClickListener {
       submit.isEnabled = false
@@ -252,10 +301,10 @@ class SmsPromptActivity : Activity() {
       val categoryText = selectedCategoryName?.trim()
       val selectedPos = bankSpinner.selectedItemPosition
       val bankIdText = if (selectedPos >= 0 && selectedPos < bankIdsRef.size) bankIdsRef[selectedPos] else ""
-      val notesText = notesInput.text?.toString()?.trim()
+      val notesText = ""
 
-      if (amountText.isNullOrEmpty() || categoryText.isNullOrEmpty() || bankIdText.isNullOrEmpty()) {
-        Toast.makeText(this, "Please fill amount, category and bank id", Toast.LENGTH_SHORT).show()
+      if (selectedType == null || amountText.isNullOrEmpty() || categoryText.isNullOrEmpty() || bankIdText.isNullOrEmpty()) {
+        Toast.makeText(this, "Select type and fill amount, category and bank", Toast.LENGTH_SHORT).show()
         submit.isEnabled = true
         progress.visibility = View.GONE
         return@setOnClickListener
@@ -270,7 +319,7 @@ class SmsPromptActivity : Activity() {
         return@setOnClickListener
       }
 
-      sendTransaction(amountText, categoryText, bankIdText, notesText ?: "", userId, token,
+      sendTransaction(amountText, selectedType!!, categoryText, bankIdText, notesText, userId, token,
         onSuccess = {
           runOnUiThread {
             Toast.makeText(this, "Transaction created", Toast.LENGTH_SHORT).show()
@@ -293,7 +342,7 @@ class SmsPromptActivity : Activity() {
 
   private fun dp(v: Int): Int = (v * resources.displayMetrics.density).toInt()
 
-  private fun labeled(label: String, field: View): LinearLayout {
+  private fun labeled(label: String, field: View, showUnderline: Boolean = true): LinearLayout {
     val container = LinearLayout(this).apply {
       orientation = LinearLayout.VERTICAL
       setPadding(0, dp(8), 0, dp(8))
@@ -303,17 +352,19 @@ class SmsPromptActivity : Activity() {
       setTextColor(Color.parseColor("#9CA3AF"))
       setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
     }
-    val underline = View(this).apply {
-      setBackgroundColor(Color.parseColor("#334155"))
-      layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(1))
-    }
     container.addView(tv)
     container.addView(field)
-    container.addView(underline)
+    if (showUnderline) {
+      val underline = View(this).apply {
+        setBackgroundColor(Color.parseColor("#334155"))
+        layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(1))
+      }
+      container.addView(underline)
+    }
     return container
   }
 
-  private fun prefillFromSms(message: String, amountField: EditText, notesField: EditText) {
+  private fun prefillAmountFromSms(message: String, amountField: EditText) {
     try {
       val amtRegex = Regex("(?i)(rs\\.?|inr|₹)\\s*(\\d{1,3}(?:[,\\s]?\\d{2,3})*(?:\\.\\d{1,2})?)")
       val match = amtRegex.find(message)
@@ -324,7 +375,6 @@ class SmsPromptActivity : Activity() {
           amountField.setText(normalized)
         }
       }
-      notesField.setText(message.take(200))
     } catch (_: Exception) {}
   }
 
@@ -403,6 +453,7 @@ class SmsPromptActivity : Activity() {
 
   private fun sendTransaction(
     amountText: String,
+    type: String,
     category: String,
     bankId: String,
     notes: String,
@@ -424,7 +475,8 @@ class SmsPromptActivity : Activity() {
           readTimeout = 15000
         }
 
-        val amountValue = amountText.toDoubleOrNull() ?: throw IllegalArgumentException("Invalid amount")
+        val baseAmount = amountText.toDoubleOrNull() ?: throw IllegalArgumentException("Invalid amount")
+        val amountValue = if (type == "income") kotlin.math.abs(baseAmount) else -kotlin.math.abs(baseAmount)
         val payload = JSONObject().apply {
           put("title", if (notes.isNotBlank()) notes else category)
           put("amount", amountValue)
