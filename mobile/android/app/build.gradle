@@ -11,6 +11,8 @@ def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 react {
     // Force using project's index.js so headless task registration is always included
     entryFile = file("../../index.js")
+    // Ensure RNGP resolves react-native config from the JS project root (mobile/)
+    root = file("../")
     reactNativeDir = new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
     hermesCommand = new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/sdks/hermesc/%OS-BIN%/hermesc"
     codegenDir = new File(["node", "--print", "require.resolve('@react-native/codegen/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
