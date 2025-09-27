@@ -7,7 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
 import { UserProvider } from "../context/userContext";
 import { TransactionsProvider } from "../context/transactionsContext";
-import PushNotification from "react-native-push-notification";
+// import PushNotification from "react-native-push-notification";
 // SMS modal is handled via the /sms route, not here
 
 const RootLayout = () => {
@@ -44,31 +44,32 @@ const Layout = () => {
     };
     ensureSmsPermissions();
 
+    // Push notifications commented out for independent app functionality
+    // PushNotification.createChannel(
+    //   {
+    //     channelId: "sms-events",
+    //     channelName: "SMS Events",
+    //     channelDescription: "Notifications for incoming SMS with transactions",
+    //     importance: 4,
+    //     vibrate: true,
+    //   },
+    //   () => {}
+    // );
 
-    PushNotification.createChannel(
-      {
-        channelId: "sms-events",
-        channelName: "SMS Events",
-        channelDescription: "Notifications for incoming SMS with transactions",
-        importance: 4,
-        vibrate: true,
-      },
-      () => {}
-    );
-
-    PushNotification.configure({
-      onNotification: function (notification) {
-        // Avoid opening modal here; deep link route will handle UI.
-        try {
-          console.log('[PushNotification] onNotification payload:', notification);
-        } catch (_) {}
-        notification?.finish && notification.finish();
-      },
-      popInitialNotification: true,
-      requestPermissions: false,
-    });
+    // PushNotification.configure({
+    //   onNotification: function (notification) {
+    //     // Avoid opening modal here; deep link route will handle UI.
+    //     try {
+    //       console.log('[PushNotification] onNotification payload:', notification);
+    //     } catch (_) {}
+    //     notification?.finish && notification.finish();
+    //   },
+    //   popInitialNotification: true,
+    //   requestPermissions: false,
+    // });
 
     // No explicit popInitialNotification; deep links handled by router (/sms)
+    console.log('SMS permissions requested - push notifications disabled');
 
     // Cleanup function
     return () => {};
