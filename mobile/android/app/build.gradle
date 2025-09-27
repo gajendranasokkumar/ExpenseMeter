@@ -7,6 +7,13 @@ def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 def reactNativeConfigPath = new File(projectRoot, "react-native.config.js")
 if (reactNativeConfigPath.exists()) {
     println "Found react-native.config.js at: ${reactNativeConfigPath.absolutePath}"
+    // Debug: Try to read the config content
+    try {
+        def configContent = reactNativeConfigPath.text
+        println "Config content: ${configContent}"
+    } catch (Exception e) {
+        println "Error reading config: ${e.message}"
+    }
 } else {
     println "WARNING: react-native.config.js not found at: ${reactNativeConfigPath.absolutePath}"
     // Create a temporary config file
@@ -23,6 +30,16 @@ module.exports = {
 };
 """
     println "Created temporary react-native.config.js"
+}
+
+// Debug: Run react-native config command to see what RNGP sees
+def rnConfigCommand = ["node", "-e", "console.log(JSON.stringify(require('./react-native.config.js'), null, 2))"]
+def rnConfigProcess = rnConfigCommand.execute(null, new File(projectRoot))
+rnConfigProcess.waitFor()
+if (rnConfigProcess.exitValue() == 0) {
+    println "RN Config output: ${rnConfigProcess.text}"
+} else {
+    println "RN Config error: ${rnConfigProcess.errorStream.text}"
 }
 
 /**
@@ -85,6 +102,9 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
+    
+    // Force package name for autolinking
+    project.android.packageName = "com.gajendran2908.mobile"
 }
 
 /**
