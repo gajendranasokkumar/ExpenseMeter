@@ -8,19 +8,19 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_USE_COMMUNITY_AUTOLINKING": "1"
+        "EXPO_USE_COMMUNITY_AUTOLINKING": "0"
       }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_USE_COMMUNITY_AUTOLINKING": "1"
+        "EXPO_USE_COMMUNITY_AUTOLINKING": "0"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
-        "EXPO_USE_COMMUNITY_AUTOLINKING": "1"
+        "EXPO_USE_COMMUNITY_AUTOLINKING": "0"
       }
     }
   },
