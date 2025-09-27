@@ -2,7 +2,28 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// Fallback configuration for React Native autolinking
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
+def reactNativeConfigPath = new File(projectRoot, "react-native.config.js")
+if (reactNativeConfigPath.exists()) {
+    println "Found react-native.config.js at: ${reactNativeConfigPath.absolutePath}"
+} else {
+    println "WARNING: react-native.config.js not found at: ${reactNativeConfigPath.absolutePath}"
+    // Create a temporary config file
+    def tempConfig = new File(projectRoot, "react-native.config.js")
+    tempConfig.text = """
+module.exports = {
+  project: {
+    android: {
+      packageName: 'com.gajendran2908.mobile',
+      sourceDir: './android',
+    },
+    ios: {},
+  },
+};
+"""
+    println "Created temporary react-native.config.js"
+}
 
 /**
  * This is the configuration block to customize your React Native Android app.
