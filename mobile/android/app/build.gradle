@@ -42,6 +42,10 @@ if (rnConfigProcess.exitValue() == 0) {
     println "RN Config error: ${rnConfigProcess.errorStream.text}"
 }
 
+// Set system property for React Native Gradle Plugin
+System.setProperty("react.native.android.packageName", "com.gajendran2908.mobile")
+println "Set system property react.native.android.packageName = com.gajendran2908.mobile"
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -102,9 +106,6 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
-    
-    // Force package name for autolinking
-    project.android.packageName = "com.gajendran2908.mobile"
 }
 
 /**
