@@ -381,7 +381,7 @@ class SmsPromptActivity : Activity() {
   private fun fetchBanksForUser() {
     val userId = TokenStore.userId
     val token = TokenStore.token
-    val apiUrl = TokenStore.apiUrl
+    val apiUrl = TokenStore.apiUrl ?: "https://expensemeter-backend.onrender.com"
     if (userId.isNullOrEmpty() || token.isNullOrEmpty() || apiUrl.isNullOrEmpty()) return
     Thread {
       try {
