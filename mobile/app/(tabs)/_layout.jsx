@@ -1,24 +1,15 @@
 import React, { useState } from "react";
-import { Tabs, router, usePathname } from "expo-router";
+import { Tabs, router } from "expo-router";
 import useTheme from "../../hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pressable, View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import SelectionModal from "../../components/SelectionModal";
 
 const TabsLayout = () => {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const [showSelectionModal, setShowSelectionModal] = useState(false);
-  const pathname = usePathname();
-
-  // Check if we're on addTransaction or addBudget screen
-  const isNewTabActive =
-    pathname === "/(tabs)/addTransaction" ||
-    pathname === "/(tabs)/addBudget" ||
-    pathname.includes("/addTransaction") ||
-    pathname.includes("/addBudget");
-
   const handleTransactionPress = () => {
     router.push("/(tabs)/addTransaction");
   };
@@ -27,8 +18,12 @@ const TabsLayout = () => {
     router.push("/(tabs)/addBudget");
   };
 
+  const handleFloatingButtonPress = () => {
+    setShowSelectionModal(true);
+  };
+
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: colors.primary,
@@ -68,6 +63,19 @@ const TabsLayout = () => {
             ),
           }}
         />
+          <Tabs.Screen
+            name="statistics"
+            options={{
+            title: "Statistics",
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons
+                name={focused ? "stats-chart" : "stats-chart-outline"}
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
         <Tabs.Screen
           name="history"
           options={{
@@ -84,27 +92,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="addTransaction"
           options={{
-            title: "New",
-            tabBarIcon: ({ color, size, focused }) => {
-              const iconName = isNewTabActive
-                ? "add-circle"
-                : "add-circle-outline";
-              const iconColor = isNewTabActive
-                ? colors.primary
-                : colors.textMuted;
-
-              return (
-                <Pressable onPress={() => setShowSelectionModal(true)}>
-                  <Ionicons name={iconName} size={size} color={iconColor} />
-                </Pressable>
-              );
-            },
-          }}
-          listeners={{
-            tabPress: (e) => {
-              e.preventDefault();
-              setShowSelectionModal(true);
-            },
+            href: null, // Hide from tab bar
           }}
         />
         <Tabs.Screen
@@ -147,7 +135,37 @@ const TabsLayout = () => {
         onSelectTransaction={handleTransactionPress}
         onSelectBudget={handleBudgetPress}
       />
-    </>
+
+      {/* Floating Add Button */}
+      <TouchableOpacity
+        onPress={handleFloatingButtonPress}
+        style={{
+          position: "absolute",
+          bottom: 80 + insets.bottom, // Position above tab bar
+          right: 20,
+          width: 56,
+          height: 56,
+          borderRadius: 100,
+          backgroundColor: colors.primary,
+          justifyContent: "center",
+          alignItems: "center",
+          elevation: 4,
+          shadowColor: "#000000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.5,
+          shadowRadius: 3.84,
+        }}
+      >
+        <Ionicons
+          name="add"
+          size={32}
+          color={colors.surface}
+          style={{
+            fontWeight: "900",
+          }}
+        />
+      </TouchableOpacity>
+    </View>
   );
 };
 
