@@ -9,7 +9,7 @@ const createHistoryStyles = () => {
     },
     content: {
       flex: 1,
-      padding: 24,
+      padding: 16,
       paddingBottom: 0,
     },
     controlsContainer: {

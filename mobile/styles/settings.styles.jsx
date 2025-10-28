@@ -11,7 +11,7 @@ const createSettingsStyles = () => {
     },
     content: {
       flex: 1,
-      padding: 24,
+      padding: 16,
       paddingBottom: 0,
     },
     header: {
@@ -23,7 +23,7 @@ const createSettingsStyles = () => {
     },
     title: {
       color: colors.text,
-      fontSize: 20,
+      fontSize: 28,
       fontWeight: "700",
     },
     clearButton: {

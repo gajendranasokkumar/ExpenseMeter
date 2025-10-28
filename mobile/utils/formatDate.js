@@ -6,6 +6,21 @@ export const formatDate = (date) => {
   });
 };
 
+export const MONTH_SHORT_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
 export const getCurrentMonth = () => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();

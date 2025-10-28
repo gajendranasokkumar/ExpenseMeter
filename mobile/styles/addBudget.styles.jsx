@@ -6,7 +6,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: 16,
   },
   scrollContent: {
     paddingBottom: 50,

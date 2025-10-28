@@ -12,7 +12,7 @@ const createHomeStyles = () => {
     },
     content: {
       flex: 1,
-      padding: 24,
+      padding: 16,
     },
     header: {
       marginBottom: 20,
