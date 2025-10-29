@@ -111,8 +111,8 @@ const Banks = () => {
       style={styles.container}
     >
       {isLoading ? (
-        <View style={[styles.carouselContainer, { width: "100%" }]}>
-          <ActivityIndicator size="small" color={colors.surface} />
+        <View style={[styles.carouselContainer, { width: "100%", height: "100%" }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList

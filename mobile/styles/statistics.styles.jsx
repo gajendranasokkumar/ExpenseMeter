@@ -58,6 +58,77 @@ const createStatisticsStyles = () => {
       fontWeight: "600",
     },
 
+
+    // DailyStats styles starts here 
+    topExpenseContainer: {
+      flexDirection: "row",
+    },
+    topExpenseDataContainer: {
+      flex: 1,
+      padding: 10,
+      paddingHorizontal: 20,
+      backgroundColor: colors.bg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border
+    },
+    topExpenseDataHeading: {
+      fontSize: 14,
+      color: colors.text,
+      marginBottom: 5,
+    },
+    topExpenseDataValue: {
+      fontSize: 20,
+      color: colors.expense,
+      textAlign: "center",
+    },
+    wrapper: {
+      alignItems: "center",
+      paddingVertical: 20,
+      backgroundColor: "transparent",
+    },
+    chartWrapper: {
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "transparent",
+    },
+    legendContainer: {
+      marginTop: 10,
+      width: "100%",
+      padding: 15,
+      marginBottom: 30
+    },
+    legendRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 6,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      paddingBottom: 2,
+    },
+    legendColorCol: {
+      width: 30,
+      alignItems: "left",
+    },
+    legendColorBox: {
+      width: 20,
+      height: 16,
+      borderRadius: 3,
+    },
+    legendLabelCol: {
+      paddingLeft: 5,
+      flex: 1,
+    },
+    legendValueCol: {
+      alignItems: "flex-end",
+    },
+    legendLabel: {
+      fontSize: 14,
+    },
+    legendValue: {
+      fontSize: 14,
+    },
+
     // MonthlyStats Styles starts here
 
     scrollView: {
