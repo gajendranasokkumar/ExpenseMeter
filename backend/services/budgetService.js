@@ -15,9 +15,9 @@ const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, end
   const pageNumber = Math.max(parseInt(page) || 1, 1);
   const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 100);
   const filter = { user_id: userId };
+  let filterStart = null;
+  let filterEnd = null;
   if (startDate || endDate) {
-    let filterStart = null;
-    let filterEnd = null;
 
     if (startDate) {
       const d = new Date(startDate);
@@ -58,7 +58,56 @@ const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, end
   ]);
 
   const totalPages = Math.ceil(total / pageSize) || 1;
-  return { items, total, page: pageNumber, limit: pageSize, totalPages };
+  // Compute amount spent per budget using each budget's own date range
+  let itemsWithSpend = items;
+  if (items.length > 0) {
+    const minStart = new Date(Math.min(...items.map(b => new Date(b.start_date).getTime())));
+    const maxEnd = new Date(Math.max(...items.map(b => new Date(b.end_date).getTime())));
+
+    const transactions = await Transaction.find({
+      user_id: userId,
+      amount: { $lt: 0 },
+      date: { $gte: minStart, $lte: maxEnd }
+    }).select('amount category date').lean();
+
+    const transactionsByCategory = transactions.reduce((acc, tx) => {
+      const key = tx.category;
+      if (!key) return acc;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(tx);
+      return acc;
+    }, {});
+
+    itemsWithSpend = items.map(b => {
+      const start = new Date(b.start_date);
+      const end = new Date(b.end_date);
+
+      if (b.category === 'Monthly Budget') {
+        // Sum all expenses across all categories within the budget window
+        const spentAll = transactions.reduce((sum, tx) => {
+          const d = new Date(tx.date);
+          if (d >= start && d <= end) {
+            return sum + Math.abs(tx.amount || 0);
+          }
+          return sum;
+        }, 0);
+        return { ...b, amountSpent: spentAll };
+      }
+
+      // Sum only this budget's category within the budget window
+      const categoryTxs = transactionsByCategory[b.category] || [];
+      const spentCategory = categoryTxs.reduce((sum, tx) => {
+        const d = new Date(tx.date);
+        if (d >= start && d <= end) {
+          return sum + Math.abs(tx.amount || 0);
+        }
+        return sum;
+      }, 0);
+      return { ...b, amountSpent: spentCategory };
+    });
+  }
+
+  return { items: itemsWithSpend, total, page: pageNumber, limit: pageSize, totalPages };
 };
 
 const getBudgetsByUserIdAndCategoryForCurrentMonth = async (userId, category, currentMonth) => {

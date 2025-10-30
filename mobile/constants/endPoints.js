@@ -1,4 +1,4 @@
-// export const API_URL = "http://192.168.70.56:3000";
+// export const API_URL = "http://192.168.1.5:3000";
 export const API_URL = "https://expensemeter-backend.onrender.com";
 
 export const AUTH_ROUTES = {

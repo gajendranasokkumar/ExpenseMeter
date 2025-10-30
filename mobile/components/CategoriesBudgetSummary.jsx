@@ -9,6 +9,7 @@ import { getCurrentMonth, getCurrentYear } from "../utils/formatDate";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { LinearGradient } from "expo-linear-gradient";
+import ProgressBar from "./ProgressBar";
 
 const CategoriesBudgetSummary = () => {
   const { user } = useUser();
@@ -44,30 +45,6 @@ const CategoriesBudgetSummary = () => {
       getCategoriesBudgetSummary();
     }, [getCategoriesBudgetSummary])
   );
-
-  const getProgressBar = (percentageUsed) => {
-    let progressColors = [colors.incomeMuted, colors.incomeMuted];
-    if (percentageUsed <= 25) {
-      progressColors = [colors.incomeMuted, colors.success];
-    } else if (percentageUsed <= 50) {
-      progressColors = [colors.incomeMuted, colors.warning];
-    } else if (percentageUsed <= 75) {
-      progressColors = [colors.incomeMuted, colors.warning, colors.orange];
-    } else {
-      progressColors = [colors.incomeMuted, colors.warning, colors.orange, colors.danger];
-    }
-
-    return (
-      <View style={styles.categoriesBudgetSummaryProgressBarContainer}>
-        <LinearGradient
-          style={[styles.categoriesBudgetSummaryProgressBar, { width: `${percentageUsed < 100 ? percentageUsed : 100}%` }]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          colors={progressColors}
-        />
-      </View>
-    );
-  };
 
   if(categoriesBudgetSummary.length === 0) {
     return null;
@@ -111,7 +88,7 @@ const CategoriesBudgetSummary = () => {
                   </Text>
                 </Text>
               </View>
-              {getProgressBar(category.percentageUsed)}
+              <ProgressBar percentageUsed={category.percentageUsed} />
             </View>
           ))}
         </>
