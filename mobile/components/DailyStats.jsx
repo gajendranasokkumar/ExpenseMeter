@@ -62,6 +62,7 @@ const DailyStats = ({ day, month, year }) => {
       );
       setDailyData(response.data);
     } catch (error) {
+      console.log(error)
       setDailyData({});
     } finally {
       setIsLoading(false);
