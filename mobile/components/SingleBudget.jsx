@@ -11,7 +11,6 @@ import ProgressBar from "./ProgressBar";
 const SingleBudget = ({ budget, onDelete, showProgressbar=false }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
-  console.log(JSON.stringify(budget));
 
   const getIcon = (category) => {
     const categoryData = categories.find(
