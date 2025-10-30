@@ -1,5 +1,5 @@
-// export const API_URL = "http://192.168.1.5:3000";
-export const API_URL = "https://expensemeter-backend.onrender.com";
+export const API_URL = "http://192.168.1.5:3000";
+// export const API_URL = "https://expensemeter-backend.onrender.com";
 
 export const AUTH_ROUTES = {
   REGISTER: "/users/register",
@@ -54,3 +54,7 @@ export const BANK_ROUTES = {
   PERMANENTLY_DELETE_BANK: "/banks/permanent/:id/user/:userId",
   GET_BANK_SUMMARY_BY_USER_ID: "/banks/summary/:id",
 };
+
+export const STATISTICS_ROUTES = {
+  GET_DAILY_STATS: "/statistics/daily/:id",
+}

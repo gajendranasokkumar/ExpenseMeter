@@ -88,7 +88,7 @@ const Statistics = () => {
       case tabsNumber.DAILY:
         return (
           <DailyStats
-            date={selectedDay.value}
+            day={selectedDay.value}
             month={selectedMonth.value}
             year={selectedYear.value}
           />

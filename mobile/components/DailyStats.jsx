@@ -1,117 +1,173 @@
-import { View, Text, ScrollView, Dimensions, StyleSheet } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import React, { useCallback, useState } from "react";
 import { PieChart } from "react-native-gifted-charts";
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
+import api from "../utils/api";
+import { STATISTICS_ROUTES } from "../constants/endPoints";
+import { useUser } from "../context/userContext";
+import { useFocusEffect } from "@react-navigation/native";
+import { categories } from "../constants/Categories";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
 
-const DailyStats = ({ date, month, year }) => {
+const DailyStats = ({ day, month, year }) => {
   const { colors } = useTheme();
   const styles = createStatisticsStyles();
+  const { user } = useUser();
+  const userId = user?._id;
+  const [isLoading, setIsLoading] = useState(false);
+  const [dailyData, setDailyData] = useState({});
 
-  const data = [
-    {
-      label: "The Lego Movie 2",
-      value: 22.46,
-      color: "#4FC3F7",
-      text: "22.46%",
-    },
-    { label: "Cold Pursuit", value: 10.24, color: "#AED581", text: "10.24%" },
-    { label: "Instant Family", value: 8.55, color: "#F06292", text: "8.55%" },
-    {
-      label: "The Kid Who Would Be King",
-      value: 7.16,
-      color: "#7986CB",
-      text: "7.16%",
-    },
-    {
-      label: "On the Basis of Sex",
-      value: 6.01,
-      color: "#81C784",
-      text: "6.01%",
-    },
-    { label: "Alita", value: 4.37, color: "#FFD54F", text: "4.37%" },
-    { label: "Total Dhamaal", value: 3.74, color: "#E57373", text: "3.74%" },
-    {
-      label: "How to Train Your Dragon",
-      value: 11.29,
-      color: "#BA68C8",
-      text: "11.29%",
-    },
-    { label: "Bumblebee", value: 2.52, color: "#9575CD", text: "2.52%" },
-    { label: "Green Book", value: 1.95, color: "#FF8A65", text: "1.95%" },
-    { label: "Other", value: 21.7, color: "#4DD0E1", text: "21.7%" },
-  ];
+  const formatToPieData = () => {
+    if (
+      !dailyData ||
+      !dailyData.categoryExpense ||
+      Object.keys(dailyData.categoryExpense).length === 0
+    ) {
+      return [];
+    }
+
+    const { categoryExpense, totalExpense } = dailyData;
+    if (totalExpense === 0) return [];
+
+    return Object.entries(categoryExpense).map(([categoryName, amount], index) => {
+      const categoryInfo = categories.find((c) => c.name === categoryName);
+      const percentage = (amount / totalExpense) * 100;
+      return {
+        label:  `${index + 1}. ${categoryName}`,
+        value: amount,
+        color: categoryInfo ? categoryInfo.color : "#CCCCCC",
+        text: `${index + 1}`,
+        percentage: `${percentage.toFixed(1)}%`
+      };
+    });
+  };
+
+  const getDailyStats = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.post(
+        `${STATISTICS_ROUTES.GET_DAILY_STATS.replace(":id", userId)}`,
+        { day, month, year }
+      );
+      setDailyData(response.data);
+    } catch (error) {
+      setDailyData({});
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userId, day, month, year]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDailyStats();
+    }, [getDailyStats])
+  );
+
+  const pieData = formatToPieData();
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <View style={styles.topExpenseContainer}>
-        <View style={styles.topExpenseDataContainer}>
-          <Text style={styles.topExpenseDataHeading}>Total Income :</Text>
-          <Text style={[styles.topExpenseDataValue, { color: colors.income }]}>
-            {formatAmountDisplay(7900)}
-          </Text>
+    <>
+      {isLoading ? (
+        <View style={[styles.wrapper, { backgroundColor: "transparent" }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-        <View style={styles.topExpenseDataContainer}>
-          <Text style={styles.topExpenseDataHeading}>Total Expense :</Text>
-          <Text style={styles.topExpenseDataValue}>
-            {formatAmountDisplay(5000)}
-          </Text>
-        </View>
-      </View>
-      <View style={[styles.wrapper]}>
-        <View style={styles.chartWrapper}>
-          <PieChart
-            data={data}
-            donut
-            radius={chartRadius}
-            showText
-            innerCircleColor={colors.surface}
-            textColor="#fff"
-            textSize={11}
-            isAnimated
-            animationDuration={800}
-          />
-        </View>
-
-        <View style={styles.legendContainer}>
-          {data.map((item, index) => (
-            <View key={index} style={styles.legendRow}>
-              <View style={styles.legendColorCol}>
-                <View
-                  style={[
-                    styles.legendColorBox,
-                    { backgroundColor: item.color },
-                  ]}
+      ) : (
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.topExpenseContainer}>
+            <View style={styles.topExpenseDataContainer}>
+              <Text style={styles.topExpenseDataHeading}>Total Income :</Text>
+              <Text
+                style={[styles.topExpenseDataValue, { color: colors.income }]}
+              >
+                {dailyData.totalIncome
+                  ? formatAmountDisplay(dailyData.totalIncome)
+                  : formatAmountDisplay(0)}
+              </Text>
+            </View>
+            <View style={styles.topExpenseDataContainer}>
+              <Text style={styles.topExpenseDataHeading}>Total Expense :</Text>
+              <Text style={styles.topExpenseDataValue}>
+                {dailyData.totalExpense
+                  ? formatAmountDisplay(dailyData.totalExpense)
+                  : formatAmountDisplay(0)}
+              </Text>
+            </View>
+          </View>
+          {pieData.length > 0 ? (
+            <View style={[styles.wrapper]}>
+              <View style={styles.chartWrapper}>
+                <PieChart
+                  data={pieData}
+                  donut
+                  radius={chartRadius}
+                  showText
+                  innerCircleColor={colors.surface}
+                  textColor="#000000"
+                  textSize={11}
+                  isAnimated
+                  animationDuration={800}
                 />
               </View>
 
-              <View style={styles.legendLabelCol}>
-                <Text
-                  style={[styles.legendLabel, { color: colors.text || "#fff" }]}
-                >
-                  {item.label}
-                </Text>
-              </View>
+              <View style={styles.legendContainer}>
+                {pieData.map((item, index) => (
+                  <View key={index} style={styles.legendRow}>
+                    <View style={styles.legendColorCol}>
+                      <View
+                        style={[
+                          styles.legendColorBox,
+                          { backgroundColor: item.color },
+                        ]}
+                      />
+                    </View>
 
-              <View style={styles.legendValueCol}>
-                <Text
-                  style={[styles.legendValue, { color: colors.text || "#fff" }]}
-                >
-                  {formatAmountDisplay(item.value)}
-                </Text>
+                    <View style={styles.legendLabelCol}>
+                      <Text
+                        style={[
+                          styles.legendLabel,
+                          { color: colors.text || "#fff" },
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </View>
+
+                    <View style={styles.legendValueCol}>
+                      <Text
+                        style={[
+                          styles.legendValue,
+                          { color: colors.text || "#fff" },
+                        ]}
+                      >
+                        {formatAmountDisplay(item.value)} ( {item.percentage} )
+                      </Text>
+                    </View>
+                  </View>
+                ))}
               </View>
             </View>
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+          ) : (
+            <View style={styles.wrapper}>
+              <Text style={{ color: colors.text }}>No expenses for this day.</Text>
+            </View>
+          )}
+        </ScrollView>
+      )}
+    </>
   );
 };
 
