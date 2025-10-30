@@ -15,7 +15,7 @@ import api from "../utils/api";
 import { STATISTICS_ROUTES } from "../constants/endPoints";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
-import { categories } from "../constants/Categories";
+import { formatToPieData } from "../utils/formatToPieData";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -27,31 +27,6 @@ const DailyStats = ({ day, month, year }) => {
   const userId = user?._id;
   const [isLoading, setIsLoading] = useState(false);
   const [dailyData, setDailyData] = useState({});
-
-  const formatToPieData = () => {
-    if (
-      !dailyData ||
-      !dailyData.categoryExpense ||
-      Object.keys(dailyData.categoryExpense).length === 0
-    ) {
-      return [];
-    }
-
-    const { categoryExpense, totalExpense } = dailyData;
-    if (totalExpense === 0) return [];
-
-    return Object.entries(categoryExpense).map(([categoryName, amount], index) => {
-      const categoryInfo = categories.find((c) => c.name === categoryName);
-      const percentage = (amount / totalExpense) * 100;
-      return {
-        label:  `${index + 1}. ${categoryName}`,
-        value: amount,
-        color: categoryInfo ? categoryInfo.color : "#CCCCCC",
-        text: `${index + 1}`,
-        percentage: `${percentage.toFixed(1)}%`
-      };
-    });
-  };
 
   const getDailyStats = useCallback(async () => {
     try {
@@ -75,7 +50,7 @@ const DailyStats = ({ day, month, year }) => {
     }, [getDailyStats])
   );
 
-  const pieData = formatToPieData();
+  const pieData = formatToPieData(dailyData);
 
   return (
     <>

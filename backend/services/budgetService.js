@@ -13,7 +13,7 @@ const getBudgetById = async (id) => {
 
 const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, endDate } = {}) => {
   const pageNumber = Math.max(parseInt(page) || 1, 1);
-  const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 100);
+  const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 1000);
   const filter = { user_id: userId };
   let filterStart = null;
   let filterEnd = null;

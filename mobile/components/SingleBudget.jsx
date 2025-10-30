@@ -22,6 +22,7 @@ const SingleBudget = ({ budget, onDelete, showProgressbar=false }) => {
   return (
     <TouchableOpacity
       onLongPress={() => {
+        if (showProgressbar) return;
         Alert.alert(
           "Delete Budget",
           "Are you sure you want to delete this budget?",

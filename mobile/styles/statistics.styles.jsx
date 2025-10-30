@@ -208,6 +208,27 @@ const createStatisticsStyles = () => {
       color: colors.primary,
       lineHeight: 20,
     },
+    budgetListContainer: {
+      padding: 15,
+      paddingBottom: 50,
+      backgroundColor: colors.bg,
+    },
+    budgetListHeading: {
+      backgroundColor: colors.surface,
+      padding: 10,
+      textAlign: "center",
+      color: colors.text,
+      fontSize: 20,
+      marginBottom: 15,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 8
+    },
+    pieChartHeadingContainer: {
+      backgroundColor: colors.bg,
+      paddingHorizontal: 15,
+      paddingTop: 15
+    }
   });
 };
 

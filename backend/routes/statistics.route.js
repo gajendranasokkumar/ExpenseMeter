@@ -6,6 +6,7 @@ const verifyToken = require('../middlewares/VerifyToken');
 router.use(verifyToken);
 
 router.post('/daily/:userId', statisticsController.getDailyStats);
+router.post('/monthly/:userId', statisticsController.getMonthlySummary);
 
 
 module.exports = router;

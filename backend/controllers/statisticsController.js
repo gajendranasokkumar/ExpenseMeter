@@ -14,6 +14,20 @@ class StatisticsController {
       return res.status(400).json({ message: error.message });
     }
   }
+
+  async getMonthlySummary(req, res) {
+    try {
+      const { userId } = req.params;
+      const { month, year } = req.body;
+      if (!userId || !month || !year) {
+        return res.status(400).json({ message: "userId, month, year are required" });
+      }
+      const summary = await statisticsService.getMonthlySummary(userId, month, year);
+      return res.status(200).json(summary);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = new StatisticsController();
