@@ -23,7 +23,7 @@ const SingleTransaction = ({ transaction, onDelete }) => {
         { text: "Delete", style: "destructive", onPress: () => onDelete(transaction._id) },
       ]);
     }}>
-      <View style={styles.transactionContainer}>
+      <View style={styles.transactionContainerForTrans}>
         <View style={styles.transactionLeft}>
           <Ionicons
             name={getIcon(transaction.category.toLowerCase())}

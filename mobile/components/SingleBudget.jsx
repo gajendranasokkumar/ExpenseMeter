@@ -37,7 +37,7 @@ const SingleBudget = ({ budget, onDelete, showProgressbar=false }) => {
         );
       }}
     >
-      <View style={styles.transactionContainer}>
+      <View style={styles.transactionContainerForBudget}>
         <View style={styles.transactionContainerTop}>
           <View style={styles.transactionLeft}>
             <Ionicons

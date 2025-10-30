@@ -81,7 +81,21 @@ const createHistoryStyles = () => {
       marginTop: 24,
       fontSize: 16,
     },
-    transactionContainer: {
+    transactionContainerForTrans: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+      padding: 4,
+      paddingBottom: 5,
+      backgroundColor: colors.surface,
+      borderRadius: 8,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      elevation: 2,
+    },
+    transactionContainerForBudget: {
       // flexDirection: 'row',
       // justifyContent: 'space-between',
       // alignItems: 'center',
