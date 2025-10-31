@@ -9,6 +9,7 @@ import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { categories as CATEGORY_CONST } from "../constants/Categories";
+import ProgressBar from "./ProgressBar";
 
 const { width } = Dimensions.get("window");
 
@@ -83,17 +84,17 @@ const TotalStats = () => {
         <View style={{ flexDirection: "row", borderTopWidth: 1, borderTopColor: colors.border }}>
           <View style={{ flex: 1, padding: 14 }}>
             <Text style={{ color: colors.text, opacity: 0.8 }}>Total Income (All time)</Text>
-            <Text style={{ color: colors.income, fontSize: 18, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalIncome)}</Text>
+            <Text style={{ color: colors.income, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalIncome)}</Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
             <Text style={{ color: colors.text, opacity: 0.8 }}>Total Expense (All time)</Text>
-            <Text style={{ color: colors.expense, fontSize: 18, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalExpense)}</Text>
+            <Text style={{ color: colors.expense, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalExpense)}</Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
             <Text style={{ color: colors.text, opacity: 0.8 }}>Net</Text>
-            <Text style={{ color: netSaving >= 0 ? colors.income : colors.expense, fontSize: 18, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(netSaving)}</Text>
+            <Text style={{ color: netSaving >= 0 ? colors.income : colors.expense, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(netSaving)}</Text>
           </View>
         </View>
       </View>
@@ -124,12 +125,12 @@ const TotalStats = () => {
         <View style={{ flexDirection: "row", gap: 12 }}>
           <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
             <Text style={{ color: colors.text, opacity: 0.7 }}>Best Income Year</Text>
-            <Text style={{ color: colors.income, fontSize: 20, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(bestIncomeYear?.income || 0)}</Text>
+            <Text style={{ color: colors.income, fontSize: 14, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(bestIncomeYear?.income || 0)}</Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{bestIncomeYear?.year ?? '-'}</Text>
           </View>
           <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
             <Text style={{ color: colors.text, opacity: 0.7 }}>Highest Expense Year</Text>
-            <Text style={{ color: colors.expense, fontSize: 20, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(highestExpenseYear?.expense || 0)}</Text>
+            <Text style={{ color: colors.expense, fontSize: 14, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(highestExpenseYear?.expense || 0)}</Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{highestExpenseYear?.year ?? '-'}</Text>
           </View>
         </View>
@@ -185,9 +186,7 @@ const TotalStats = () => {
               <Text style={{ color: colors.text, fontWeight: "700", textAlign: "right" }}>{mostUsedBank?.usage ?? 0}</Text>
             </View>
           </View>
-          <View style={{ marginTop: 10, height: 10, backgroundColor: colors.bg, borderRadius: 6, overflow: "hidden" }}>
-            <View style={{ width: '100%', height: 10, backgroundColor: mostUsedBank?.color || colors.primary }} />
-          </View>
+          <ProgressBar percentageUsed={100} />
         </View>
       </View>
       </>
