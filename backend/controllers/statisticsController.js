@@ -28,6 +28,20 @@ class StatisticsController {
       return res.status(400).json({ message: error.message });
     }
   }
+
+  async getYearlyStats(req, res) {
+    try {
+      const { userId } = req.params;
+      const { year } = req.body;
+      if (!userId || !year) {
+        return res.status(400).json({ message: "userId, year are required" });
+      }
+      const yearlyStats = await statisticsService.getYearlyStats(userId, year);
+      return res.status(200).json(yearlyStats);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
 }
 
 module.exports = new StatisticsController();
