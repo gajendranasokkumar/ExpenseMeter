@@ -16,6 +16,7 @@ A comprehensive expense tracking and budget management application built with Re
 - **Category System**: 13 predefined categories including Food, Transport, Entertainment, Shopping, etc.
 - **Real-time Notifications & SMS Parsing**: Get notified on receipt of transaction-related SMS and add transactions from a native modal
 - **Data Visualization**: Interactive charts and summaries for better financial understanding
+ - **Advanced Statistics**: Daily, monthly, yearly, and total insights (income, expenses, categories, top years, most-used bank)
 
 ### User Experience
 - **Modern UI/UX**: Beautiful gradient backgrounds and intuitive design
@@ -196,6 +197,12 @@ This project includes a native Android SMS receiver to detect bank/transaction S
 - Keyboard hides notes:
   - The modal uses `SOFT_INPUT_ADJUST_RESIZE` and a `ScrollView`. If it still happens on specific devices, consider switching to `SOFT_INPUT_ADJUST_PAN`.
 
+- Auth errors (401 Unauthorized) on protected routes:
+  - Ensure requests include the JWT header:
+    ```http
+    Authorization: Bearer <your_jwt_token>
+    ```
+
 ## 📱 Mobile App Features
 
 ### Authentication
@@ -250,6 +257,12 @@ This project includes a native Android SMS receiver to detect bank/transaction S
 - `POST /banks/all` - Get all banks for the logged in user (body: `{ userId }`)
 - `POST /banks` - Add new bank
 - `DELETE /banks/:id` - Delete bank
+
+### Statistics
+- `POST /statistics/daily/:userId` - Get daily stats (body: `{ day, month, year }`)
+- `POST /statistics/monthly/:userId` - Get monthly summary (body: `{ month, year }`)
+- `POST /statistics/yearly/:userId` - Get yearly stats (body: `{ year }`)
+- `GET /statistics/total/:userId` - Get all-time totals and highlights
 
 ### Notifications
 - `GET /notifications/:id` - Get user notifications
@@ -309,9 +322,14 @@ This project includes a native Android SMS receiver to detect bank/transaction S
   logo: String,
   ifsc: String,
   user_id: ObjectId,
-  isActive: Boolean
+  isActive: Boolean,
+  createdAt: Date,
+  updatedAt: Date
 }
 ```
+
+Note:
+- `name` and `ifsc` are unique. Timestamps are automatically managed.
 
 ## 🚀 Deployment
 
