@@ -59,4 +59,5 @@ export const STATISTICS_ROUTES = {
   GET_DAILY_STATS: "/statistics/daily/:id",
   GET_MONTHLY_STATS: "/statistics/monthly/:id",
   GET_YEARLY_STATS: "/statistics/yearly/:id",
+  GET_TOTAL_STATS: "/statistics/total/:id",
 };
