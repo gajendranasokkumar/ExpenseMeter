@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Image } from 'expo-image';
+import useTheme from '../hooks/useTheme';
 
 const CustomDropdown = ({ 
   data, 
@@ -19,8 +20,11 @@ const CustomDropdown = ({
   placeholderStyle,
   selectedValue
 }) => {
+  const { colors } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(selectedValue || null);
+  
+  const dropdownStyles = getStyles(colors);
 
   const handleSelect = (item) => {
     setSelectedItem(item);
@@ -32,7 +36,7 @@ const CustomDropdown = ({
     if (renderItem) {
       return (
         <TouchableOpacity
-          style={styles.dropdownItem}
+          style={[dropdownStyles.dropdownItem]}
           onPress={() => handleSelect(item)}
         >
           {renderItem(item)}
@@ -42,24 +46,24 @@ const CustomDropdown = ({
 
     return (
       <TouchableOpacity
-        style={styles.dropdownItem}
+        style={[dropdownStyles.dropdownItem]}
         onPress={() => handleSelect(item)}
       >
-        <Text style={styles.dropdownItemText}>{item.name || item.label}</Text>
+        <Text style={dropdownStyles.dropdownItemText}>{item.name || item.label}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[dropdownStyles.container, style]}>
       <TouchableOpacity
-        style={[styles.dropdownButton, dropdownStyle]}
+        style={[dropdownStyles.dropdownButton, dropdownStyle]}
         onPress={() => setIsVisible(true)}
       >
-        <Text style={[styles.placeholderText, placeholderStyle]}>
+        <Text style={[dropdownStyles.placeholderText, placeholderStyle]}>
           {selectedItem ? (selectedItem.name || selectedItem.label) : placeholder}
         </Text>
-        <Text style={styles.arrow}>▼</Text>
+        <Text style={dropdownStyles.arrow}>▼</Text>
       </TouchableOpacity>
 
       <Modal
@@ -69,17 +73,17 @@ const CustomDropdown = ({
         onRequestClose={() => setIsVisible(false)}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          style={dropdownStyles.modalOverlay}
           activeOpacity={1}
           onPress={() => setIsVisible(false)}
         >
-          <View style={styles.modalContent}>
+          <View style={dropdownStyles.modalContent}>
             <FlatList
               data={data}
               keyExtractor={(item) => item.id?.toString() || item.value?.toString()}
               renderItem={renderDropdownItem}
               showsVerticalScrollIndicator={false}
-              style={styles.dropdownList}
+              style={dropdownStyles.dropdownList}
             />
           </View>
         </TouchableOpacity>
@@ -88,7 +92,7 @@ const CustomDropdown = ({
   );
 };
 
-const styles = StyleSheet.create({
+const getStyles = (colors) => StyleSheet.create({
   container: {
     position: 'relative',
   },
@@ -98,18 +102,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: colors.backgrounds?.input || colors.surface,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: colors.border,
   },
   placeholderText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
     flex: 1,
   },
   arrow: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 12,
     marginLeft: 8,
   },
@@ -120,12 +124,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'rgba(30, 30, 30, 0.95)',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     maxHeight: 300,
     width: '80%',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   dropdownList: {
     maxHeight: 300,
@@ -134,10 +146,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: colors.border,
   },
   dropdownItemText: {
-    color: '#FFFFFF',
+    color: colors.text,
     fontSize: 16,
   },
 });

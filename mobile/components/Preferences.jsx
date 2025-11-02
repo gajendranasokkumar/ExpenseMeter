@@ -1,41 +1,94 @@
-import { View, Text, Switch } from "react-native";
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import useTheme from "../hooks/useTheme";
+import useTheme, { THEMES, THEME_NAMES } from "../hooks/useTheme";
 import createSettingsStyles from "../styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
 
 const Preferences = () => {
   const styles = createSettingsStyles();
-  const { colors, isDarkMode, toggleDarkMode } = useTheme();
+  const { colors, currentTheme, setTheme, availableThemes, themeNames } = useTheme();
 
   return (
     <LinearGradient
       colors={colors.gradients.surface}
       style={styles.section}
     >
-      <View style={styles.profileSectionHeader}>
+      {/* <View style={styles.profileSectionHeader}>
         <Text style={styles.sectionTitle}>Preferences</Text>
-      </View>
+      </View> */}
 
-      {/* DARK MODE */}
+      {/* THEME SELECTOR */}
       <View style={styles.settingItem}>
         <View style={styles.settingLeft}>
           <LinearGradient colors={colors.gradients.primary} style={styles.settingIcon}>
-            <Ionicons name="moon" size={18} color="#fff" />
+            <Ionicons name="color-palette" size={18} color="#fff" />
           </LinearGradient>
-          <Text style={styles.settingText}>Dark Mode</Text>
+          <Text style={styles.settingText}>Theme</Text>
         </View>
-        <Switch
-          value={isDarkMode}
-          onValueChange={toggleDarkMode}
-          thumbColor={"#fff"}
-          trackColor={{ false: colors.border, true: colors.primary }}
-          ios_backgroundColor={colors.border}
-          style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
-          scaleX={1}
-          scaleY={1}
-        />
+      </View>
+
+      {/* Theme Color Swatches */}
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginTop: 10,
+          marginBottom: 10,
+        }}
+      >
+        {availableThemes.map((themeKey) => {
+          const theme = THEMES[themeKey];
+          const isSelected = currentTheme === themeKey;
+
+          return (
+            <TouchableOpacity
+              key={themeKey}
+              onPress={() => setTheme(themeKey)}
+              style={{
+                alignItems: "center",
+                width: "22%",
+                marginBottom: 12,
+                paddingHorizontal: 4,
+              }}
+            >
+              <View
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 25,
+                  backgroundColor: theme.primary,
+                  marginBottom: 8,
+                  borderWidth: isSelected ? 3 : 1,
+                  borderColor: isSelected ? colors.primary : colors.border,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  shadowColor: colors.shadow,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 4,
+                  elevation: 3,
+                }}
+              >
+                {isSelected && (
+                  <Ionicons name="checkmark" size={20} color="#fff" />
+                )}
+              </View>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: colors.textMuted,
+                  textAlign: "center",
+                  fontWeight: isSelected ? "600" : "400",
+                }}
+                numberOfLines={1}
+              >
+                {themeNames[themeKey]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </LinearGradient>
   );
