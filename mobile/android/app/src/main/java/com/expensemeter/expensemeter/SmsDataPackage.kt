@@ -1,4 +1,4 @@
-package com.gajendran2908.mobile
+package com.expensemeter.expensemeter
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

@@ -1,4 +1,4 @@
-package com.gajendran2908.mobile
+package com.expensemeter.expensemeter
 
 import android.app.Activity
 import android.os.Bundle
@@ -20,7 +20,7 @@ import java.net.URL
 import org.json.JSONObject
 import java.io.BufferedOutputStream
 import java.nio.charset.StandardCharsets
-import com.gajendran2908.mobile.TokenStore
+import com.expensemeter.expensemeter.TokenStore
 import android.widget.ProgressBar
 import android.view.inputmethod.EditorInfo
 import android.text.InputType

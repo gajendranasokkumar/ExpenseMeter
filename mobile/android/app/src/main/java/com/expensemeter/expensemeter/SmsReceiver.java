@@ -1,4 +1,4 @@
-package com.gajendran2908.mobile;
+package com.expensemeter.expensemeter;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -33,6 +33,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="exp+mobile"/>
         <data android:scheme="exp+expensemeter"/>
+        <data android:scheme="exp+expense-meter"/>
       </intent-filter>
     </activity>
     <activity android:name=".SmsPromptActivity" android:exported="false" android:excludeFromRecents="true" android:theme="@style/AppTheme.Dialog" android:taskAffinity="" android:noHistory="true" android:launchMode="singleTop"/>

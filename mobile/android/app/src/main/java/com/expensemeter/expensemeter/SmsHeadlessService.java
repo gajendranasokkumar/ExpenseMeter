@@ -1,4 +1,4 @@
-package com.gajendran2908.mobile;
+package com.expensemeter.expensemeter;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

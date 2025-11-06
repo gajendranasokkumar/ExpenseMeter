@@ -1,4 +1,4 @@
-package com.gajendran2908.mobile
+package com.expensemeter.expensemeter
 
 object SmsDataStore {
     private var smsData: String? = null
