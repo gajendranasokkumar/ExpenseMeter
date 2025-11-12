@@ -1,5 +1,11 @@
-import React, { useMemo, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import React, { useMemo, useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  PanResponder,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import useTheme from "../../hooks/useTheme";
 import createStatisticsStyles from "../../styles/statistics.styles";
@@ -9,6 +15,22 @@ import DailyStats from "../../components/DailyStats";
 import MonthlyStats from "../../components/MonthlyStats";
 import YearlyStats from "../../components/YearlyStats";
 import TotalStats from "../../components/TotalStats";
+
+const tabsNumber = Object.freeze({
+  DAILY: 1,
+  MONTHLY: 2,
+  YEARLY: 3,
+  TOTAL: 4,
+});
+
+const tabList = [
+  { id: tabsNumber.DAILY, label: "Daily" },
+  { id: tabsNumber.MONTHLY, label: "Monthly" },
+  { id: tabsNumber.YEARLY, label: "Yearly" },
+  { id: tabsNumber.TOTAL, label: "Total" },
+];
+
+const tabOrder = tabList.map((tab) => tab.id);
 
 const Statistics = () => {
   const { colors } = useTheme();
@@ -67,21 +89,47 @@ const Statistics = () => {
     ),
   });
 
-  const tabsNumber = Object.freeze({
-    DAILY: 1,
-    MONTHLY: 2,
-    YEARLY: 3,
-    TOTAL: 4,
-  });
-
-  const tabList = [
-    { id: tabsNumber.DAILY, label: "Daily" },
-    { id: tabsNumber.MONTHLY, label: "Monthly" },
-    { id: tabsNumber.YEARLY, label: "Yearly" },
-    { id: tabsNumber.TOTAL, label: "Total" },
-  ];
-
   const [activeTabNumber, setActiveTabNumber] = useState(tabsNumber.DAILY);
+
+  const goToNextTab = useCallback(() => {
+    setActiveTabNumber((prevTab) => {
+      const currentIndex = tabOrder.indexOf(prevTab);
+      if (currentIndex === -1 || currentIndex >= tabOrder.length - 1) {
+        return prevTab;
+      }
+
+      return tabOrder[currentIndex + 1];
+    });
+  }, []);
+
+  const goToPreviousTab = useCallback(() => {
+    setActiveTabNumber((prevTab) => {
+      const currentIndex = tabOrder.indexOf(prevTab);
+      if (currentIndex <= 0) {
+        return prevTab;
+      }
+
+      return tabOrder[currentIndex - 1];
+    });
+  }, []);
+
+  const panResponder = useMemo(() => {
+    const swipeThreshold = 10;
+
+    return PanResponder.create({
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        const { dx, dy } = gestureState;
+        return Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 15;
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dx < -swipeThreshold) {
+          goToNextTab();
+        } else if (gestureState.dx > swipeThreshold) {
+          goToPreviousTab();
+        }
+      },
+    });
+  }, [goToNextTab, goToPreviousTab]);
 
   const renderActiveStats = () => {
     switch (activeTabNumber) {
@@ -111,7 +159,7 @@ const Statistics = () => {
       colors={colors.gradients.background}
       style={styles.container}
     >
-      <View style={styles.content}>
+      <View style={styles.content} {...panResponder.panHandlers}>
         <View style={styles.header}>
           <Text style={styles.title}>Statistics</Text>
         </View>
