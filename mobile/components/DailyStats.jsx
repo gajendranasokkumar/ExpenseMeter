@@ -16,6 +16,7 @@ import { STATISTICS_ROUTES } from "../constants/endPoints";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatToPieData } from "../utils/formatToPieData";
+import useLanguage from "../hooks/useLanguage";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -25,6 +26,7 @@ const DailyStats = ({ day, month, year }) => {
   const styles = createStatisticsStyles();
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [dailyData, setDailyData] = useState({});
 
@@ -65,7 +67,11 @@ const DailyStats = ({ day, month, year }) => {
         >
           <View style={styles.topExpenseContainer}>
             <View style={styles.topExpenseDataContainer}>
-              <Text style={styles.topExpenseDataHeading}>Total Income :</Text>
+              <Text style={styles.topExpenseDataHeading}>
+                {t("statistics.daily.totalIncome", {
+                  defaultValue: "Total income",
+                })}
+              </Text>
               <Text
                 style={[styles.topExpenseDataValue, { color: colors.income }]}
               >
@@ -75,7 +81,11 @@ const DailyStats = ({ day, month, year }) => {
               </Text>
             </View>
             <View style={styles.topExpenseDataContainer}>
-              <Text style={styles.topExpenseDataHeading}>Total Expense :</Text>
+              <Text style={styles.topExpenseDataHeading}>
+                {t("statistics.daily.totalExpense", {
+                  defaultValue: "Total expense",
+                })}
+              </Text>
               <Text style={styles.topExpenseDataValue}>
                 {dailyData.totalExpense
                   ? formatAmountDisplay(dailyData.totalExpense)
@@ -138,7 +148,11 @@ const DailyStats = ({ day, month, year }) => {
             </View>
           ) : (
             <View style={styles.wrapper}>
-              <Text style={{ color: colors.text }}>No expenses for this day.</Text>
+              <Text style={{ color: colors.text }}>
+                {t("statistics.daily.empty", {
+                  defaultValue: "No expenses for this day.",
+                })}
+              </Text>
             </View>
           )}
         </ScrollView>

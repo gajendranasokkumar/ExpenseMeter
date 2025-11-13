@@ -5,6 +5,12 @@ const { width, height } = Dimensions.get("window");
 
 const createHomeStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const surfaceRadius = colors?.radii?.surface ?? cardRadius;
+  const buttonRadius = colors?.radii?.button ?? 16;
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
+  const modalRadius = colors?.radii?.modal ?? surfaceRadius;
 
   return StyleSheet.create({
     container: {
@@ -26,13 +32,13 @@ const createHomeStyles = () => {
     headerIconImage: {
       width: 40,
       height: 40,
-      borderRadius: 10,
+      borderRadius: circleRadius,
     },
     headerIcon: {
       color: colors.primary,
       backgroundColor: colors.surface,
       padding: 10,
-      borderRadius: 10,
+      borderRadius: pillRadius,
     },
     headerTitle: {
       color: colors.text,
@@ -54,7 +60,7 @@ const createHomeStyles = () => {
     notificationIcon: {
       color: colors.warning,
       backgroundColor: colors.surface,
-      borderRadius: 10,
+      borderRadius: pillRadius,
       padding: 10,
       position: "relative",
     },
@@ -66,7 +72,7 @@ const createHomeStyles = () => {
       top: -2,
       right: -2,
       backgroundColor: colors.danger,
-      borderRadius: 10,
+      borderRadius: circleRadius,
       padding: 1,
       zIndex: 1,
       shadowColor: colors.danger,
@@ -78,13 +84,13 @@ const createHomeStyles = () => {
     addButton: {
       backgroundColor: colors.primary,
       padding: 10,
-      borderRadius: 10,
+      borderRadius: buttonRadius,
     },
     statsContainer: {
       backgroundColor: colors.surface,
       padding: 15,
       paddingHorizontal: 20,
-      borderRadius: 10,
+      borderRadius: surfaceRadius,
       borderWidth: 1,
       borderColor: colors.border,
       shadowColor: colors.shadow,
@@ -146,8 +152,8 @@ const createHomeStyles = () => {
       width: "90%",
       backgroundColor: colors.border,
       alignSelf: "center",
-      borderBottomRightRadius: 10,
-      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: surfaceRadius,
+      borderBottomLeftRadius: surfaceRadius,
     },
     currentMonthContainer: {
       marginTop: 25,
@@ -155,7 +161,7 @@ const createHomeStyles = () => {
       borderWidth: 1,
       borderColor: colors.border,
       padding: 10,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-evenly",
@@ -169,7 +175,7 @@ const createHomeStyles = () => {
       height: 20,
       width: 1,
       backgroundColor: colors.textMuted,
-      borderRadius: 100,
+      borderRadius: pillRadius,
     },
     currentYear: {
       fontSize: 24,
@@ -237,7 +243,7 @@ const createHomeStyles = () => {
       width: "100%",
       height: 10,
       backgroundColor: colors.surface,
-      borderRadius: 50,
+      borderRadius: pillRadius,
       borderWidth: 1,
       borderColor: colors.border,
       overflow: "hidden",
@@ -246,7 +252,7 @@ const createHomeStyles = () => {
     progressBarFill: {
       height: "100%",
       backgroundColor: colors.primary,
-      borderRadius: 50,
+      borderRadius: pillRadius,
     },
     modalOverlay: {
       flex: 1,
@@ -261,14 +267,14 @@ const createHomeStyles = () => {
       shadowOpacity: 0.3,
       shadowRadius: 8,
       elevation: 8,
-      borderTopLeftRadius: 50,
-      borderTopRightRadius: 50,
+      borderTopLeftRadius: modalRadius,
+      borderTopRightRadius: modalRadius,
     },
     notificationModalContent: {
       flex: 1,
       backgroundColor: colors.surface,
-      borderTopLeftRadius: 25,
-      borderTopRightRadius: 25,
+      borderTopLeftRadius: surfaceRadius,
+      borderTopRightRadius: surfaceRadius,
       borderWidth: 1,
       borderColor: colors.border,
       padding: 20,
@@ -288,7 +294,7 @@ const createHomeStyles = () => {
     },
     notificationModalContentHeaderClose: {
       padding: 5,
-      borderRadius: 10,
+      borderRadius: pillRadius,
       backgroundColor: colors.backgrounds.error,
     },
     notificationModalContentEmptyContainer: {
@@ -315,7 +321,7 @@ const createHomeStyles = () => {
       marginBottom: 5,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
-      borderRadius: 5,
+      borderRadius: pillRadius,
     },
     newNotificationItemContainer: {
       borderLeftWidth: 3,
@@ -344,7 +350,7 @@ const createHomeStyles = () => {
       padding: 16,
       paddingVertical: 8,
       backgroundColor: colors.bg,
-      borderRadius: 8,
+      borderRadius: surfaceRadius,
       borderLeftWidth: 4,
       borderLeftColor: colors.warning,
     },
@@ -363,7 +369,7 @@ const createHomeStyles = () => {
       marginBottom: 16,
       backgroundColor: colors.danger,
       padding: 10,
-      borderRadius: 8,
+      borderRadius: buttonRadius,
     },
     deleteAllButtonText: {
       color: colors.text,
@@ -377,7 +383,7 @@ const createHomeStyles = () => {
       borderWidth: 2,
       borderColor: colors.border,
       padding: 20,
-      borderRadius: 8,
+      borderRadius: cardRadius,
       backgroundColor: colors.surface,
       borderStyle: 'dashed',
     },

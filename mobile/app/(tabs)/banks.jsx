@@ -1,4 +1,15 @@
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator, FlatList, RefreshControl, LayoutAnimation, Platform, UIManager } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
 import { Image } from "expo-image";
 import React, { useState, useCallback } from "react";
 import useTheme from "../../hooks/useTheme";
@@ -11,6 +22,7 @@ import api from "../../utils/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { defaultBanks, IfscCodes } from "../../constants/BankNamesAndIfsc";
 import { useUser } from "../../context/userContext";
+import useLanguage from "../../hooks/useLanguage";
 
 const Banks = () => {
   const { colors } = useTheme();
@@ -21,6 +33,7 @@ const Banks = () => {
   const [banks, setBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { t } = useLanguage();
 
   const { user } = useUser();
   const userId = user?._id;
@@ -30,7 +43,12 @@ const Banks = () => {
     setIsSaving(true);
     try {
       if (!selectedBank || !selectedIfsc) {
-        Alert.alert('Error', 'Please select a bank and IFSC code');
+        Alert.alert(
+          t("common.error", { defaultValue: "Error" }),
+          t("banks.validation.bankAndIfsc", {
+            defaultValue: "Please select a bank and IFSC code",
+          })
+        );
         return;
       }
       const response = await api.post(BANK_ROUTES.CREATE_BANK, {
@@ -39,12 +57,23 @@ const Banks = () => {
         ifsc: selectedIfsc.ifsc,
         userId: userId,
       });
-      Alert.alert('Success', 'Bank created successfully');
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("banks.alerts.createSuccess", {
+          defaultValue: "Bank created successfully",
+        })
+      );
       getAllBanks();
       setSelectedBank(null);
       setSelectedIfsc(null);
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("banks.alerts.createError", {
+            defaultValue: "Unable to create bank.",
+          })
+      );
     } finally { 
       setIsSaving(false);
     }
@@ -58,29 +87,59 @@ const Banks = () => {
       });
       setBanks(response.data.data);
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("banks.alerts.fetchError", {
+            defaultValue: "Unable to load banks.",
+          })
+      );
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t, userId]);
 
   useFocusEffect(useCallback(() => {
     getAllBanks();
   }, [getAllBanks]));
 
   const handleDelete = async (bankId) => {
-    Alert.alert('Delete Bank', 'Are you sure you want to delete this bank?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => handleDeleteBank(bankId) },
-    ]);
+    Alert.alert(
+      t("banks.dialogs.delete.title", { defaultValue: "Delete Bank" }),
+      t("banks.dialogs.delete.message", {
+        defaultValue: "Are you sure you want to delete this bank?",
+      }),
+      [
+        {
+          text: t("common.cancel", { defaultValue: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: t("common.delete", { defaultValue: "Delete" }),
+          style: "destructive",
+          onPress: () => handleDeleteBank(bankId),
+        },
+      ]
+    );
   };
 
   const handleDeleteBank = async (bankId) => {
     try {
-      await api.delete(BANK_ROUTES.PERMANENTLY_DELETE_BANK.replace(":id", bankId).replace(":userId", userId));
+      await api.delete(
+        BANK_ROUTES.PERMANENTLY_DELETE_BANK.replace(":id", bankId).replace(
+          ":userId",
+          userId
+        )
+      );
       getAllBanks();
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("banks.alerts.deleteError", {
+            defaultValue: "Unable to delete bank.",
+          })
+      );
     }
   };
 
@@ -131,7 +190,9 @@ const Banks = () => {
                       <Image source={{ uri: item.logo }} style={styles.carouselImage} />
                     ) : null}
                     <View style={styles.bankText}>
-                      <Text style={styles.bankName}>{item.name}</Text>
+                      <Text style={styles.bankName}>
+                        {item.name}
+                      </Text>
                       {item.ifsc ? (
                         <View style={styles.ifscBadge}>
                           <Text style={styles.ifscBadgeText}>{item.ifsc}</Text>
@@ -150,25 +211,47 @@ const Banks = () => {
                 {isExpanded ? (
                   <View style={styles.expandedContainer}>
                     <View style={styles.detailRow}>
-                      <Text style={styles.detailLabel}>Status</Text>
-                      <Text style={styles.detailValue}>{item.isActive ? 'Active' : 'Inactive'}</Text>
+                      <Text style={styles.detailLabel}>
+                        {t("banks.details.status.label", {
+                          defaultValue: "Status",
+                        })}
+                      </Text>
+                      <Text style={styles.detailValue}>
+                        {item.isActive
+                          ? t("banks.details.status.active", {
+                              defaultValue: "Active",
+                            })
+                          : t("banks.details.status.inactive", {
+                              defaultValue: "Inactive",
+                            })}
+                      </Text>
                     </View>
                     {item.createdAt ? (
                       <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Created</Text>
+                        <Text style={styles.detailLabel}>
+                          {t("banks.details.created", {
+                            defaultValue: "Created",
+                          })}
+                        </Text>
                         <Text style={styles.detailValue}>{new Date(item.createdAt).toLocaleDateString()}</Text>
                       </View>
                     ) : null}
                     {item.updatedAt ? (
                       <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Updated</Text>
+                        <Text style={styles.detailLabel}>
+                          {t("banks.details.updated", {
+                            defaultValue: "Updated",
+                          })}
+                        </Text>
                         <Text style={styles.detailValue}>{new Date(item.updatedAt).toLocaleDateString()}</Text>
                       </View>
                     ) : null}
                     <View style={styles.expandedActions}>
                       <TouchableOpacity onPress={() => handleDelete(bankId)} style={styles.deleteButton}>
                         <Ionicons name="trash" size={18} color={colors.surface} />
-                        <Text style={styles.deleteButtonText}>Delete</Text>
+                        <Text style={styles.deleteButtonText}>
+                          {t("common.delete", { defaultValue: "Delete" })}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -182,15 +265,23 @@ const Banks = () => {
           ListHeaderComponent={() => (
             <>
             <View style={styles.header}>
-              <Text style={styles.title}>Banks</Text>
+              <Text style={styles.title}>
+                {t("banks.title", { defaultValue: "Banks" })}
+              </Text>
             </View>
             <LinearGradient colors={colors.gradients.surface} style={[styles.section, { marginTop: 8 }]}> 
             <View style={styles.dropdownContainer}>
-              <Text style={styles.dropdownTitle}>Select Bank</Text>
+              <Text style={styles.dropdownTitle}>
+                {t("banks.form.selectBank", {
+                  defaultValue: "Select Bank",
+                })}
+              </Text>
               <CustomDropdown
                 data={defaultBanks}
                 onSelect={setSelectedBank}
-                placeholder="Choose a bank"
+                placeholder={t("banks.form.selectBankPlaceholder", {
+                  defaultValue: "Choose a bank",
+                })}
                 renderItem={(item) => (
                   <View style={styles.bankContainer}>
                     <Image source={{ uri: item.logo }} style={styles.bankLogo} />
@@ -201,11 +292,17 @@ const Banks = () => {
               />
             </View>
             <View style={styles.dropdownContainer}>
-              <Text style={styles.dropdownTitle}>Select IFSC Code</Text>
+              <Text style={styles.dropdownTitle}>
+                {t("banks.form.selectIfsc", {
+                  defaultValue: "Select IFSC Code",
+                })}
+              </Text>
               <CustomDropdown
                 data={IfscCodes}
                 onSelect={setSelectedIfsc}
-                placeholder="Choose an IFSC code"
+                placeholder={t("banks.form.selectIfscPlaceholder", {
+                  defaultValue: "Choose an IFSC code",
+                })}
                 renderItem={(item) => (
                   <View style={styles.ifscContainer}>
                     <Text style={styles.ifscName}>{item.name}</Text>
@@ -219,12 +316,16 @@ const Banks = () => {
               {isSaving ? (
                 <>
                   <ActivityIndicator size="small" color={colors.surface} />
-                  <Text style={styles.saveButtonText}>Saving...</Text>
+                  <Text style={styles.saveButtonText}>
+                    {t("banks.actions.saving", { defaultValue: "Saving..." })}
+                  </Text>
                 </>
               ) : (
                 <>
                   <Ionicons name="save" size={24} color={colors.surface} />
-                  <Text style={styles.saveButtonText}>Save</Text>
+                  <Text style={styles.saveButtonText}>
+                    {t("common.save", { defaultValue: "Save" })}
+                  </Text>
                 </>
               )}
             </TouchableOpacity>
@@ -233,12 +334,16 @@ const Banks = () => {
           )}
           ListEmptyComponent={() => (
             <View style={styles.carouselContainer}>
-              <Text style={styles.emptyCarouselText}>No banks found</Text>
+              <Text style={styles.emptyCarouselText}>
+                {t("banks.empty", { defaultValue: "No banks found" })}
+              </Text>
             </View>
           )}
           ListFooterComponent={() => (
             <View style={styles.footer}>
-              <Text style={styles.footerText}>End of banks</Text>
+              <Text style={styles.footerText}>
+                {t("banks.footer", { defaultValue: "End of banks" })}
+              </Text>
             </View>
           )}
         />

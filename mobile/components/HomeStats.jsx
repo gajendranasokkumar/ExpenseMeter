@@ -1,19 +1,25 @@
-import { View, Text, Alert } from 'react-native'
-import React, { useEffect, useState, useCallback } from 'react'
-import createHomeStyles from '../styles/home.styles'
-import { Ionicons } from '@expo/vector-icons';
-import useTheme from '../hooks/useTheme';
-import { useUser } from '../context/userContext';
-import api from '../utils/api';
-import { useFocusEffect } from '@react-navigation/native'
-import { formatAmountDisplay } from '../utils/formatAmountDisplay';
+import { View, Text, Alert } from "react-native";
+import React, { useCallback, useState } from "react";
+import createHomeStyles from "../styles/home.styles";
+import { Ionicons } from "@expo/vector-icons";
+import useTheme from "../hooks/useTheme";
+import { useUser } from "../context/userContext";
+import api from "../utils/api";
+import { useFocusEffect } from "@react-navigation/native";
+import { formatAmountDisplay } from "../utils/formatAmountDisplay";
+import useLanguage from "../hooks/useLanguage";
 
 const HomeStats = () => {
-  const [summary, setSummary] = useState({ balance: 0, income: 0, expenses: 0 });
+  const [summary, setSummary] = useState({
+    balance: 0,
+    income: 0,
+    expenses: 0,
+  });
   const { user } = useUser();
   const userId = user?._id;
   const styles = createHomeStyles();
   const { colors } = useTheme();
+  const { t } = useLanguage();
 
   const fetchSummary = useCallback(async () => {
     try {
@@ -21,9 +27,15 @@ const HomeStats = () => {
       const response = await api.get(`/transactions/summary/${userId}`);
       setSummary(response.data);
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("home.stats.errorGeneric", {
+            defaultValue: "Unable to fetch summary.",
+          })
+      );
     }
-  }, [userId]);
+  }, [t, userId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -40,21 +52,27 @@ const HomeStats = () => {
     <>
       <View style={styles.statsContainer}>
           <View style={styles.mainBalanceContainer}>
-              <Text style={styles.mainBalanceTitle}>Main Balance</Text>
+              <Text style={styles.mainBalanceTitle}>
+                {t("home.stats.mainBalance", {
+                  defaultValue: "Main Balance",
+                })}
+              </Text>
               <Text style={styles.mainBalanceValue}>{formatAmountDisplay(summary.balance)}</Text>
           </View>
           <View style={styles.expensesContainer}>
               <View style={styles.expensesHeader}>
                   <Text style={styles.expensesTitle}>
                       <Ionicons name="arrow-down-circle-outline" size={14} color={colors.textMuted} />
-                      {" Income"}
+                      {` ${t("home.stats.income", { defaultValue: "Income" })}`}
                   </Text>
                   <Text style={[styles.expensesValue, { color: colors.income }]}>+ {formatAmountDisplay(summary.income)}</Text>
               </View>
               <View style={styles.expensesHeader2}>
                   <Text style={styles.expensesTitle}>
                       <Ionicons name="arrow-up-circle-outline" size={14} color={colors.textMuted} />
-                      {" Expenses"}
+                      {` ${t("home.stats.expenses", {
+                        defaultValue: "Expenses",
+                      })}`}
                   </Text>
                   <Text style={[styles.expensesValue, { color: colors.expense }]}>- {formatAmountDisplay(formarExpenseAmount(summary.expenses))}</Text>
               </View>

@@ -22,6 +22,7 @@ import { TRANSACTION_ROUTES } from "../../constants/endPoints";
 import { BUDGET_ROUTES } from "../../constants/endPoints";
 import SingleBudget from "../../components/SingleBudget";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import useLanguage from "../../hooks/useLanguage";
 
 const Transactions = () => {
   const { colors } = useTheme();
@@ -45,6 +46,7 @@ const Transactions = () => {
   const [activeScreen, setActiveScreen] = useState("transactions");
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
 
   // Date filter state
   const [isFilterVisible, setIsFilterVisible] = useState(false);
@@ -81,8 +83,11 @@ const Transactions = () => {
         setTransactionsTotalPages(response.data.totalPages);
       } catch (error) {
         Alert.alert(
-          "Error",
-          error.response?.data?.message || "Something went wrong"
+          t("common.error", { defaultValue: "Error" }),
+          error?.response?.data?.message ??
+            t("history.alerts.fetchTransactionsError", {
+              defaultValue: "Something went wrong",
+            })
         );
       } finally {
         setTransactionsLoading(false);
@@ -121,8 +126,11 @@ const Transactions = () => {
         setBudgetsTotalPages(response.data.totalPages);
       } catch (error) {
         Alert.alert(
-          "Error",
-          error.response?.data?.message || "Something went wrong"
+          t("common.error", { defaultValue: "Error" }),
+          error?.response?.data?.message ??
+            t("history.alerts.fetchBudgetsError", {
+              defaultValue: "Something went wrong",
+            })
         );
       } finally {
         setBudgetsLoading(false);
@@ -168,8 +176,11 @@ const Transactions = () => {
       fetchTransactions(1); // refresh after delete
     } catch (error) {
       Alert.alert(
-        "Error",
-        error.response?.data?.message || "Something went wrong"
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("history.alerts.deleteTransactionError", {
+            defaultValue: "Something went wrong",
+          })
       );
     }
   };
@@ -182,8 +193,11 @@ const Transactions = () => {
       fetchBudgets(1); // refresh after delete
     } catch (error) {
       Alert.alert(
-        "Error",
-        error.response?.data?.message || "Something went wrong"
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("history.alerts.deleteBudgetError", {
+            defaultValue: "Something went wrong",
+          })
       );
     }
   };
@@ -200,7 +214,11 @@ const Transactions = () => {
       ListHeaderComponent={
         <>
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Transactions</Text>
+            <Text style={styles.headerTitle}>
+              {t("history.transactions.title", {
+                defaultValue: "Transactions",
+              })}
+            </Text>
             <View style={styles.headerButton}>
               <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
                 <Ionicons
@@ -218,7 +236,9 @@ const Transactions = () => {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              Long press a transaction to delete it.
+              {t("history.transactions.longPressInfo", {
+                defaultValue: "Long press a transaction to delete it.",
+              })}
             </Text>
           </View>
         </>
@@ -235,7 +255,11 @@ const Transactions = () => {
               size={60}
               color={colors.textMuted}
             />
-            <Text style={styles.emptyText}>No transactions found</Text>
+            <Text style={styles.emptyText}>
+              {t("history.transactions.empty", {
+                defaultValue: "No transactions found",
+              })}
+            </Text>
           </View>
         </View>
       }
@@ -246,7 +270,11 @@ const Transactions = () => {
           </View>
         ) : transactions.length > 0 ? (
           <View style={styles.footer}>
-            <Text style={styles.footerText}>End of transactions history</Text>
+            <Text style={styles.footerText}>
+              {t("history.transactions.footer", {
+                defaultValue: "End of transactions history",
+              })}
+            </Text>
           </View>
         ) : null
       }
@@ -271,7 +299,9 @@ const Transactions = () => {
       ListHeaderComponent={
         <>
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Budgets</Text>
+            <Text style={styles.headerTitle}>
+              {t("history.budgets.title", { defaultValue: "Budgets" })}
+            </Text>
             <View style={styles.headerButton}>
               <TouchableOpacity onPress={() => setIsFilterVisible(true)}>
                 <Ionicons
@@ -289,7 +319,9 @@ const Transactions = () => {
               style={styles.infoIcon}
             />
             <Text style={styles.infoText}>
-              Long press a budget to delete it.
+              {t("history.budgets.longPressInfo", {
+                defaultValue: "Long press a budget to delete it.",
+              })}
             </Text>
           </View>
         </>
@@ -306,7 +338,11 @@ const Transactions = () => {
               size={60}
               color={colors.textMuted}
             />
-            <Text style={styles.emptyText}>No budgets found</Text>
+            <Text style={styles.emptyText}>
+              {t("history.budgets.empty", {
+                defaultValue: "No budgets found",
+              })}
+            </Text>
           </View>
         </View>
       }
@@ -317,7 +353,11 @@ const Transactions = () => {
           </View>
         ) : budgets.length > 0 ? (
           <View style={styles.footer}>
-            <Text style={styles.footerText}>End of budgets history</Text>
+            <Text style={styles.footerText}>
+              {t("history.budgets.footer", {
+                defaultValue: "End of budgets history",
+              })}
+            </Text>
           </View>
         ) : null
       }
@@ -369,7 +409,9 @@ const Transactions = () => {
                 activeScreen === "transactions" && { color: colors.primary },
               ]}
             >
-              Transactions
+              {t("history.controls.transactions", {
+                defaultValue: "Transactions",
+              })}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -401,7 +443,9 @@ const Transactions = () => {
                 activeScreen === "budgets" && { color: colors.primary },
               ]}
             >
-              Budgets
+              {t("history.controls.budgets", {
+                defaultValue: "Budgets",
+              })}
             </Text>
           </TouchableOpacity>
         </View>
@@ -419,26 +463,61 @@ const Transactions = () => {
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
             <TouchableWithoutFeedback>
             <View style={{ width: "90%", maxWidth: 420, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
-              <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>Filter by date</Text>
+              <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>
+                {t("history.filters.title", { defaultValue: "Filter by date" })}
+              </Text>
               <View style={{ gap: 12 }}>
                 <TouchableOpacity onPress={() => setShowStartPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
                     <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
                   <Text style={{ color: colors.text }}>
-                    {startDate ? startDate.toDateString() : "Select start date"}
+                    {startDate
+                      ? startDate.toDateString()
+                      : t("history.filters.selectStartDate", {
+                          defaultValue: "Select start date",
+                        })}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setShowEndPicker(true)} style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 8, flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="calendar-outline" size={16} color={colors.textMuted} style={{ marginRight: 8 }} />
                   <Text style={{ color: colors.text }}>
-                    {endDate ? endDate.toDateString() : "Select end date"}
+                    {endDate
+                      ? endDate.toDateString()
+                      : t("history.filters.selectEndDate", {
+                          defaultValue: "Select end date",
+                        })}
                   </Text>
                 </TouchableOpacity>
                 <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
-                  <TouchableOpacity onPress={() => { setStartDate(null); setEndDate(null); setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
-                    <Text style={{ color: colors.textMuted }}>Clear</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setStartDate(null);
+                      setEndDate(null);
+                      setIsFilterVisible(false);
+                      setTransactionsPage(1);
+                      setBudgetsPage(1);
+                    }}
+                    style={{ paddingVertical: 10, paddingHorizontal: 14 }}
+                  >
+                    <Text style={{ color: colors.textMuted }}>
+                      {t("common.clear", { defaultValue: "Clear" })}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => { setIsFilterVisible(false); setTransactionsPage(1); setBudgetsPage(1); }} style={{ paddingVertical: 10, paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: 8 }}>
-                    <Text style={{ color: colors.onPrimary }}>Apply</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsFilterVisible(false);
+                      setTransactionsPage(1);
+                      setBudgetsPage(1);
+                    }}
+                    style={{
+                      paddingVertical: 10,
+                      paddingHorizontal: 14,
+                      backgroundColor: colors.primary,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <Text style={{ color: colors.onPrimary }}>
+                      {t("common.apply", { defaultValue: "Apply" })}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>

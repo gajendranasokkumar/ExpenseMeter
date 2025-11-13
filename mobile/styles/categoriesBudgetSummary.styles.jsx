@@ -4,6 +4,9 @@ import useTheme from "../hooks/useTheme";
 
 const createCategoriesBudgetSummaryStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
   const styles = StyleSheet.create({    
     categoriesBudgetSummaryContainer: {
       flex: 1,
@@ -11,7 +14,7 @@ const createCategoriesBudgetSummaryStyles = () => {
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
-      borderRadius: 10,
+      borderRadius: cardRadius,
       padding: 10,
     },
     categoriesBudgetSummaryTitle: {
@@ -57,12 +60,12 @@ const createCategoriesBudgetSummaryStyles = () => {
       width: "100%",
       height: 5,
       backgroundColor: colors.border,
-      borderRadius: 100,
+      borderRadius: pillRadius,
       marginTop: 8,
     },
     categoriesBudgetSummaryProgressBar: {
       height: "100%",
-      borderRadius: 100,
+      borderRadius: circleRadius,
       overflow: "hidden",
     },
   });

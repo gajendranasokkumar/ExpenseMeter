@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,21 +12,27 @@ import NotificationModal from "../../components/NotificationModal";
 import api from "../../utils/api";
 import { NOTIFICATION_ROUTES } from "../../constants/endPoints";
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 import CategoriesBudgetSummary from "../../components/CategoriesBudgetSummary";
 import BankSummary from "../../components/BankSummary";
+import useLanguage from "../../hooks/useLanguage";
 
 const Home = () => {
   const { colors } = useTheme();
   const styles = createHomeStyles();
-  const { user } = useUser();  
-  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
+  const { user } = useUser();
+  const { t } = useLanguage();
+  const [isNotificationModalVisible, setIsNotificationModalVisible] =
+    useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
 
-  
   const fetchNotifications = async () => {
     try {
-      const response = await api.get(`${NOTIFICATION_ROUTES.GET_UNREAD_NOTIFICATIONS_BY_USER_ID.replace(":id", user?._id)}`);
+      const response = await api.get(
+        `${NOTIFICATION_ROUTES.GET_UNREAD_NOTIFICATIONS_BY_USER_ID.replace(
+          ":id",
+          user?._id
+        )}`
+      );
       setNotificationCount(response.data.length);
     } catch (error) {
       // ignore error
@@ -57,8 +63,15 @@ const Home = () => {
               }
           </View>
           <View>
-            <Text style={styles.headerSubtitle}>Welcome back,</Text>
-            <Text style={styles.headerTitle}>{user?.name || "User"}</Text>
+            <Text style={styles.headerSubtitle}>
+              {t("home.header.welcomeBack", {
+                defaultValue: "Welcome back,",
+              })}
+            </Text>
+            <Text style={styles.headerTitle}>
+              {user?.name ||
+                t("home.header.defaultName", { defaultValue: "User" })}
+            </Text>
           </View>
           <View style={styles.headerRight}>
             <NotificationModal visible={isNotificationModalVisible} onClose={() => setIsNotificationModalVisible(false)} />

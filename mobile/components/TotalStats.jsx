@@ -10,12 +10,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { categories as CATEGORY_CONST } from "../constants/Categories";
 import ProgressBar from "./ProgressBar";
+import useLanguage from "../hooks/useLanguage";
 
 const { width } = Dimensions.get("window");
 
 const TotalStats = () => {
   const { colors } = useTheme();
   const styles = createStatisticsStyles();
+  const { t } = useLanguage();
 
   const { user } = useUser();
   const userId = user?._id;
@@ -79,21 +81,33 @@ const TotalStats = () => {
         <>
       <View style={{ margin: 16, borderWidth: 1, borderColor: colors.border, borderRadius: 12, overflow: "hidden" }}>
         <View style={{ padding: 14, backgroundColor: colors.bg }}>
-          <Text style={{ color: colors.text, opacity: 0.8 }}>Overview</Text>
+          <Text style={{ color: colors.text, opacity: 0.8 }}>
+            {t("statistics.total.overview", { defaultValue: "Overview" })}
+          </Text>
         </View>
         <View style={{ flexDirection: "row", borderTopWidth: 1, borderTopColor: colors.border }}>
           <View style={{ flex: 1, padding: 14 }}>
-            <Text style={{ color: colors.text, opacity: 0.8 }}>Total Income (All time)</Text>
+            <Text style={{ color: colors.text, opacity: 0.8 }}>
+              {t("statistics.total.totalIncome", {
+                defaultValue: "Total income (all time)",
+              })}
+            </Text>
             <Text style={{ color: colors.income, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalIncome)}</Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
-            <Text style={{ color: colors.text, opacity: 0.8 }}>Total Expense (All time)</Text>
+            <Text style={{ color: colors.text, opacity: 0.8 }}>
+              {t("statistics.total.totalExpense", {
+                defaultValue: "Total expense (all time)",
+              })}
+            </Text>
             <Text style={{ color: colors.expense, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalExpense)}</Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
-            <Text style={{ color: colors.text, opacity: 0.8 }}>Net</Text>
+            <Text style={{ color: colors.text, opacity: 0.8 }}>
+              {t("statistics.total.net", { defaultValue: "Net" })}
+            </Text>
             <Text style={{ color: netSaving >= 0 ? colors.income : colors.expense, fontSize: 12, fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(netSaving)}</Text>
           </View>
         </View>
@@ -105,7 +119,11 @@ const TotalStats = () => {
             <Ionicons name="calendar-outline" size={18} color={colors.primary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, opacity: 0.7 }}>Average monthly spend</Text>
+            <Text style={{ color: colors.text, opacity: 0.7 }}>
+              {t("statistics.total.avgMonthly", {
+                defaultValue: "Average monthly spend",
+              })}
+            </Text>
             <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600', marginTop: 2 }}>{formatAmountDisplay(avgMonthlySpend)}</Text>
           </View>
         </View>
@@ -114,22 +132,38 @@ const TotalStats = () => {
             <Ionicons name="time-outline" size={18} color={colors.expense} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ color: colors.text, opacity: 0.7 }}>Average daily spend</Text>
+            <Text style={{ color: colors.text, opacity: 0.7 }}>
+              {t("statistics.total.avgDaily", {
+                defaultValue: "Average daily spend",
+              })}
+            </Text>
             <Text style={{ color: colors.text, fontSize: 18, fontWeight: '600', marginTop: 2 }}>{formatAmountDisplay(avgDailySpend)}</Text>
           </View>
         </View>
       </View>
 
       <View style={{ marginHorizontal: 16 }}>
-        <Text style={styles.budgetListHeading}>Top year highlights</Text>
+        <Text style={styles.budgetListHeading}>
+          {t("statistics.total.highlights", {
+            defaultValue: "Top year highlights",
+          })}
+        </Text>
         <View style={{ flexDirection: "row", gap: 12 }}>
           <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
-            <Text style={{ color: colors.text, opacity: 0.7 }}>Best Income Year</Text>
+            <Text style={{ color: colors.text, opacity: 0.7 }}>
+              {t("statistics.total.bestIncomeYear", {
+                defaultValue: "Best income year",
+              })}
+            </Text>
             <Text style={{ color: colors.income, fontSize: 14, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(bestIncomeYear?.income || 0)}</Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{bestIncomeYear?.year ?? '-'}</Text>
           </View>
           <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
-            <Text style={{ color: colors.text, opacity: 0.7 }}>Highest Expense Year</Text>
+            <Text style={{ color: colors.text, opacity: 0.7 }}>
+              {t("statistics.total.highestExpenseYear", {
+                defaultValue: "Highest expense year",
+              })}
+            </Text>
             <Text style={{ color: colors.expense, fontSize: 14, fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(highestExpenseYear?.expense || 0)}</Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{highestExpenseYear?.year ?? '-'}</Text>
           </View>
@@ -137,7 +171,11 @@ const TotalStats = () => {
       </View>
 
       <View style={{ padding: 16 }}>
-        <Text style={styles.budgetListHeading}>Top 5 categories</Text>
+        <Text style={styles.budgetListHeading}>
+          {t("statistics.total.topCategories", {
+            defaultValue: "Top 5 categories",
+          })}
+        </Text>
         {categories
           .slice()
           .sort((a, b) => b.value - a.value)
@@ -147,14 +185,27 @@ const TotalStats = () => {
             const catInfo = CATEGORY_CONST.find((ci) => ci.name === c.name);
             const iconName = catInfo?.unselectedIcon || "ellipsis-horizontal-outline";
             const iconColor = catInfo?.color || colors.primary;
+            const slug = c.name
+              ?.toLowerCase()
+              ?.replace(/[^a-z0-9]+/gi, "-");
+            const translatedCategory = t(`categories.${slug}`, {
+              defaultValue: c.name,
+            });
             return (
               <View key={idx} style={{ flexDirection: "row", alignItems: "center", padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg, marginBottom: 10 }}>
                 <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: iconColor + '33', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                   <Ionicons name={iconName} size={20} color={iconColor} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: colors.text, fontWeight: "600" }}>{idx + 1}. {c.name}</Text>
-                  <Text style={{ color: colors.text, opacity: 0.75, marginTop: 2 }}>{percent}% of expenses</Text>
+                  <Text style={{ color: colors.text, fontWeight: "600" }}>
+                    {idx + 1}. {translatedCategory}
+                  </Text>
+                  <Text style={{ color: colors.text, opacity: 0.75, marginTop: 2 }}>
+                    {t("statistics.total.categoryShare", {
+                      defaultValue: "{percent}% of expenses",
+                      replace: { percent },
+                    })}
+                  </Text>
                 </View>
                 <View>
                   <Text style={{ color: colors.text, fontWeight: '700' }}>{formatAmountDisplay(c.value)}</Text>
@@ -165,7 +216,11 @@ const TotalStats = () => {
       </View>
 
       <View style={{ padding: 16, paddingBottom: 45 }}>
-        <Text style={styles.budgetListHeading}>Most used bank account</Text>
+        <Text style={styles.budgetListHeading}>
+          {t("statistics.total.mostUsedBank", {
+            defaultValue: "Most used bank account",
+          })}
+        </Text>
         <View style={{ padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {mostUsedBank?.logo ? (
@@ -182,7 +237,9 @@ const TotalStats = () => {
               <Text style={{ color: colors.text, opacity: 0.75 }}>{mostUsedBank?.account || ''}</Text>
             </View>
             <View>
-              <Text style={{ color: colors.text, opacity: 0.75 }}>Uses</Text>
+              <Text style={{ color: colors.text, opacity: 0.75 }}>
+                {t("statistics.total.uses", { defaultValue: "Uses" })}
+              </Text>
               <Text style={{ color: colors.text, fontWeight: "700", textAlign: "right" }}>{mostUsedBank?.usage ?? 0}</Text>
             </View>
           </View>

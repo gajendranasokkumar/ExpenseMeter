@@ -36,6 +36,15 @@ const DARK_BLUE_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const ORANGE_THEME = {
@@ -70,6 +79,15 @@ const ORANGE_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const GREEN_THEME = {
@@ -104,6 +122,15 @@ const GREEN_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const PURPLE_THEME = {
@@ -138,6 +165,15 @@ const PURPLE_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const YELLOW_THEME = {
@@ -172,6 +208,15 @@ const YELLOW_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const WHITE_THEME = {
@@ -206,6 +251,15 @@ const WHITE_THEME = {
     error: "#fee2e2",
   },
   statusBarStyle: "dark",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const INDIGO_THEME = {
@@ -240,6 +294,15 @@ const INDIGO_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 const LIGHT_BLUE_THEME = {
@@ -274,6 +337,15 @@ const LIGHT_BLUE_THEME = {
     error: "#fcbdbd",
   },
   statusBarStyle: "light",
+  radii: {
+    card: 20,
+    surface: 20,
+    modal: 28,
+    input: 16,
+    button: 16,
+    pill: 12,
+    circle: 999,
+  },
 };
 
 // Theme mapping object

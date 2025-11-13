@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Slot } from "expo-router";
 import { View, PermissionsAndroid, Platform } from "react-native";
 import { ThemeProvider } from "../hooks/useTheme";
+import { LanguageProvider } from "../hooks/useLanguage";
 import useTheme from "../hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
@@ -13,13 +14,15 @@ import PushNotification from "react-native-push-notification";
 const RootLayout = () => {
   return (
     <UserProvider>
-      <ThemeProvider>
-        <TransactionsProvider>
-          <SafeScreen>
-            <Layout />
-          </SafeScreen>
-        </TransactionsProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <TransactionsProvider>
+            <SafeScreen>
+              <Layout />
+            </SafeScreen>
+          </TransactionsProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </UserProvider>
   );
 };

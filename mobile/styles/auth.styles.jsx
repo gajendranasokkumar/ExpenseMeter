@@ -5,6 +5,10 @@ const { width, height } = Dimensions.get("window");
 
 const createAuthStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const inputRadius = colors?.radii?.input ?? 16;
+  const buttonRadius = colors?.radii?.button ?? 16;
+
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -48,7 +52,7 @@ const createAuthStyles = () => {
       maxWidth: 360,
       paddingVertical: 12,
       paddingHorizontal: 14,
-      borderRadius: 10,
+      borderRadius: cardRadius,
       backgroundColor: "#FFE5E5",
       borderLeftWidth: 4,
       borderLeftColor: colors.danger,
@@ -79,7 +83,7 @@ const createAuthStyles = () => {
       height: 52,
       borderColor: colors.border,
       borderWidth: 1.5,
-      borderRadius: 12,
+      borderRadius: inputRadius,
       paddingHorizontal: 16,
       fontSize: 16,
       color: colors.text,
@@ -131,7 +135,7 @@ const createAuthStyles = () => {
       backgroundColor: colors.primary,
       justifyContent: "center",
       alignItems: "center",
-      borderRadius: 12,
+      borderRadius: buttonRadius,
       marginTop: 8,
       marginBottom: 15,
       shadowColor: colors.shadow,
@@ -188,7 +192,7 @@ const createAuthStyles = () => {
       height: 48,
       borderColor: colors.border,
       borderWidth: 1.5,
-      borderRadius: 12,
+      borderRadius: buttonRadius,
       justifyContent: "center",
       alignItems: "center",
       marginHorizontal: 6,

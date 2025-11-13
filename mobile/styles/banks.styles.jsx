@@ -3,6 +3,11 @@ import useTheme from "../hooks/useTheme";
 
 const createBanksStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const surfaceRadius = colors?.radii?.surface ?? cardRadius;
+  const buttonRadius = colors?.radii?.button ?? 16;
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -19,7 +24,7 @@ const createBanksStyles = () => {
       color: colors.text,
     },
     section: {
-      borderRadius: 20,
+      borderRadius: surfaceRadius,
       padding: 15,
       shadowColor: colors.shadow,
       borderWidth: 1,
@@ -44,7 +49,7 @@ const createBanksStyles = () => {
       alignItems: "center",
       justifyContent: "center",
       padding: 12,
-      borderRadius: 12,
+      borderRadius: surfaceRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -54,7 +59,7 @@ const createBanksStyles = () => {
     carouselImage: {
       width: 60,
       height: 60,
-      borderRadius: 10,
+      borderRadius: circleRadius,
       marginBottom: 10,
     },
     carouselName: {
@@ -105,7 +110,7 @@ const createBanksStyles = () => {
       alignItems: "center",
       justifyContent: "space-between",
       padding: 14,
-      borderRadius: 12,
+      borderRadius: surfaceRadius,
       borderWidth: 1,
       borderColor: colors.border,
       shadowColor: colors.shadow,
@@ -132,7 +137,7 @@ const createBanksStyles = () => {
       borderColor: colors.border,
       paddingHorizontal: 8,
       paddingVertical: 4,
-      borderRadius: 6,
+      borderRadius: pillRadius,
     },
     ifscBadgeText: {
       fontSize: 12,
@@ -151,7 +156,7 @@ const createBanksStyles = () => {
       borderWidth: 1,
       borderColor: colors.border,
       padding: 6,
-      borderRadius: 8,
+      borderRadius: pillRadius,
     },
     chevronWrapExpanded: {
       transform: [{ rotate: "180deg" }],
@@ -160,7 +165,7 @@ const createBanksStyles = () => {
       marginTop: 8,
       marginHorizontal: 12,
       padding: 12,
-      borderRadius: 12,
+      borderRadius: surfaceRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -176,7 +181,7 @@ const createBanksStyles = () => {
       gap: 8,
       backgroundColor: colors.danger,
       paddingVertical: 10,
-      borderRadius: 10,
+      borderRadius: buttonRadius,
     },
     deleteButtonText: {
       color: colors.surface,
@@ -218,13 +223,13 @@ const createBanksStyles = () => {
       paddingVertical: 12,
       paddingHorizontal: 16,
       backgroundColor: colors.surface,
-      borderRadius: 8,
+      borderRadius: pillRadius,
       marginVertical: 2,
     },
     bankLogo: {
       width: 32,
       height: 32,
-      borderRadius: 16,
+      borderRadius: circleRadius,
       marginRight: 12,
     },
     bankName: {
@@ -259,7 +264,7 @@ const createBanksStyles = () => {
       width: "70%",
       alignSelf: "center",
       padding: 8,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.primary,
       flexDirection: "row",
       alignItems: "center",

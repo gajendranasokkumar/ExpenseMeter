@@ -3,6 +3,11 @@ import useTheme from "../hooks/useTheme";
 
 const createAddTransactionStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const surfaceRadius = colors?.radii?.surface ?? cardRadius;
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
+
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -31,7 +36,7 @@ const createAddTransactionStyles = () => {
     controls: {
       flex: 1,
       padding: 15,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -56,7 +61,7 @@ const createAddTransactionStyles = () => {
     amountInputContainer: {
       marginTop: 20,
       padding: 10,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -74,7 +79,7 @@ const createAddTransactionStyles = () => {
     dateContainer: {
       marginTop: 20,
       padding: 10,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -97,7 +102,7 @@ const createAddTransactionStyles = () => {
     categoriesContainer: {
       marginTop: 20,
       padding: 20,
-      borderRadius: 20,
+      borderRadius: surfaceRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -125,7 +130,7 @@ const createAddTransactionStyles = () => {
       flexDirection: "row",
       alignItems: "center",
       padding: 10,
-      borderRadius: 100,
+      borderRadius: pillRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -138,7 +143,7 @@ const createAddTransactionStyles = () => {
     notesContainer: {
       marginTop: 20,
       padding: 20,
-      borderRadius: 20,
+      borderRadius: surfaceRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -166,7 +171,7 @@ const createAddTransactionStyles = () => {
       width: "90%",
       alignSelf: "center",
       padding: 15,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.primary,
       flexDirection: "row",
       alignItems: "center",
@@ -181,7 +186,7 @@ const createAddTransactionStyles = () => {
     errorContainer: {
       marginTop: 20,
       padding: 10,
-      borderRadius: 10,
+      borderRadius: cardRadius,
       backgroundColor: colors.backgrounds.error,
       flexDirection: "row",
       alignItems: "center",

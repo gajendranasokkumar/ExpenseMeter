@@ -4,10 +4,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import useTheme, { THEMES, THEME_NAMES } from "../hooks/useTheme";
 import createSettingsStyles from "../styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
+import useLanguage from "../hooks/useLanguage";
 
 const Preferences = () => {
   const styles = createSettingsStyles();
   const { colors, currentTheme, setTheme, availableThemes, themeNames } = useTheme();
+  const { t } = useLanguage();
+  const circleRadius = colors?.radii?.circle ?? 999;
 
   return (
     <LinearGradient
@@ -24,7 +27,7 @@ const Preferences = () => {
           <LinearGradient colors={colors.gradients.primary} style={styles.settingIcon}>
             <Ionicons name="color-palette" size={18} color="#fff" />
           </LinearGradient>
-          <Text style={styles.settingText}>Theme</Text>
+          <Text style={styles.settingText}>{t("preferences.themeLabel")}</Text>
         </View>
       </View>
 
@@ -57,7 +60,7 @@ const Preferences = () => {
                 style={{
                   width: 50,
                   height: 50,
-                  borderRadius: 25,
+                  borderRadius: circleRadius,
                   backgroundColor: theme.primary,
                   marginBottom: 8,
                   borderWidth: isSelected ? 3 : 1,

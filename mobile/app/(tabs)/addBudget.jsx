@@ -20,12 +20,14 @@ import { BUDGET_ROUTES } from "../../constants/endPoints";
 import { useUser } from "../../context/userContext";
 import { getCurrentMonth, computeEndDate } from "../../utils/formatDate";
 import { categories } from "../../constants/Categories";
+import useLanguage from "../../hooks/useLanguage";
 
 const AddBudget = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     title: "",
     amount: "",
@@ -41,12 +43,24 @@ const AddBudget = () => {
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [isAllCategory, setIsAllCategory] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const listofCategories = ["Monthly Budget", ...categories.map((category) => category.name)];
+  const listofCategories = [
+    "Monthly Budget",
+    ...categories.map((category) => category.name),
+  ];
 
   const periods = [
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
-    { value: "yearly", label: "Yearly" },
+    {
+      value: "weekly",
+      label: t("budget.period.weekly", { defaultValue: "Weekly" }),
+    },
+    {
+      value: "monthly",
+      label: t("budget.period.monthly", { defaultValue: "Monthly" }),
+    },
+    {
+      value: "yearly",
+      label: t("budget.period.yearly", { defaultValue: "Yearly" }),
+    },
   ];
 
   const handleInputChange = (field, value) => {
@@ -137,7 +151,12 @@ const AddBudget = () => {
 
   const handleSubmit = async () => {
     if (!formData.title.trim()) {
-      Alert.alert("Error", "Please enter a budget title");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("budget.add.validation.title", {
+          defaultValue: "Please enter a budget title",
+        })
+      );
       return;
     }
     if (
@@ -145,19 +164,39 @@ const AddBudget = () => {
       isNaN(formData.amount) ||
       parseFloat(formData.amount) <= 0
     ) {
-      Alert.alert("Error", "Please enter a valid amount");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("budget.add.validation.amount", {
+          defaultValue: "Please enter a valid amount",
+        })
+      );
       return;
     }
     if (!formData.category) {
-      Alert.alert("Error", "Please select a category");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("budget.add.validation.category", {
+          defaultValue: "Please select a category",
+        })
+      );
       return;
     }
     if (!formData.start_date) {
-      Alert.alert("Error", "Please select start date");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("budget.add.validation.startDate", {
+          defaultValue: "Please select start date",
+        })
+      );
       return;
     }
     if (!formData.end_date) {
-      Alert.alert("Error", "Please select end date");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("budget.add.validation.endDate", {
+          defaultValue: "Please select end date",
+        })
+      );
       return;
     }
 
@@ -171,7 +210,12 @@ const AddBudget = () => {
         end_date: new Date(formData.end_date),
         isAllCategory: isAllCategory,
       });
-      Alert.alert("Success", "Budget created successfully!");
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("budget.add.alerts.createSuccess", {
+          defaultValue: "Budget created successfully!",
+        })
+      );
       setFormData({
         title: "",
         amount: "",
@@ -188,18 +232,32 @@ const AddBudget = () => {
       setIsLoading(false);
       router.back();
     } catch (error) {
-      Alert.alert("Error", error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("budget.add.alerts.createError", {
+            defaultValue: "Unable to create budget.",
+          })
+      );
       console.log("Error creating budget:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getDateInput = (field, label, date, showPicker, onPress, onChange) => (
-    <View style={styles.dateInputContainer}>
-      <Text style={styles.inputLabel}>
-        {label}
-      </Text>
+  const getDateInput = (
+    field,
+    labelKey,
+    defaultLabel,
+    date,
+    showPicker,
+    onPress,
+    onChange
+  ) => {
+    const label = t(labelKey, { defaultValue: defaultLabel });
+    return (
+      <View style={styles.dateInputContainer}>
+      <Text style={styles.inputLabel}>{label}</Text>
       <TouchableOpacity
         style={styles.dateInputButton}
         onPress={onPress}
@@ -210,7 +268,11 @@ const AddBudget = () => {
             formData[field] ? styles.dateInputTextFilled : styles.dateInputTextPlaceholder
           ]}
         >
-          {formData[field] ? date.toLocaleDateString() : `Select ${label}`}
+          {formData[field]
+            ? date.toLocaleDateString()
+            : t(`${labelKey}.placeholder`, {
+                defaultValue: `Select ${defaultLabel}`,
+              })}
         </Text>
         <Ionicons name="calendar-outline" size={20} color={colors.textMuted} />
         {showPicker && (
@@ -222,8 +284,9 @@ const AddBudget = () => {
           />
         )}
       </TouchableOpacity>
-    </View>
-  );
+      </View>
+    );
+  };
 
   return (
     <LinearGradient colors={colors.gradients.background} style={styles.container}>
@@ -234,7 +297,7 @@ const AddBudget = () => {
         >
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
-              Create Budget
+              {t("budget.add.title", { defaultValue: "Create Budget" })}
             </Text>
           </View>
 
@@ -242,11 +305,15 @@ const AddBudget = () => {
             <View style={styles.formContainer}>
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>
-                  Budget Title
+                  {t("budget.add.form.titleLabel", {
+                    defaultValue: "Budget Title",
+                  })}
                 </Text>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="Enter budget title"
+                  placeholder={t("budget.add.form.titlePlaceholder", {
+                    defaultValue: "Enter budget title",
+                  })}
                   placeholderTextColor={colors.textMuted}
                   value={formData.title}
                   onChangeText={(text) => handleInputChange("title", text)}
@@ -254,11 +321,15 @@ const AddBudget = () => {
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>
-                  Budget Amount
+                  {t("budget.add.form.amountLabel", {
+                    defaultValue: "Budget Amount",
+                  })}
                 </Text>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="Enter amount"
+                  placeholder={t("budget.add.form.amountPlaceholder", {
+                    defaultValue: "Enter amount",
+                  })}
                   placeholderTextColor={colors.textMuted}
                   value={formData.amount}
                   onChangeText={(text) => handleInputChange("amount", text)}
@@ -267,7 +338,9 @@ const AddBudget = () => {
               </View>
               <View style={styles.categoryContainer}>
                 <Text style={styles.inputLabel}>
-                  Category
+                  {t("budget.add.form.categoryLabel", {
+                    defaultValue: "Category",
+                  })}
                 </Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={styles.categoryScrollView}>
@@ -287,10 +360,17 @@ const AddBudget = () => {
                             styles.categoryButtonText,
                             formData.category === category
                               ? styles.categoryButtonTextSelected
-                              : styles.categoryButtonTextUnselected
+                              : styles.categoryButtonTextUnselected,
                           ]}
                         >
-                          {category}
+                          {t(
+                            `categories.${category
+                              .toLowerCase()
+                              .replace(/[^a-z0-9]+/g, "-")}`,
+                            {
+                              defaultValue: category,
+                            }
+                          )}
                         </Text>
                       </TouchableOpacity>
                     ))}
@@ -300,7 +380,9 @@ const AddBudget = () => {
 
               <View style={styles.periodContainer}>
                 <Text style={styles.inputLabel}>
-                  Budget Period
+                  {t("budget.add.form.periodLabel", {
+                    defaultValue: "Budget Period",
+                  })}
                 </Text>
                 <View style={styles.periodButtonRow}>
                   {periods.map((period) => (
@@ -319,7 +401,7 @@ const AddBudget = () => {
                           styles.periodButtonText,
                           formData.period === period.value
                             ? styles.periodButtonTextSelected
-                            : styles.periodButtonTextUnselected
+                            : styles.periodButtonTextUnselected,
                         ]}
                       >
                         {period.label}
@@ -331,6 +413,7 @@ const AddBudget = () => {
 
               {getDateInput(
                 "start_date", 
+                "budget.add.form.startDate", 
                 "Start Date", 
                 startDate, 
                 showStartDatePicker, 
@@ -340,6 +423,7 @@ const AddBudget = () => {
 
               {getDateInput(
                 "end_date", 
+                "budget.add.form.endDate", 
                 "End Date", 
                 endDate, 
                 showEndDatePicker, 
@@ -353,7 +437,13 @@ const AddBudget = () => {
                 disabled={isLoading}
               >
                 <Text style={styles.submitButtonText}>
-                  {isLoading ? "Creating..." : "Create Budget"}
+                  {isLoading
+                    ? t("budget.add.actions.creating", {
+                        defaultValue: "Creating...",
+                      })
+                    : t("budget.add.actions.submit", {
+                        defaultValue: "Create Budget",
+                      })}
                 </Text>
               </TouchableOpacity>
             </View>

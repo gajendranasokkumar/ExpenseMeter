@@ -1,4 +1,10 @@
-import { View, Text, ActivityIndicator, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import createHomeStyles from "../styles/home.styles";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
@@ -9,12 +15,14 @@ import api from "../utils/api";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { getCurrentMonth } from "../utils/formatDate";
+import useLanguage from "../hooks/useLanguage";
 
 const BudgetSummary = () => {
   const styles = createHomeStyles();
   const { colors } = useTheme();
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
   const [budget, setBudget] = useState({});
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -94,10 +102,21 @@ const BudgetSummary = () => {
       await api.post(
         `${BUDGET_ROUTES.CREATE_MONTHLY_BUDGET_AS_PREVIOUS.replace(":id", userId).replace(":month", getCurrentMonth())}`
       );
-      Alert.alert("Success", "Budget set as previous successfully");
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("home.budget.alerts.setPreviousSuccess", {
+          defaultValue: "Budget set as previous successfully",
+        })
+      );
       getCurrentMonthBudget();
     } catch (error) {
-      Alert.alert("Error", error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("home.budget.alerts.setPreviousError", {
+            defaultValue: "Failed to set budget as previous month.",
+          })
+      );
     } finally {
       setIsLoading(false);
     }
@@ -105,10 +124,23 @@ const BudgetSummary = () => {
 
   const setBudgetAsPrevious = () => {
     
-      Alert.alert("Warning", "Are you sure you want to set the budget as previous month's budget?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "OK", onPress: handleSetBudgetAsPrevious },
-      ]);
+      Alert.alert(
+        t("common.warning", { defaultValue: "Warning" }),
+        t("home.budget.alerts.confirmSetPrevious", {
+          defaultValue:
+            "Are you sure you want to set the budget as previous month's budget?",
+        }),
+        [
+          {
+            text: t("common.cancel", { defaultValue: "Cancel" }),
+            style: "cancel",
+          },
+          {
+            text: t("common.ok", { defaultValue: "OK" }),
+            onPress: handleSetBudgetAsPrevious,
+          },
+        ]
+      );
     
   };
 
@@ -121,7 +153,11 @@ const BudgetSummary = () => {
       ) : (budget.budgetLimit && budget.currentExpenses) ? (
         <>
           <View style={styles.budgetSummaryTitleContainer}>
-            <Text style={styles.budgetSummaryTitle}>Current month budget</Text>
+            <Text style={styles.budgetSummaryTitle}>
+              {t("home.budget.currentMonthTitle", {
+                defaultValue: "Current month budget",
+              })}
+            </Text>
             <View style={styles.burgetSUmmaryPercent}>
               <Text
                 style={[
@@ -136,14 +172,20 @@ const BudgetSummary = () => {
           <View style={styles.budgetSummaryContent}>
             <View style={styles.budgetSummaryContentLeft}>
               <Text style={styles.budgetSummaryAmountTitle}>
-                Total Expenses
+                {t("home.budget.totalExpenses", {
+                  defaultValue: "Total Expenses",
+                })}
               </Text>
               <Text style={styles.budgetSummaryAmountLeft}>
                 {formatAmountDisplay(budget.currentExpenses)}
               </Text>
             </View>
             <View style={styles.budgetSummaryContentRight}>
-              <Text style={styles.budgetSummaryAmountTitle}>Budget Limit</Text>
+              <Text style={styles.budgetSummaryAmountTitle}>
+                {t("home.budget.budgetLimit", {
+                  defaultValue: "Budget Limit",
+                })}
+              </Text>
               <Text style={styles.budgetSummaryAmountRight}>
                 {formatAmountDisplay(budget.budgetLimit)}
               </Text>
@@ -161,22 +203,41 @@ const BudgetSummary = () => {
             />
           </View>
           <View style={styles.remainingBudgetContainer}>
-            { budget.remainingBudget > 0 ? (
-            <Text style={styles.remainingBudgetTitle}>
-                You can spend <Text style={styles.remainingBudgetAmount}>{formatAmountDisplay(budget.remainingBudget)}</Text> more this month.
+            {budget.remainingBudget > 0 ? (
+              <Text style={styles.remainingBudgetTitle}>
+                {t("home.budget.remainingPositive.prefix", {
+                  defaultValue: "You can spend ",
+                })}
+                <Text style={styles.remainingBudgetAmount}>
+                  {formatAmountDisplay(budget.remainingBudget)}
+                </Text>
+                {t("home.budget.remainingPositive.suffix", {
+                  defaultValue: " more this month.",
+                })}
               </Text>
             ) : (
               <Text style={styles.remainingBudgetTitle}>
-                You have exceeded your budget this month.
+                {t("home.budget.remainingNegative", {
+                  defaultValue: "You have exceeded your budget this month.",
+                })}
               </Text>
             )}
           </View>
         </>
       ) : (
         <View style={styles.budgetFailureTitleContainer}>
-          <Text style={styles.budgetFailureTitle}>Set your monthly budget to see your progress here.</Text>
+          <Text style={styles.budgetFailureTitle}>
+            {t("home.budget.emptyState.message", {
+              defaultValue:
+                "Set your monthly budget to see your progress here.",
+            })}
+          </Text>
           <TouchableOpacity onPress={() => setBudgetAsPrevious()}>
-            <Text style={styles.budgetFailureTitleButton}>Set as previous month&apos;s budget</Text>
+            <Text style={styles.budgetFailureTitleButton}>
+              {t("home.budget.emptyState.cta", {
+                defaultValue: "Set as previous month's budget",
+              })}
+            </Text>
           </TouchableOpacity>
         </View>
       )}

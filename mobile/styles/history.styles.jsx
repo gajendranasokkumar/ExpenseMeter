@@ -3,6 +3,9 @@ import useTheme from "../hooks/useTheme";
 
 const createHistoryStyles = () => {
   const { colors } = useTheme();
+  const surfaceRadius = colors?.radii?.surface ?? (colors?.radii?.card ?? 20);
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -20,7 +23,7 @@ const createHistoryStyles = () => {
     controls: {
       flex: 1,
       padding: 15,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
@@ -146,7 +149,7 @@ const createHistoryStyles = () => {
     optionsIcon: {
       color: colors.primary,
       backgroundColor: colors.surface,
-      borderRadius: 10,
+      borderRadius: pillRadius,
       padding: 10,
     },
     info: {

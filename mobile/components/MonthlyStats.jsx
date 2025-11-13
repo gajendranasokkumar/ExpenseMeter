@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -16,8 +16,7 @@ import SingleBudget from "./SingleBudget";
 import { formatToPieData } from "../utils/formatToPieData";
 import { PieChart } from "react-native-gifted-charts";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
-
-const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+import useLanguage from "../hooks/useLanguage";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -27,6 +26,7 @@ const MonthlyStats = ({ month, year }) => {
   const styles = createStatisticsStyles();
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [monthlyData, setMonthlyData] = useState({});
   const [monthlyBudget, setMonthlyBudget] = useState([]);
@@ -61,6 +61,19 @@ const MonthlyStats = ({ month, year }) => {
   const lastDay = new Date(year, month, 0);
   const totalDays = lastDay.getDate();
   const startDay = firstDay.getDay();
+
+  const daysOfWeek = useMemo(
+    () => [
+      t("statistics.monthly.weekdays.sun", { defaultValue: "Sun" }),
+      t("statistics.monthly.weekdays.mon", { defaultValue: "Mon" }),
+      t("statistics.monthly.weekdays.tue", { defaultValue: "Tue" }),
+      t("statistics.monthly.weekdays.wed", { defaultValue: "Wed" }),
+      t("statistics.monthly.weekdays.thu", { defaultValue: "Thu" }),
+      t("statistics.monthly.weekdays.fri", { defaultValue: "Fri" }),
+      t("statistics.monthly.weekdays.sat", { defaultValue: "Sat" }),
+    ],
+    [t]
+  );
 
   // Build the calendar grid
   const daysArray = Array(startDay)
@@ -162,13 +175,17 @@ const MonthlyStats = ({ month, year }) => {
               <>
                 <View style={styles.pieChartHeadingContainer}>
                   <Text style={styles.budgetListHeading}>
-                    All your expenses of this month
+                    {t("statistics.monthly.expenseHeading", {
+                      defaultValue: "All your expenses this month",
+                    })}
                   </Text>
                 </View>
                 <View style={styles.topExpenseContainer}>
                   <View style={styles.topExpenseDataContainer}>
                     <Text style={styles.topExpenseDataHeading}>
-                      Total Income :
+                      {t("statistics.monthly.totalIncome", {
+                        defaultValue: "Total income",
+                      })}
                     </Text>
                     <Text
                       style={[
@@ -183,7 +200,9 @@ const MonthlyStats = ({ month, year }) => {
                   </View>
                   <View style={styles.topExpenseDataContainer}>
                     <Text style={styles.topExpenseDataHeading}>
-                      Total Expense :
+                      {t("statistics.monthly.totalExpense", {
+                        defaultValue: "Total expense",
+                      })}
                     </Text>
                     <Text style={styles.topExpenseDataValue}>
                       {monthlyPieData.totalExpense
@@ -251,7 +270,9 @@ const MonthlyStats = ({ month, year }) => {
             ) : (
               <View style={styles.wrapper}>
                 <Text style={{ color: colors.text }}>
-                  No expenses for this month.
+                  {t("statistics.monthly.empty", {
+                    defaultValue: "No expenses for this month.",
+                  })}
                 </Text>
               </View>
             )}
@@ -259,7 +280,9 @@ const MonthlyStats = ({ month, year }) => {
             {monthlyBudget.length > 0 && (
               <View style={styles.budgetListContainer}>
                 <Text style={styles.budgetListHeading}>
-                  Your budgets of this month
+                  {t("statistics.monthly.budgetsHeading", {
+                    defaultValue: "Your budgets this month",
+                  })}
                 </Text>
                 {monthlyBudget.map((item, index) => (
                   <SingleBudget

@@ -7,6 +7,8 @@ const createStatisticsStyles = () => {
   const CELL_WIDTH = width / 7;
 
   const { colors } = useTheme();
+  const surfaceRadius = colors?.radii?.surface ?? (colors?.radii?.card ?? 20);
+  const pillRadius = colors?.radii?.pill ?? 12;
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -113,7 +115,7 @@ const createStatisticsStyles = () => {
     legendColorBox: {
       width: 20,
       height: 16,
-      borderRadius: 3,
+      borderRadius: pillRadius,
     },
     legendLabelCol: {
       paddingLeft: 5,
@@ -222,7 +224,7 @@ const createStatisticsStyles = () => {
       marginBottom: 15,
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: 8
+      borderRadius: surfaceRadius
     },
     pieChartHeadingContainer: {
       backgroundColor: colors.bg,

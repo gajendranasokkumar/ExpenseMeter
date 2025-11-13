@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
+import useLanguage from "../hooks/useLanguage";
 
 const { width } = Dimensions.get("window");
 
@@ -20,6 +21,10 @@ const SelectionModal = ({
   onSelectBudget,
 }) => {
   const { colors } = useTheme();
+  const { t } = useLanguage();
+  const modalRadius = colors?.radii?.modal ?? (colors?.radii?.surface ?? 20);
+  const buttonRadius = colors?.radii?.button ?? 16;
+  const pillRadius = colors?.radii?.pill ?? 12;
 
   const styles = StyleSheet.create({
     modalOverlay: {
@@ -30,7 +35,7 @@ const SelectionModal = ({
     },
     modalContent: {
       backgroundColor: colors.surface,
-      borderRadius: 20,
+      borderRadius: modalRadius,
       padding: 24,
       width: width * 0.85,
       maxWidth: 400,
@@ -56,7 +61,7 @@ const SelectionModal = ({
       alignItems: "center",
       justifyContent: "center",
       padding: 16,
-      borderRadius: 12,
+      borderRadius: buttonRadius,
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
@@ -71,6 +76,7 @@ const SelectionModal = ({
     cancelButton: {
       marginTop: 16,
       padding: 12,
+      borderRadius: pillRadius,
     },
     cancelText: {
       fontSize: 14,
@@ -89,9 +95,16 @@ const SelectionModal = ({
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.title}>What would you like to add?</Text>
+            <Text style={styles.title}>
+              {t("selectionModal.title", {
+                defaultValue: "What would you like to add?",
+              })}
+            </Text>
             <Text style={styles.subtitle}>
-              Choose between creating a new transaction or setting up a budget
+              {t("selectionModal.subtitle", {
+                defaultValue:
+                  "Choose between creating a new transaction or setting up a budget",
+              })}
             </Text>
 
             <View style={styles.buttonContainer}>
@@ -109,7 +122,11 @@ const SelectionModal = ({
                   color={colors.primary}
                   style={styles.buttonIcon}
                 />
-                <Text style={styles.buttonText}>Transaction</Text>
+                <Text style={styles.buttonText}>
+                  {t("selectionModal.transaction", {
+                    defaultValue: "Transaction",
+                  })}
+                </Text>
               </TouchableOpacity>
 
               {/* Budget Button */}
@@ -126,13 +143,19 @@ const SelectionModal = ({
                   color={colors.primary}
                   style={styles.buttonIcon}
                 />
-                <Text style={styles.buttonText}>Budget</Text>
+                <Text style={styles.buttonText}>
+                  {t("selectionModal.budget", {
+                    defaultValue: "Budget",
+                  })}
+                </Text>
               </TouchableOpacity>
             </View>
 
             {/* Cancel Button */}
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
+              <Text style={styles.cancelText}>
+                {t("common.cancel", { defaultValue: "Cancel" })}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

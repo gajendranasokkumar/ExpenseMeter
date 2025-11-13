@@ -21,6 +21,7 @@ import { TRANSACTION_ROUTES, BANK_ROUTES } from "../../constants/endPoints";
 import { categories } from "../../constants/Categories";
 import CustomDropdown from "../../components/CustomDropdown";
 import { useFocusEffect } from "@react-navigation/native";
+import useLanguage from "../../hooks/useLanguage";
 
 const AddTransaction = () => {
   const { colors } = useTheme();
@@ -40,6 +41,7 @@ const AddTransaction = () => {
   const { user } = useUser();
   const userId = user?._id;
   const router = useRouter();
+  const { t } = useLanguage();
 
   useEffect(() => {
     setIsError(false);
@@ -96,36 +98,67 @@ const AddTransaction = () => {
         date,
         user_id: userId,
       });
-      Alert.alert("Success", "Transaction created successfully");
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("transactions.add.alerts.createSuccess", {
+          defaultValue: "Transaction created successfully",
+        })
+      );
       router.replace("/history");
     } catch (error) {
-      Alert.alert("Error", error.response.data.message);
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          t("transactions.add.alerts.createError", {
+            defaultValue: "Unable to create transaction.",
+          })
+      );
     }
   };
 
   const handleSave = () => {
     if (!selectedControl) {
-      setError("Please select a type");
+      setError(
+        t("transactions.add.validation.type", {
+          defaultValue: "Please select a type",
+        })
+      );
       setIsError(true);
       return;
     }
     if (!amount) {
-      setError("Please enter an amount");
+      setError(
+        t("transactions.add.validation.amount", {
+          defaultValue: "Please enter an amount",
+        })
+      );
       setIsError(true);
       return;
     }
     if (!date) {
-      setError("Please select a date");
+      setError(
+        t("transactions.add.validation.date", {
+          defaultValue: "Please select a date",
+        })
+      );
       setIsError(true);
       return;
     }
     if (!selectedCategory) {
-      setError("Please select a category");
+      setError(
+        t("transactions.add.validation.category", {
+          defaultValue: "Please select a category",
+        })
+      );
       setIsError(true);
       return;
     }
     if (!selectedBank) {
-      setError("Please select a bank");
+      setError(
+        t("transactions.add.validation.bank", {
+          defaultValue: "Please select a bank",
+        })
+      );
       setIsError(true);
       return;
     }
@@ -159,7 +192,11 @@ const AddTransaction = () => {
         contentContainerStyle={{ paddingBottom: 50 }}
       >
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>New Transaction</Text>
+          <Text style={styles.headerTitle}>
+            {t("transactions.add.title", {
+              defaultValue: "New Transaction",
+            })}
+          </Text>
         </View>
 
         <View style={styles.controlsContainer}>
@@ -192,7 +229,9 @@ const AddTransaction = () => {
                 selectedControl === "income" && { color: colors.incomeMuted },
               ]}
             >
-              Income
+              {t("transactions.common.income", {
+                defaultValue: "Income",
+              })}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -224,7 +263,9 @@ const AddTransaction = () => {
                 selectedControl === "expense" && { color: colors.expenseMuted },
               ]}
             >
-              Expense
+              {t("transactions.common.expense", {
+                defaultValue: "Expense",
+              })}
             </Text>
           </TouchableOpacity>
         </View>
@@ -242,7 +283,9 @@ const AddTransaction = () => {
             color={isFocused ? colors.text : colors.textMuted}
           />
           <TextInput
-            placeholder="00.00"
+            placeholder={t("transactions.add.form.amountPlaceholder", {
+              defaultValue: "00.00",
+            })}
             placeholderTextColor={colors.textMuted}
             style={styles.amountInput}
             keyboardType="numeric"
@@ -265,7 +308,9 @@ const AddTransaction = () => {
               data={banks}
               selectedValue={selectedBank}
               onSelect={setSelectedBank}
-              placeholder="Select bank"
+              placeholder={t("transactions.add.form.selectBank", {
+                defaultValue: "Select bank",
+              })}
               dropdownStyle={{
                 backgroundColor: "transparent",
                 borderWidth: 0,
@@ -302,7 +347,11 @@ const AddTransaction = () => {
         <View style={styles.categoriesContainer}>
           <View style={styles.categoriesHeader}>
             <Ionicons name="list-outline" size={24} color={colors.text} />
-            <Text style={styles.categoriesHeaderText}>Select a category</Text>
+            <Text style={styles.categoriesHeaderText}>
+              {t("transactions.add.form.selectCategory", {
+                defaultValue: "Select a category",
+              })}
+            </Text>
           </View>
           <View style={styles.categoriesList}>
             {categories.map((category) => (
@@ -338,7 +387,9 @@ const AddTransaction = () => {
                     },
                   ]}
                 >
-                  {category.name}
+                  {t(`categories.${category.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, {
+                    defaultValue: category.name,
+                  })}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -360,11 +411,17 @@ const AddTransaction = () => {
                 size={24}
                 color={colors.text}
               />
-              <Text style={styles.notesHeaderText}>Add a note</Text>
+              <Text style={styles.notesHeaderText}>
+                {t("transactions.add.form.addNoteLabel", {
+                  defaultValue: "Add a note",
+                })}
+              </Text>
             </View>
 
             <TextInput
-              placeholder="Add a note"
+              placeholder={t("transactions.add.form.addNotePlaceholder", {
+                defaultValue: "Add a note",
+              })}
               placeholderTextColor={colors.textMuted}
               style={styles.notesInput}
               multiline={true}
@@ -390,12 +447,20 @@ const AddTransaction = () => {
           {isSaving ? (
             <>
               <ActivityIndicator size="small" color={colors.surface} />
-              <Text style={styles.saveButtonText}>Saving...</Text>
+              <Text style={styles.saveButtonText}>
+                {t("transactions.add.actions.saving", {
+                  defaultValue: "Saving...",
+                })}
+              </Text>
             </>
           ) : (
             <>
               <Ionicons name="save" size={24} color={colors.surface} />
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Text style={styles.saveButtonText}>
+                {t("transactions.add.actions.save", {
+                  defaultValue: "Save",
+                })}
+              </Text>
             </>
           )}
         </TouchableOpacity>

@@ -16,6 +16,7 @@ import { MONTH_SHORT_NAMES } from "../utils/formatDate";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { formatToPieData } from "../utils/formatToPieData";
 import { PieChart } from "react-native-gifted-charts";
+import useLanguage from "../hooks/useLanguage";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -25,6 +26,7 @@ const YearlyStats = ({ year }) => {
   const styles = createStatisticsStyles();
   const { user } = useUser();
   const userId = user?._id;
+  const { t } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
   const [yearlyData, setYearlyData] = useState({
@@ -94,7 +96,9 @@ const YearlyStats = ({ year }) => {
           <View style={styles.topExpenseContainer}>
             <View style={styles.topExpenseDataContainer}>
               <Text style={styles.topExpenseDataHeading}>
-                This year's Income :
+                {t("statistics.yearly.totalIncome", {
+                  defaultValue: "This year's income",
+                })}
               </Text>
               <Text
                 style={[styles.topExpenseDataValue, { color: colors.income }]}
@@ -104,7 +108,9 @@ const YearlyStats = ({ year }) => {
             </View>
             <View style={styles.topExpenseDataContainer}>
               <Text style={styles.topExpenseDataHeading}>
-                This year's Expense :
+                {t("statistics.yearly.totalExpense", {
+                  defaultValue: "This year's expense",
+                })}
               </Text>
               <Text style={styles.topExpenseDataValue}>
                 {formatAmountDisplay(yearlyData.totalExpense || 0)}
@@ -114,11 +120,18 @@ const YearlyStats = ({ year }) => {
 
           <View style={{ paddingHorizontal: 15, paddingTop: 15, borderBottomWidth: 2, borderBottomColor: colors.border }}>
             <Text style={styles.budgetListHeading}>
-              Month-wise breakdown ({year})
+              {t("statistics.yearly.monthBreakdown", {
+                defaultValue: `Month-wise breakdown (${year})`,
+                replace: { year },
+              })}
             </Text>
             {yearlyData?.months?.map((m, idx) => {
+              const monthIndex = (m.month || idx + 1) - 1;
               const monthName =
-                MONTH_SHORT_NAMES[(m.month || idx + 1) - 1] || `M${idx + 1}`;
+                t(`calendar.months.${monthIndex}`, {
+                  defaultValue:
+                    MONTH_SHORT_NAMES[monthIndex] || `M${idx + 1}`,
+                }) || `M${idx + 1}`;
               const income = m.income || 0;
               const expense = m.expense || 0;
               const total = Math.max(maxMonthlyValue, 1);
@@ -180,7 +193,9 @@ const YearlyStats = ({ year }) => {
             {!yearlyData?.months?.length ? (
               <View style={styles.wrapper}>
                 <Text style={{ color: colors.text }}>
-                  No data found for this year.
+                  {t("statistics.yearly.emptyMonths", {
+                    defaultValue: "No data found for this year.",
+                  })}
                 </Text>
               </View>
             ) : null}
@@ -189,7 +204,10 @@ const YearlyStats = ({ year }) => {
           {pieData.length > 0 ? (
             <View style={[styles.wrapper]}>
               <Text style={styles.budgetListHeading}>
-                Category-wise breakdown ({year})
+                {t("statistics.yearly.categoryBreakdown", {
+                  defaultValue: `Category-wise breakdown (${year})`,
+                  replace: { year },
+                })}
               </Text>
 
               <View style={styles.chartWrapper}>
@@ -246,7 +264,9 @@ const YearlyStats = ({ year }) => {
           ) : (
             <View style={styles.wrapper}>
               <Text style={{ color: colors.text }}>
-                No expenses for this Year.
+                {t("statistics.yearly.empty", {
+                  defaultValue: "No expenses for this year.",
+                })}
               </Text>
             </View>
           )}

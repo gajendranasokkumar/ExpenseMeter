@@ -18,11 +18,13 @@ import { NOTIFICATION_ROUTES } from "../constants/endPoints";
 import { useUser } from "../context/userContext";
 import { formatDate } from "../utils/formatDate";
 import { useFocusEffect } from "@react-navigation/native";
+import useLanguage from "../hooks/useLanguage";
 
 const NotificationModal = ({ visible, onClose }) => {
   const styles = createHomeStyles();
   const { colors } = useTheme();
   const { user } = useUser();
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -70,12 +72,19 @@ const NotificationModal = ({ visible, onClose }) => {
   const deleteNotification = async (id) => {
     try {
       Alert.alert(
-        "Delete Notification",
-        "Are you sure you want to delete this notification?",
+        t("notifications.alerts.deleteOneTitle", {
+          defaultValue: "Delete notification",
+        }),
+        t("notifications.alerts.deleteOneMessage", {
+          defaultValue: "Are you sure you want to delete this notification?",
+        }),
         [
-          { text: "Cancel", style: "cancel" },
           {
-            text: "Delete",
+            text: t("common.cancel", { defaultValue: "Cancel" }),
+            style: "cancel",
+          },
+          {
+            text: t("common.delete", { defaultValue: "Delete" }),
             style: "destructive",
             onPress: async () => {
               await api.delete(
@@ -104,12 +113,19 @@ const NotificationModal = ({ visible, onClose }) => {
 
   const deleteAllNotifications = async () => {
     Alert.alert(
-      "Delete All Notifications",
-      "Are you sure you want to delete all notifications?",
+      t("notifications.alerts.deleteAllTitle", {
+        defaultValue: "Delete all notifications",
+      }),
+      t("notifications.alerts.deleteAllMessage", {
+        defaultValue: "Are you sure you want to delete all notifications?",
+      }),
       [
-        { text: "Cancel", style: "cancel" },
         {
-          text: "Delete",
+          text: t("common.cancel", { defaultValue: "Cancel" }),
+          style: "cancel",
+        },
+        {
+          text: t("common.delete", { defaultValue: "Delete" }),
           style: "destructive",
           onPress: async () => {
             await api.delete(`${NOTIFICATION_ROUTES.DELETE_ALL_NOTIFICATIONS}`);
@@ -182,7 +198,10 @@ const NotificationModal = ({ visible, onClose }) => {
                           <Text
                             style={styles.notificationModalContentHeaderTitle}
                           >
-                            Notifications ({notifications.length})
+                            {t("notifications.title", {
+                              defaultValue: "Notifications ({count})",
+                              replace: { count: notifications.length },
+                            })}
                           </Text>
 
                           <TouchableOpacity
@@ -205,8 +224,10 @@ const NotificationModal = ({ visible, onClose }) => {
                                 style={styles.infoIcon}
                               />
                               <Text style={styles.infoText}>
-                                Click to mark it as read and long press to
-                                delete it.
+                                {t("notifications.info", {
+                                  defaultValue:
+                                    "Tap to mark as read and long press to delete.",
+                                })}
                               </Text>
                             </View>
                             
@@ -220,7 +241,9 @@ const NotificationModal = ({ visible, onClose }) => {
                                 color={colors.text}
                               />
                               <Text style={styles.deleteAllButtonText}>
-                                Delete All Notifications
+                                {t("notifications.deleteAll", {
+                                  defaultValue: "Delete all notifications",
+                                })}
                               </Text>
                             </TouchableOpacity>
                           </>
@@ -240,7 +263,9 @@ const NotificationModal = ({ visible, onClose }) => {
                           color={colors.textMuted}
                         />
                         <Text style={styles.notificationModalContentEmpty}>
-                          No notifications found.
+                          {t("notifications.empty", {
+                            defaultValue: "No notifications found.",
+                          })}
                         </Text>
                       </View>
                     }
@@ -257,7 +282,9 @@ const NotificationModal = ({ visible, onClose }) => {
                           <Text
                             style={styles.notificationModalContentFooterText}
                           >
-                            End of notifications.
+                            {t("notifications.footer", {
+                              defaultValue: "End of notifications.",
+                            })}
                           </Text>
                         </View>
                       ) : null

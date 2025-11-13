@@ -109,16 +109,44 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name="settings"
+          name="more"
           options={{
-            title: "Settings",
+            title: "More",
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons
-                name={focused ? "settings" : "settings-outline"}
+                name={
+                  focused
+                    ? "ellipsis-horizontal-circle"
+                    : "ellipsis-horizontal-circle-outline"
+                }
                 size={size}
                 color={color}
               />
             ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="languages"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="themes"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="support"
+          options={{
+            href: null,
           }}
         />
         <Tabs.Screen

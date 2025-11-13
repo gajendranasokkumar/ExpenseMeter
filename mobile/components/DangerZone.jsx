@@ -6,12 +6,13 @@ import useTheme from "../hooks/useTheme";
 import createSettingsStyles from "../styles/settings.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import useTransations from "../hooks/useTransations";
+import useLanguage from "../hooks/useLanguage";
 
 const DangerZone = () => {
   const { colors } = useTheme();
   const styles = createSettingsStyles();
+  const { t } = useLanguage();
 
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -27,12 +28,29 @@ const DangerZone = () => {
 
     setLoggingOut(true);
     try {
-      Alert.alert("Logout", "Are you sure you want to logout?", [
-        { text: "Cancel", style: "cancel" },
-        { text: "Ok", onPress: () => handleLogout() },
-      ]);
+      Alert.alert(
+        t("dangerZone.alerts.logoutTitle", { defaultValue: "Logout" }),
+        t("dangerZone.alerts.logoutMessage", {
+          defaultValue: "Are you sure you want to logout?",
+        }),
+        [
+          {
+            text: t("common.cancel", { defaultValue: "Cancel" }),
+            style: "cancel",
+          },
+          {
+            text: t("common.ok", { defaultValue: "OK" }),
+            onPress: () => handleLogout(),
+          },
+        ]
+      );
     } catch (e) {
-      Alert.alert("Error", "Failed to logout. Please try again.");
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("dangerZone.alerts.logoutError", {
+          defaultValue: "Failed to logout. Please try again.",
+        })
+      );
     } finally {
       setLoggingOut(false);
     }
@@ -41,7 +59,9 @@ const DangerZone = () => {
   return (
     <LinearGradient colors={colors.gradients.surface} style={styles.section}>
       <View style={styles.profileSectionHeader}>
-        <Text style={styles.sectionTitleDanger}>Danger Zone</Text>
+        <Text style={styles.sectionTitleDanger}>
+          {t("dangerZone.title", { defaultValue: "Danger zone" })}
+        </Text>
       </View>
       <TouchableOpacity
         onPress={handleLogoutPress}
@@ -52,7 +72,9 @@ const DangerZone = () => {
         {loggingOut ? (
           <ActivityIndicator color={colors.text} />
         ) : (
-          <Text style={styles.settingText}>Logout</Text>
+          <Text style={styles.settingText}>
+            {t("dangerZone.logout", { defaultValue: "Logout" })}
+          </Text>
         )}
       </TouchableOpacity>
       <TouchableOpacity
@@ -64,7 +86,11 @@ const DangerZone = () => {
         {loggingOut ? (
           <ActivityIndicator color={colors.text} />
         ) : (
-          <Text style={styles.settingText}>Delete All Transactions</Text>
+          <Text style={styles.settingText}>
+            {t("dangerZone.deleteAllTransactions", {
+              defaultValue: "Delete all transactions",
+            })}
+          </Text>
         )}
       </TouchableOpacity>
     </LinearGradient>

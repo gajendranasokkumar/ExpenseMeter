@@ -3,6 +3,9 @@ import useTheme from "../hooks/useTheme";
 
 export const banksSummaryStyles = () => {
   const { colors } = useTheme();
+  const cardRadius = colors?.radii?.card ?? 20;
+  const circleRadius = colors?.radii?.circle ?? 999;
+
   return StyleSheet.create({
     banksSummaryContainer: {
       flex: 1,
@@ -12,7 +15,7 @@ export const banksSummaryStyles = () => {
       borderWidth: 2,
       borderColor: colors.border,
       padding: 10,
-      borderRadius: 10,
+      borderRadius: cardRadius,
       borderStyle: "dashed",
     },
     banksSummaryTitle: {
@@ -30,7 +33,7 @@ export const banksSummaryStyles = () => {
     bankSummaryItemLogo: {
       width: 20,
       height: 20,
-      borderRadius: 10,
+      borderRadius: cardRadius,
       marginRight: 10,
     },
     bankSummaryItemName: {
@@ -53,7 +56,7 @@ export const banksSummaryStyles = () => {
       marginTop: 15,
       borderWidth: 2,
       borderColor: colors.border,
-      borderRadius: 10,
+      borderRadius: circleRadius,
       borderStyle: "dashed",
       padding: 10,
       backgroundColor: colors.surface,

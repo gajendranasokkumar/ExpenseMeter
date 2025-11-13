@@ -15,6 +15,7 @@ import DailyStats from "../../components/DailyStats";
 import MonthlyStats from "../../components/MonthlyStats";
 import YearlyStats from "../../components/YearlyStats";
 import TotalStats from "../../components/TotalStats";
+import useLanguage from "../../hooks/useLanguage";
 
 const tabsNumber = Object.freeze({
   DAILY: 1,
@@ -23,18 +24,35 @@ const tabsNumber = Object.freeze({
   TOTAL: 4,
 });
 
-const tabList = [
-  { id: tabsNumber.DAILY, label: "Daily" },
-  { id: tabsNumber.MONTHLY, label: "Monthly" },
-  { id: tabsNumber.YEARLY, label: "Yearly" },
-  { id: tabsNumber.TOTAL, label: "Total" },
+const tabListDefinitions = [
+  {
+    id: tabsNumber.DAILY,
+    labelKey: "statistics.tabs.daily",
+    defaultLabel: "Daily",
+  },
+  {
+    id: tabsNumber.MONTHLY,
+    labelKey: "statistics.tabs.monthly",
+    defaultLabel: "Monthly",
+  },
+  {
+    id: tabsNumber.YEARLY,
+    labelKey: "statistics.tabs.yearly",
+    defaultLabel: "Yearly",
+  },
+  {
+    id: tabsNumber.TOTAL,
+    labelKey: "statistics.tabs.total",
+    defaultLabel: "Total",
+  },
 ];
 
-const tabOrder = tabList.map((tab) => tab.id);
+const tabOrder = tabListDefinitions.map((tab) => tab.id);
 
 const Statistics = () => {
   const { colors } = useTheme();
   const styles = createStatisticsStyles();
+  const { t } = useLanguage();
 
   const now = new Date();
   const currentYear = now.getFullYear();
@@ -44,8 +62,12 @@ const Statistics = () => {
   const monthNames = MONTH_SHORT_NAMES;
 
   const monthOptions = useMemo(
-    () => monthNames.map((name, idx) => ({ value: idx + 1, label: name })),
-    []
+    () =>
+      monthNames.map((name, idx) => ({
+        value: idx + 1,
+        label: t(`calendar.months.${idx}`, { defaultValue: name }),
+      })),
+    [monthNames, t]
   );
 
   const yearOptions = useMemo(() => {
@@ -161,7 +183,9 @@ const Statistics = () => {
     >
       <View style={styles.content} {...panResponder.panHandlers}>
         <View style={styles.header}>
-          <Text style={styles.title}>Statistics</Text>
+          <Text style={styles.title}>
+            {t("statistics.title", { defaultValue: "Statistics" })}
+          </Text>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -172,7 +196,9 @@ const Statistics = () => {
                   <CustomDropdown
                     data={dayOptions}
                     selectedValue={selectedDay}
-                    placeholder="Day"
+                    placeholder={t("statistics.filters.day", {
+                      defaultValue: "Day",
+                    })}
                     onSelect={setSelectedDay}
                   />
                 </View>
@@ -184,7 +210,9 @@ const Statistics = () => {
                   <CustomDropdown
                     data={monthOptions}
                     selectedValue={selectedMonth}
-                    placeholder="Month"
+                    placeholder={t("statistics.filters.month", {
+                      defaultValue: "Month",
+                    })}
                     onSelect={setSelectedMonth}
                   />
                 </View>
@@ -197,7 +225,9 @@ const Statistics = () => {
                   <CustomDropdown
                     data={yearOptions}
                     selectedValue={selectedYear}
-                    placeholder="Year"
+                    placeholder={t("statistics.filters.year", {
+                      defaultValue: "Year",
+                    })}
                     onSelect={setSelectedYear}
                   />
                 </View>
@@ -206,7 +236,7 @@ const Statistics = () => {
           )}
 
           <View style={styles.tabsSelectorContainer}>
-            {tabList.map((tab) => (
+            {tabListDefinitions.map((tab) => (
               <TouchableOpacity
                 key={tab.id}
                 onPress={() => setActiveTabNumber(tab.id)}
@@ -223,7 +253,7 @@ const Statistics = () => {
                       : styles.tabName
                   }
                 >
-                  {tab.label}
+                  {t(tab.labelKey, { defaultValue: tab.defaultLabel })}
                 </Text>
               </TouchableOpacity>
             ))}

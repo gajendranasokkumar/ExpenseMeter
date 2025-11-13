@@ -5,6 +5,11 @@ const { width, height } = Dimensions.get("window");
 
 const createSettingsStyles = () => {
   const { colors } = useTheme();
+  const surfaceRadius = colors?.radii?.surface ?? (colors?.radii?.card ?? 20);
+  const buttonRadius = colors?.radii?.button ?? 16;
+  const pillRadius = colors?.radii?.pill ?? 12;
+  const circleRadius = colors?.radii?.circle ?? 999;
+
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -22,20 +27,26 @@ const createSettingsStyles = () => {
       marginBottom: 10,
     },
     title: {
+      flex: 1,
       color: colors.text,
       fontSize: 28,
       fontWeight: "700",
+      textAlign: "center",
+    },
+    headerSpacer: {
+      width: 44,
+      height: 44,
     },
     clearButton: {
       height: 52,
-      borderRadius: 12,
+      borderRadius: buttonRadius,
       backgroundColor: colors.danger,
       justifyContent: "center",
       alignItems: "center",
       marginBottom: 15,
     },
     section: {
-      borderRadius: 20,
+      borderRadius: surfaceRadius,
       padding: 24,
       shadowColor: colors.shadow,
       borderWidth: 1,
@@ -73,7 +84,7 @@ const createSettingsStyles = () => {
     settingIcon: {
       width: 36,
       height: 36,
-      borderRadius: 8,
+      borderRadius: pillRadius,
       justifyContent: "center",
       alignItems: "center",
       marginRight: 16,
@@ -123,7 +134,7 @@ const createSettingsStyles = () => {
     profileSectionAvatar: {
       width: 150,
       height: 150,
-      borderRadius: 16,
+      borderRadius: surfaceRadius,
       marginBottom: 15,
       borderWidth: 2,
       borderColor: colors.textMuted,
@@ -134,7 +145,7 @@ const createSettingsStyles = () => {
       top: -10,
       right: 60,
       backgroundColor: colors.surface,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       padding: 5,
       shadowColor: colors.shadow,
       shadowOffset: {
@@ -153,7 +164,7 @@ const createSettingsStyles = () => {
       top: -10,
       left: 60,
       backgroundColor: colors.danger,
-      borderRadius: 100,
+      borderRadius: circleRadius,
       padding: 5,
       shadowColor: colors.shadow,
       shadowOffset: {
@@ -169,7 +180,7 @@ const createSettingsStyles = () => {
     },
     profileSectionEditButton: {
       padding: 8,
-      borderRadius: 8,
+      borderRadius: pillRadius,
       backgroundColor: colors.primary,
     },
     profileSectionName: {
@@ -186,6 +197,16 @@ const createSettingsStyles = () => {
       color: colors.text,
       borderBottomWidth: 1,
       borderBottomColor: colors.text,
+    },
+    backButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 };
