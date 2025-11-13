@@ -272,36 +272,26 @@ export const TRANSLATIONS = {
       },
     },
     notifications: {
-      title: "सूचनाएँ ({count})",
-      info: "पढ़ा चिह्नित करने के लिए टैप करें और हटाने के लिए लंबे समय तक दबाएँ।",
-      deleteAll: "सभी सूचनाएँ हटाएँ",
-      empty: "कोई सूचनाएँ नहीं मिलीं।",
-      footer: "सूचनाओं का अंत।",
+      title: "Notifications ({count})",
+      info: "Tap to mark as read and long press to delete.",
+      deleteAll: "Delete all notifications",
+      empty: "No notifications found.",
+      footer: "End of notifications.",
       alerts: {
-        deleteOneTitle: "सूचना हटाएँ",
+        deleteOneTitle: "Delete notification",
         deleteOneMessage:
-          "क्या आप वाकई इस सूचना को हटाना चाहते हैं?",
-        deleteAllTitle: "सभी सूचनाएँ हटाएँ",
+          "Are you sure you want to delete this notification",
+        deleteAllTitle: "Delete all notifications",
         deleteAllMessage:
-          "क्या आप वाकई सभी सूचनाओं को हटाना चाहते हैं?",
+          "Are you sure you want to delete all notifications?",
       },
     },
     selectionModal: {
-      title: "आप क्या जोड़ना चाहेंगे?",
+      title: "What would you like to add?",
       subtitle:
-        "नई लेन-देन बनाने या बजट सेट करने में से चुनें",
-      transaction: "लेन-देन",
-      budget: "बजट",
-    },
-    dangerZone: {
-      title: "खतरे का क्षेत्र",
-      logout: "लॉगआउट",
-      deleteAllTransactions: "सभी लेन-देन हटाएँ",
-      alerts: {
-        logoutTitle: "लॉगआउट",
-        logoutMessage: "क्या आप वाकई लॉगआउट करना चाहते हैं?",
-        logoutError: "लॉगआउट असफल रहा। कृपया पुनः प्रयास करें।",
-      },
+        "Choose between creating a new transaction or setting up a budget",
+      transaction: "Transaction",
+      budget: "Budget",
     },
     calendar: {
       months: {
