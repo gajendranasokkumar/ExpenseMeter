@@ -31,7 +31,7 @@ const createSettingsStyles = () => {
       color: colors.text,
       fontSize: 28,
       fontWeight: "700",
-      textAlign: "center",
+      paddingLeft: 16,
     },
     headerSpacer: {
       width: 44,

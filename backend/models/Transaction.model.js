@@ -26,6 +26,12 @@ const transactionSchema = new mongoose.Schema(
       trim: true,
       maxlength: 100,
     },
+    category_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: false,
+      index: true,
+    },
     bank: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'banks',

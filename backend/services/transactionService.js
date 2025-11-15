@@ -41,8 +41,20 @@ const getTransactionsByUserId = async (userId, { page = 1, limit = 10, startDate
   return { items, total, page: pageNumber, limit: pageSize, totalPages };
 };
 
-const createTransaction = async ({ title, amount, category, bank, user_id, date }) => {
-  const transaction = await Transaction.create({ title, amount, category, bank, user_id, date });
+const createTransaction = async ({ title, amount, category, category_id, bank, user_id, date }) => {
+  const transactionData = { title, amount, category, bank, user_id, date };
+  
+  // If category_id is provided (custom category), set it
+  if (category_id) {
+    transactionData.category_id = category_id;
+    // Store category name as well for backward compatibility
+    transactionData.category = category || category_id;
+  } else {
+    // For default categories, category is a string
+    transactionData.category = category;
+  }
+  
+  const transaction = await Transaction.create(transactionData);
   if(amount > 0) {
     await NotificationService.createNotification({ user_id, title: 'Income', message: `You have earned ${amount} from ${title}` });
   } else {

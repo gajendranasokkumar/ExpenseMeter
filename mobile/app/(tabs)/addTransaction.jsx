@@ -17,7 +17,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import api from "../../utils/api";
 import { useUser } from "../../context/userContext";
 import { useRouter } from "expo-router";
-import { TRANSACTION_ROUTES, BANK_ROUTES } from "../../constants/endPoints";
+import { TRANSACTION_ROUTES, BANK_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
 import { categories } from "../../constants/Categories";
 import CustomDropdown from "../../components/CustomDropdown";
 import { useFocusEffect } from "@react-navigation/native";
@@ -38,6 +38,8 @@ const AddTransaction = () => {
   const [isError, setIsError] = useState(false);
   const [banks, setBanks] = useState([]);
   const [selectedBank, setSelectedBank] = useState(null);
+  const [userCategories, setUserCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const { user } = useUser();
   const userId = user?._id;
   const router = useRouter();
@@ -48,7 +50,45 @@ const AddTransaction = () => {
     setError("");
   }, [selectedControl, amount, date, selectedCategory, selectedBank]);
 
-  const fetchBanks = async () => {
+  const fetchUserCategories = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
+        userId: userId,
+      });
+      const userCats = res?.data?.data || [];
+      setUserCategories(userCats);
+      
+      // Combine default categories with user categories
+      const defaultCats = categories.map(cat => ({
+        ...cat,
+        isCustom: false,
+        _id: null,
+      }));
+      
+      const customCats = userCats.map(cat => ({
+        name: cat.name,
+        unselectedIcon: cat.icon || "pricetag-outline",
+        selectedIcon: cat.icon || "pricetag",
+        color: cat.color || colors.primary,
+        isCustom: true,
+        _id: cat._id,
+      }));
+      
+      setAllCategories([...defaultCats, ...customCats]);
+    } catch (e) {
+      // If error, just use default categories
+      const defaultCats = categories.map(cat => ({
+        ...cat,
+        isCustom: false,
+        _id: null,
+      }));
+      setAllCategories(defaultCats);
+    }
+  }, [userId, colors.primary]);
+
+  const fetchBanks = useCallback(async () => {
+    if (!userId) return;
     try {
       const res = await api.post(BANK_ROUTES.GET_ALL_BANKS, {
         userId: userId,
@@ -58,12 +98,13 @@ const AddTransaction = () => {
     } catch (e) {
       // silently ignore
     }
-  };
+  }, [userId]);
 
   useFocusEffect(
     useCallback(() => {
       fetchBanks();
-    }, [fetchBanks])
+      fetchUserCategories();
+    }, [fetchBanks, fetchUserCategories])
   );
 
   const onDateChange = (event, selectedDate) => {
@@ -80,6 +121,7 @@ const AddTransaction = () => {
   const createTransaction = async (
     amount,
     category,
+    category_id,
     bank,
     date,
     notes = ""
@@ -94,6 +136,7 @@ const AddTransaction = () => {
         title: notes,
         amount,
         category,
+        category_id,
         bank,
         date,
         user_id: userId,
@@ -167,9 +210,14 @@ const AddTransaction = () => {
     setError("");
     setIsSaving(true);
 
+    // Determine if it's a custom category or default category
+    const categoryName = selectedCategory.name;
+    const categoryId = selectedCategory.isCustom ? selectedCategory._id : null;
+
     createTransaction(
       amount,
-      selectedCategory.name,
+      categoryName,
+      categoryId,
       selectedBank.id,
       date,
       notes
@@ -354,9 +402,9 @@ const AddTransaction = () => {
             </Text>
           </View>
           <View style={styles.categoriesList}>
-            {categories.map((category) => (
+            {allCategories.map((category) => (
               <TouchableOpacity
-                key={category.name}
+                key={category.isCustom ? category._id : category.name}
                 style={[
                   styles.category,
                   selectedCategory?.name === category.name && {

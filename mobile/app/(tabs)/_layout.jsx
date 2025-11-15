@@ -116,8 +116,8 @@ const TabsLayout = () => {
               <Ionicons
                 name={
                   focused
-                    ? "ellipsis-horizontal-circle"
-                    : "ellipsis-horizontal-circle-outline"
+                    ? "ellipsis-horizontal"
+                    : "ellipsis-horizontal-outline"
                 }
                 size={size}
                 color={color}
@@ -155,6 +155,12 @@ const TabsLayout = () => {
             href: null, // Hide from tab bar
           }}
         />
+        <Tabs.Screen
+          name="categories"
+          options={{
+            href: null,
+          }}
+        />
       </Tabs>
 
       <SelectionModal
@@ -173,7 +179,7 @@ const TabsLayout = () => {
           right: 20,
           width: 56,
           height: 56,
-          borderRadius: 100,
+          borderRadius: 16,
           backgroundColor: colors.primary,
           justifyContent: "center",
           alignItems: "center",

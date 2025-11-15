@@ -7,11 +7,22 @@ import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { categories } from "../constants/Categories";
 import { formatDate } from "../utils/formatDate";
 
-const SingleTransaction = ({ transaction, onDelete }) => {
+const SingleTransaction = ({ transaction, onDelete, userCategories = [] }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
 
-  const getIcon = (category) => {
+  const getIcon = (category, categoryId) => {
+    // If category_id exists, it's a custom category - use the icon from userCategories
+    if (categoryId) {
+      const customCategory = userCategories.find(
+        (cat) => cat._id === categoryId || cat._id?.toString() === categoryId?.toString()
+      );
+      if (customCategory?.icon) {
+        return customCategory.icon;
+      }
+    }
+    
+    // Otherwise, it's a default category - use the icon from Categories.jsx
     const categoryData = categories.find((cat) => cat.name.toLowerCase() === category.toLowerCase());
     return categoryData?.unselectedIcon || "ellipsis-horizontal-outline";
   };
@@ -26,7 +37,7 @@ const SingleTransaction = ({ transaction, onDelete }) => {
       <View style={styles.transactionContainerForTrans}>
         <View style={styles.transactionLeft}>
           <Ionicons
-            name={getIcon(transaction.category.toLowerCase())}
+            name={getIcon(transaction.category?.toLowerCase() || transaction.category, transaction.category_id)}
             size={24}
             color={
               transaction.amount > 0 ? colors.incomeMuted : colors.expenseMuted

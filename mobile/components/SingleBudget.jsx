@@ -8,11 +8,22 @@ import { categories } from "../constants/Categories";
 import { formatDate } from "../utils/formatDate";
 import ProgressBar from "./ProgressBar";
 
-const SingleBudget = ({ budget, onDelete, showProgressbar=false }) => {
+const SingleBudget = ({ budget, onDelete, showProgressbar=false, userCategories = [] }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
 
-  const getIcon = (category) => {
+  const getIcon = (category, categoryId) => {
+    // If category_id exists, it's a custom category - use the icon from userCategories
+    if (categoryId) {
+      const customCategory = userCategories.find(
+        (cat) => cat._id === categoryId || cat._id?.toString() === categoryId?.toString()
+      );
+      if (customCategory?.icon) {
+        return customCategory.icon;
+      }
+    }
+    
+    // Otherwise, it's a default category - use the icon from Categories.jsx
     const categoryData = categories.find(
       (cat) => cat.name.toLowerCase() === category.toLowerCase()
     );
@@ -41,7 +52,7 @@ const SingleBudget = ({ budget, onDelete, showProgressbar=false }) => {
         <View style={styles.transactionContainerTop}>
           <View style={styles.transactionLeft}>
             <Ionicons
-              name={getIcon(budget.category.toLowerCase())}
+              name={getIcon(budget.category?.toLowerCase() || budget.category, budget.category_id)}
               size={24}
               color={colors.incomeMuted}
             />

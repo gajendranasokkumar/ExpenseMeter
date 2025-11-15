@@ -214,7 +214,7 @@ const getBudgetsAndExpensesByCategoryForMonthAndYear = async (userId, month, yea
   };
 };
 
-const createBudget = async ({ title, amount, category, user_id, period, start_date, end_date, isAllCategory }) => {
+const createBudget = async ({ title, amount, category, category_id, user_id, period, start_date, end_date, isAllCategory }) => {
 
   const month = new Date(start_date).toLocaleString('en-US', { month: 'long' });
 
@@ -226,7 +226,7 @@ const createBudget = async ({ title, amount, category, user_id, period, start_da
     }
   }
 
-  const budget = await Budget.create({ 
+  const budgetData = { 
     title, 
     amount, 
     category, 
@@ -235,7 +235,19 @@ const createBudget = async ({ title, amount, category, user_id, period, start_da
     start_date, 
     end_date,
     isAllCategory
-  });
+  };
+
+  // If category_id is provided (custom category), set it
+  if (category_id) {
+    budgetData.category_id = category_id;
+    // Store category name as well for backward compatibility
+    budgetData.category = category || category_id;
+  } else {
+    // For default categories, category is a string
+    budgetData.category = category;
+  }
+
+  const budget = await Budget.create(budgetData);
   
   await NotificationService.createNotification({ 
     user_id, 

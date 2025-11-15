@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -16,11 +16,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import createStyles from "../../styles/addBudget.styles";
 import api from "../../utils/api";
-import { BUDGET_ROUTES } from "../../constants/endPoints";
+import { BUDGET_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
 import { useUser } from "../../context/userContext";
 import { getCurrentMonth, computeEndDate } from "../../utils/formatDate";
 import { categories } from "../../constants/Categories";
 import useLanguage from "../../hooks/useLanguage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const AddBudget = () => {
   const { colors } = useTheme();
@@ -43,10 +44,11 @@ const AddBudget = () => {
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [isAllCategory, setIsAllCategory] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const listofCategories = [
+  const [userCategories, setUserCategories] = useState([]);
+  const [listofCategories, setListofCategories] = useState([
     "Monthly Budget",
     ...categories.map((category) => category.name),
-  ];
+  ]);
 
   const periods = [
     {
@@ -102,6 +104,35 @@ const AddBudget = () => {
   const showEndDatePickerModal = () => {
     setShowEndDatePicker(true);
   };
+
+  const fetchUserCategories = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
+        userId: userId,
+      });
+      const userCats = res?.data?.data || [];
+      setUserCategories(userCats);
+      
+      // Combine default categories with user categories
+      const defaultCats = categories.map((category) => category.name);
+      const customCats = userCats.map((cat) => cat.name);
+      
+      setListofCategories(["Monthly Budget", ...defaultCats, ...customCats]);
+    } catch (e) {
+      // If error, just use default categories
+      setListofCategories([
+        "Monthly Budget",
+        ...categories.map((category) => category.name),
+      ]);
+    }
+  }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserCategories();
+    }, [fetchUserCategories])
+  );
 
   useEffect(() => {
     // Initialize start_date to today and end_date based on default period
@@ -202,8 +233,16 @@ const AddBudget = () => {
 
     try {
       setIsLoading(true);
+      
+      // Check if selected category is a custom category
+      const selectedUserCategory = userCategories.find(
+        (cat) => cat.name === formData.category
+      );
+      const category_id = selectedUserCategory ? selectedUserCategory._id : null;
+      
       const response = await api.post(BUDGET_ROUTES.CREATE_BUDGET, {
         ...formData,
+        category_id,
         user_id: userId,
         amount: parseFloat(formData.amount),
         start_date: new Date(formData.start_date),

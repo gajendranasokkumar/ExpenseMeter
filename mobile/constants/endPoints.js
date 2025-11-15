@@ -1,5 +1,5 @@
-// export const API_URL = "http://192.168.1.5:3000";
-export const API_URL = "https://expensemeter-backend.onrender.com";
+export const API_URL = "http://192.168.1.5:3000";
+// export const API_URL = "https://expensemeter-backend.onrender.com";
 
 export const AUTH_ROUTES = {
   REGISTER: "/users/register",
@@ -60,4 +60,14 @@ export const STATISTICS_ROUTES = {
   GET_MONTHLY_STATS: "/statistics/monthly/:id",
   GET_YEARLY_STATS: "/statistics/yearly/:id",
   GET_TOTAL_STATS: "/statistics/total/:id",
+};
+
+export const CATEGORY_ROUTES = {
+  CREATE_CATEGORY: "/categories",
+  GET_ALL_CATEGORIES: "/categories/all",
+  GET_CATEGORY_BY_ID: "/categories/:id/user/:userId",
+  UPDATE_CATEGORY: "/categories/:id",
+  DELETE_CATEGORY: "/categories/:id/user/:userId",
+  PERMANENTLY_DELETE_CATEGORY: "/categories/permanent/:id/user/:userId",
+  GET_CATEGORY_SUMMARY: "/categories/summary/:userId",
 };

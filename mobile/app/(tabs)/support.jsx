@@ -24,7 +24,14 @@ const Support = () => {
       title: t("support.option.email.title"),
       description: t("support.option.email.description"),
       icon: "mail-outline",
-      action: () => Linking.openURL("mailto:support@expensemeter.app"),
+      action: () => Linking.openURL("mailto:gajendran2908@gmail.com"),
+    },
+    {
+      key: "phone",
+      title: t("support.option.phone.title"),
+      description: t("support.option.phone.description"),
+      icon: "call-outline",
+      action: () => Linking.openURL("tel:+919944919805"),
     },
     {
       key: "docs",

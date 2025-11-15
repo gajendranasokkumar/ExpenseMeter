@@ -8,6 +8,7 @@ const notificationRoutes = require('./notification.route');
 const budgetRoutes = require('./budget.route');
 const bankRoutes = require('./bank.route');
 const statisticsRoute = require('./statistics.route');
+const categoryRoutes = require('./category.route');
 
 router.get('/', homeController.getHome);
 router.use('/users', userRoutes);
@@ -16,6 +17,7 @@ router.use('/notifications', notificationRoutes);
 router.use('/budgets', budgetRoutes);
 router.use('/banks', bankRoutes);
 router.use('/statistics', statisticsRoute);
+router.use('/categories', categoryRoutes);
 
 module.exports = router;
         

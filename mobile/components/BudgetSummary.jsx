@@ -150,7 +150,7 @@ const BudgetSummary = () => {
         <View style={styles.budgetSummaryLoadingContainer}>
           <ActivityIndicator size="small" color={colors.primary} />
         </View>
-      ) : (budget.budgetLimit && budget.currentExpenses) ? (
+      ) : (budget.budgetLimit) ? (
         <>
           <View style={styles.budgetSummaryTitleContainer}>
             <Text style={styles.budgetSummaryTitle}>

@@ -17,7 +17,7 @@ class TransactionController {
 
   async createTransaction(req, res) {
     try {
-      const { title, amount, category, bank, user_id, date } = req.body;
+      const { title, amount, category, category_id, bank, user_id, date } = req.body;
       if (!title || user_id === undefined || !category || !bank || amount === undefined) {
         return res.status(400).json({ message: 'All fields are required' });
       }
@@ -27,7 +27,7 @@ class TransactionController {
       if (typeof amount !== 'number' || Number.isNaN(amount)) {
         return res.status(400).json({ message: 'amount must be a number' });
       }
-      const transaction = await transactionService.createTransaction({ title, amount, category, bank, user_id, date });
+      const transaction = await transactionService.createTransaction({ title, amount, category, category_id, bank, user_id, date });
       return res.status(201).json(transaction);
     } catch (error) {
       return res.status(400).json({ message: error.message });

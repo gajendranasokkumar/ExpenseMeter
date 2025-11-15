@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
-import { STATISTICS_ROUTES } from "../constants/endPoints";
+import { STATISTICS_ROUTES, CATEGORY_ROUTES } from "../constants/endPoints";
 import api from "../utils/api";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -31,6 +31,19 @@ const MonthlyStats = ({ month, year }) => {
   const [monthlyData, setMonthlyData] = useState({});
   const [monthlyBudget, setMonthlyBudget] = useState([]);
   const [monthlyPieData, setMonthlyPieData] = useState({});
+  const [userCategories, setUserCategories] = useState([]);
+
+  const fetchUserCategories = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
+        userId: userId,
+      });
+      setUserCategories(res?.data?.data || []);
+    } catch (e) {
+      setUserCategories([]);
+    }
+  }, [userId]);
 
   const fetchMonthlyStats = useCallback(() => {
     if (!userId || !month || !year) return;
@@ -52,7 +65,8 @@ const MonthlyStats = ({ month, year }) => {
   useFocusEffect(
     useCallback(() => {
       fetchMonthlyStats();
-    }, [fetchMonthlyStats])
+      fetchUserCategories();
+    }, [fetchMonthlyStats, fetchUserCategories])
   );
 
   const pieData = formatToPieData(monthlyPieData);
@@ -290,6 +304,7 @@ const MonthlyStats = ({ month, year }) => {
                     budget={item}
                     onDelete={() => {}}
                     showProgressbar
+                    userCategories={userCategories}
                   />
                 ))}
               </View>

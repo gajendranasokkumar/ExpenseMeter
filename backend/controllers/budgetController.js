@@ -71,7 +71,7 @@ class BudgetController {
 
   async createBudget(req, res) {
     try {
-      const { title, amount, category, user_id, period, start_date, end_date, isAllCategory = false } = req.body;
+      const { title, amount, category, category_id, user_id, period, start_date, end_date, isAllCategory = false } = req.body;
       if (!title || user_id === undefined || !category || amount === undefined) {
         return res.status(400).json({ message: 'All fields are required' });
       }
@@ -87,7 +87,8 @@ class BudgetController {
       const budget = await budgetService.createBudget({ 
         title, 
         amount, 
-        category, 
+        category,
+        category_id,
         user_id, 
         period: period || 'monthly',
         start_date, 

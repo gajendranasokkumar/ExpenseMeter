@@ -153,6 +153,50 @@ export const TRANSLATIONS = {
       empty: "No banks found",
       footer: "End of banks",
     },
+    categories: {
+      title: "Categories",
+      validation: {
+        nameRequired: "Category name is required",
+        iconRequired: "Please select an icon",
+      },
+      alerts: {
+        createSuccess: "Category created successfully",
+        createError: "Unable to create category.",
+        fetchError: "Unable to load categories.",
+        updateError: "Unable to update category.",
+        deleteError: "Unable to delete category.",
+      },
+      dialogs: {
+        delete: {
+          title: "Delete Category",
+          message: "Are you sure you want to delete this category?",
+        },
+      },
+      details: {
+        status: {
+          label: "Status",
+          active: "Active",
+          inactive: "Inactive",
+        },
+        created: "Created",
+        updated: "Updated",
+      },
+      form: {
+        categoryName: "Category Name",
+        categoryNamePlaceholder: "Enter category name",
+        selectIcon: "Select Icon",
+        selectColor: "Select Color",
+        searchIcons: "Search icons...",
+      },
+      actions: {
+        saving: "Saving...",
+        updating: "Updating...",
+        addCategory: "Add Category",
+        editCategory: "Edit Category",
+      },
+      empty: "No categories found",
+      footer: "End of categories",
+    },
     history: {
       alerts: {
         fetchTransactionsError: "Something went wrong",
@@ -321,6 +365,8 @@ export const TRANSLATIONS = {
       "Choose how ExpenseMeter speaks to you",
     "more.option.themes.title": "Themes",
     "more.option.themes.description": "Switch up the look & feel",
+    "more.option.categories.title": "Edit Categories",
+    "more.option.categories.description": "Manage your expense categories",
     "more.option.support.title": "Help & Support",
     "more.option.support.description":
       "FAQs, contact, and issue reporting",
@@ -338,9 +384,11 @@ export const TRANSLATIONS = {
     "support.description":
       "Need a hand? Reach out or explore resources tailored to help you get the most out of ExpenseMeter.",
     "support.option.email.title": "Email Support",
-    "support.option.email.description": "support@expensemeter.app",
+    "support.option.email.description": "gajendran2908@gmail.com",
     "support.option.docs.title": "Documentation",
     "support.option.docs.description": "Guides, FAQs, and release notes",
+    "support.option.phone.title": "Call our suppport team",
+    "support.option.phone.description": "+919944919805",
 
     "settings.title": "Settings",
     "preferences.themeLabel": "Theme",

@@ -18,8 +18,7 @@ import api from "../../utils/api";
 import { useUser } from "../../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import SingleTransaction from "../../components/SingleTransaction";
-import { TRANSACTION_ROUTES } from "../../constants/endPoints";
-import { BUDGET_ROUTES } from "../../constants/endPoints";
+import { TRANSACTION_ROUTES, BUDGET_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
 import SingleBudget from "../../components/SingleBudget";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import useLanguage from "../../hooks/useLanguage";
@@ -44,6 +43,7 @@ const Transactions = () => {
   const [budgetsTotalPages, setBudgetsTotalPages] = useState(1);
 
   const [activeScreen, setActiveScreen] = useState("transactions");
+  const [userCategories, setUserCategories] = useState([]);
   const { user } = useUser();
   const userId = user?._id;
   const { t } = useLanguage();
@@ -141,11 +141,25 @@ const Transactions = () => {
     [userId, startDate, endDate]
   );
 
+  const fetchUserCategories = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
+        userId: userId,
+      });
+      setUserCategories(res?.data?.data || []);
+    } catch (e) {
+      // If error, just use empty array (will fall back to default categories)
+      setUserCategories([]);
+    }
+  }, [userId]);
+
   useFocusEffect(
     useCallback(() => {
       fetchTransactions(1);
       fetchBudgets(1);
-    }, [fetchTransactions, fetchBudgets])
+      fetchUserCategories();
+    }, [fetchTransactions, fetchBudgets, fetchUserCategories])
   );
 
   // Refetch when date filters change (handles Clear/Apply cases)
@@ -280,7 +294,11 @@ const Transactions = () => {
       }
       data={transactions}
       renderItem={({ item }) => (
-        <SingleTransaction transaction={item} onDelete={handleDeleteTransaction} />
+        <SingleTransaction 
+          transaction={item} 
+          onDelete={handleDeleteTransaction}
+          userCategories={userCategories}
+        />
       )}
       keyExtractor={(item) => item._id.toString()}
       showsVerticalScrollIndicator={false}
@@ -363,7 +381,11 @@ const Transactions = () => {
       }
       data={budgets}
       renderItem={({ item }) => (
-        <SingleBudget budget={item} onDelete={handleDeleteBudget} />
+        <SingleBudget 
+          budget={item} 
+          onDelete={handleDeleteBudget}
+          userCategories={userCategories}
+        />
       )}
       keyExtractor={(item) => item._id.toString()}
       showsVerticalScrollIndicator={false}

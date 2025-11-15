@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Dimensions, ActivityIndicator, Image } from "re
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
-import { STATISTICS_ROUTES } from "../constants/endPoints";
+import { STATISTICS_ROUTES, CATEGORY_ROUTES } from "../constants/endPoints";
 import api from "../utils/api";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
@@ -22,6 +22,7 @@ const TotalStats = () => {
   const { user } = useUser();
   const userId = user?._id;
   const [isLoading, setIsLoading] = useState(false);
+  const [userCategories, setUserCategories] = useState([]);
   const [totalData, setTotalData] = useState({
     totals: { totalIncome: 0, totalExpense: 0, net: 0 },
     bestIncomeYear: null,
@@ -49,6 +50,18 @@ const TotalStats = () => {
 
   const mostUsedBank = totalData.mostUsedBank;
 
+  const fetchUserCategories = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
+        userId: userId,
+      });
+      setUserCategories(res?.data?.data || []);
+    } catch (e) {
+      setUserCategories([]);
+    }
+  }, [userId]);
+
   const fetchTotalStats = useCallback(() => {
     if (!userId) return;
     setIsLoading(true);
@@ -68,7 +81,8 @@ const TotalStats = () => {
   useFocusEffect(
     useCallback(() => {
       fetchTotalStats();
-    }, [fetchTotalStats])
+      fetchUserCategories();
+    }, [fetchTotalStats, fetchUserCategories])
   );
 
   return (
@@ -182,9 +196,23 @@ const TotalStats = () => {
           .slice(0, 5)
           .map((c, idx) => {
             const percent = Math.round((c.value / Math.max(totalCategory, 1)) * 100);
-            const catInfo = CATEGORY_CONST.find((ci) => ci.name === c.name);
-            const iconName = catInfo?.unselectedIcon || "ellipsis-horizontal-outline";
-            const iconColor = catInfo?.color || colors.primary;
+            
+            // First check if it's a user custom category
+            const userCat = userCategories.find((uc) => uc.name === c.name);
+            let iconName = "ellipsis-horizontal-outline";
+            let iconColor = colors.primary;
+            
+            if (userCat?.icon) {
+              // Use custom category icon
+              iconName = userCat.icon;
+              iconColor = userCat.color || colors.primary;
+            } else {
+              // Use default category icon
+              const catInfo = CATEGORY_CONST.find((ci) => ci.name === c.name);
+              iconName = catInfo?.unselectedIcon || "ellipsis-horizontal-outline";
+              iconColor = catInfo?.color || colors.primary;
+            }
+            
             const slug = c.name
               ?.toLowerCase()
               ?.replace(/[^a-z0-9]+/gi, "-");

@@ -48,6 +48,13 @@ const More = () => {
               themeNames?.[currentTheme] ?? "Default",
             onPress: () => router.push("/(tabs)/themes"),
           },
+          {
+            key: "categories",
+            title: t("more.option.categories.title"),
+            description: t("more.option.categories.description"),
+            icon: "pricetags-outline",
+            onPress: () => router.push("/(tabs)/categories"),
+          },
         ],
       },
       {
