@@ -1,15 +1,16 @@
 import React, { useEffect } from "react";
-import { Slot } from "expo-router";
+import { Slot, router } from "expo-router";
 import { View, PermissionsAndroid, Platform } from "react-native";
-import { ThemeProvider } from "../hooks/useTheme";
+import useTheme, { ThemeProvider } from "../hooks/useTheme";
 import { LanguageProvider } from "../hooks/useLanguage";
-import useTheme from "../hooks/useTheme";
 import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
 import { UserProvider } from "../context/userContext";
 import { TransactionsProvider } from "../context/transactionsContext";
 import { FontSizeProvider } from "../context/fontSizeContext";
 import PushNotification from "react-native-push-notification";
+import { NotificationPreferencesProvider } from "../context/notificationPreferencesContext";
+import { PERSISTENT_NOTIFICATION_CHANNEL_ID } from "../utils/persistentNotification";
 // SMS modal is handled via the /sms route, not here
 
 const RootLayout = () => {
@@ -18,11 +19,13 @@ const RootLayout = () => {
       <LanguageProvider>
         <ThemeProvider>
           <FontSizeProvider>
-            <TransactionsProvider>
-              <SafeScreen>
-                <Layout />
-              </SafeScreen>
-            </TransactionsProvider>
+            <NotificationPreferencesProvider>
+              <TransactionsProvider>
+                <SafeScreen>
+                  <Layout />
+                </SafeScreen>
+              </TransactionsProvider>
+            </NotificationPreferencesProvider>
           </FontSizeProvider>
         </ThemeProvider>
       </LanguageProvider>
@@ -45,7 +48,7 @@ const Layout = () => {
               PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
             );
           }
-        } catch (e) {}
+        } catch (_error) {}
       }
     };
     ensureSmsPermissions();
@@ -62,11 +65,35 @@ const Layout = () => {
       () => {}
     );
 
+    PushNotification.createChannel(
+      {
+        channelId: PERSISTENT_NOTIFICATION_CHANNEL_ID,
+        channelName: "Expense Meter reminder",
+        channelDescription:
+          "Keeps a pinned notification for quick access to Expense Meter.",
+        importance: 4,
+        vibrate: false,
+        playSound: false,
+      },
+      () => {}
+    );
+
     PushNotification.configure({
       onNotification: function (notification) {
-        // Avoid opening modal here; deep link route will handle UI.
         try {
-          console.log('[PushNotification] onNotification payload:', notification);
+          if (notification?.userInteraction) {
+            const targetTab =
+              notification?.data?.targetTab ||
+              notification?.userInfo?.targetTab ||
+              "/(tabs)";
+            if (targetTab) {
+              router.push(targetTab);
+            }
+          }
+          console.log(
+            "[PushNotification] onNotification payload:",
+            notification
+          );
         } catch (_) {}
         notification?.finish && notification.finish();
       },

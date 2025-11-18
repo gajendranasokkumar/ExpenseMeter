@@ -137,3 +137,13 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+
+# Android build artifacts
+**/android/build/
+**/android/.gradle/
+*.dex
+
+# iOS build artifacts
+**/ios/build/
+**/ios/Pods/

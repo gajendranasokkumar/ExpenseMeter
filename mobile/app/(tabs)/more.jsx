@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
+  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -12,11 +14,18 @@ import useTheme from "../../hooks/useTheme";
 import createMoreStyles from "../../styles/more.styles";
 import useLanguage from "../../hooks/useLanguage";
 import { useFontSize } from "../../context/fontSizeContext";
+import { useNotificationPreferences } from "../../context/notificationPreferencesContext";
 
 const More = () => {
   const { colors, currentTheme, themeNames } = useTheme();
   const { currentLanguage, languageMeta, t } = useLanguage();
   const { currentPreset } = useFontSize();
+  const {
+    persistentNotificationEnabled,
+    isNotificationPreferenceLoading,
+    isUpdatingPersistentNotification,
+    setPersistentNotificationEnabled,
+  } = useNotificationPreferences();
   const styles = createMoreStyles();
 
   const sections = useMemo(
@@ -69,6 +78,31 @@ const More = () => {
             icon: "pricetags-outline",
             onPress: () => router.push("/(tabs)/categories"),
           },
+          {
+            key: "persistent-notification",
+            title: t("more.option.notifications.title", {
+              defaultValue: "Persistent notification",
+            }),
+            description: t("more.option.notifications.description", {
+              defaultValue:
+                "Keep a pinned alert so you can reopen Expense Meter instantly.",
+            }),
+            icon: "notifications-outline",
+            type: "toggle",
+            value: persistentNotificationEnabled,
+            onToggle: (nextValue) =>
+              setPersistentNotificationEnabled(
+                typeof nextValue === "boolean"
+                  ? nextValue
+                  : !persistentNotificationEnabled
+              ),
+            loading:
+              isNotificationPreferenceLoading ||
+              isUpdatingPersistentNotification,
+            disabled:
+              isNotificationPreferenceLoading ||
+              isUpdatingPersistentNotification,
+          },
         ],
       },
       {
@@ -85,7 +119,18 @@ const More = () => {
         ],
       },
     ],
-    [currentLanguage, currentTheme, currentPreset, languageMeta, t, themeNames]
+    [
+      currentLanguage,
+      currentTheme,
+      currentPreset,
+      isNotificationPreferenceLoading,
+      isUpdatingPersistentNotification,
+      languageMeta,
+      persistentNotificationEnabled,
+      setPersistentNotificationEnabled,
+      t,
+      themeNames,
+    ]
   );
 
   return (
@@ -105,44 +150,71 @@ const More = () => {
         {sections.map((section) => (
           <View style={styles.section} key={section.key}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
-            {section.options.map((option) => (
-              <TouchableOpacity
-                key={option.key}
-                activeOpacity={0.8}
-                onPress={option.onPress}
-                style={styles.optionCard}
-              >
-                <View style={styles.optionInner}>
-                  <View style={styles.iconContainer}>
-                    <Ionicons
-                      name={option.icon}
-                      size={22}
-                      color={colors.primary}
-                    />
+            {section.options.map((option) => {
+              const isToggle = option.type === "toggle";
+              const onPress =
+                isToggle && option.onToggle
+                  ? () => option.onToggle(!option.value)
+                  : option.onPress;
+              return (
+                <TouchableOpacity
+                  key={option.key}
+                  activeOpacity={isToggle ? 1 : 0.8}
+                  onPress={onPress}
+                  disabled={option.disabled}
+                  style={styles.optionCard}
+                >
+                  <View style={styles.optionInner}>
+                    <View style={styles.iconContainer}>
+                      <Ionicons
+                        name={option.icon}
+                        size={22}
+                        color={colors.primary}
+                      />
+                    </View>
+                    <View style={styles.optionTextWrapper}>
+                      <Text style={styles.optionTitle}>{option.title}</Text>
+                      {option.description ? (
+                        <Text style={styles.optionDescription}>
+                          {option.description}
+                        </Text>
+                      ) : null}
+                    </View>
+                    <View style={styles.trailing}>
+                      {isToggle ? (
+                        option.loading ? (
+                          <ActivityIndicator color={colors.primary} />
+                        ) : (
+                          <Switch
+                            value={option.value}
+                            onValueChange={option.onToggle}
+                            trackColor={{
+                              false: colors.border,
+                              true: colors.primary,
+                            }}
+                            thumbColor={colors.text}
+                            disabled={option.disabled}
+                          />
+                        )
+                      ) : (
+                        <>
+                          {option.trailingText ? (
+                            <Text style={styles.trailingText}>
+                              {option.trailingText}
+                            </Text>
+                          ) : null}
+                          <Ionicons
+                            name="chevron-forward"
+                            size={20}
+                            color={colors.textMuted}
+                          />
+                        </>
+                      )}
+                    </View>
                   </View>
-                  <View style={styles.optionTextWrapper}>
-                    <Text style={styles.optionTitle}>{option.title}</Text>
-                    {option.description ? (
-                      <Text style={styles.optionDescription}>
-                        {option.description}
-                      </Text>
-                    ) : null}
-                  </View>
-                  <View style={styles.trailing}>
-                    {option.trailingText ? (
-                      <Text style={styles.trailingText}>
-                        {option.trailingText}
-                      </Text>
-                    ) : null}
-                    <Ionicons
-                      name="chevron-forward"
-                      size={20}
-                      color={colors.textMuted}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         ))}
       </ScrollView>

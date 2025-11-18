@@ -40,3 +40,13 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+
+# Android build artifacts
+**/android/build/
+**/android/.gradle/
+*.dex
+
+# iOS build artifacts
+**/ios/build/
+**/ios/Pods/

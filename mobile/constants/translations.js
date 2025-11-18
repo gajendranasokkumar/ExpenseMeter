@@ -370,6 +370,9 @@ export const TRANSLATIONS = {
       "Adjust how large text appears across the app",
     "more.option.categories.title": "Edit Categories",
     "more.option.categories.description": "Manage your expense categories",
+    "more.option.notifications.title": "Persistent notification",
+    "more.option.notifications.description":
+      "Keep a pinned alert so Expense Meter is always one tap away.",
     "more.option.support.title": "Help & Support",
     "more.option.support.description":
       "FAQs, contact, and issue reporting",
@@ -678,6 +681,14 @@ export const TRANSLATIONS = {
       "ExpenseMeter आपसे किस भाषा में बोले, चुनें",
     "more.option.themes.title": "थीम",
     "more.option.themes.description": "रूप और अनुभव बदलें",
+    "more.option.fontSizes.title": "फ़ॉन्ट आकार",
+    "more.option.fontSizes.description":
+      "पूरे ऐप में पाठ को आरामदायक रखें",
+    "more.option.categories.title": "श्रेणियाँ संपादित करें",
+    "more.option.categories.description": "अपने खर्च की श्रेणियों को व्यवस्थित करें",
+    "more.option.notifications.title": "स्थायी सूचना",
+    "more.option.notifications.description":
+      "Expense Meter तक तुरंत पहुँच के लिए सूचना पिन रखें।",
     "more.option.support.title": "मदद और सहायता",
     "more.option.support.description":
       "प्रश्नोत्तर, संपर्क, और समस्या रिपोर्टिंग",
