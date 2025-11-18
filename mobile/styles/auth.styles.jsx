@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -8,6 +9,9 @@ const createAuthStyles = () => {
   const cardRadius = colors?.radii?.card ?? 20;
   const inputRadius = colors?.radii?.input ?? 16;
   const buttonRadius = colors?.radii?.button ?? 16;
+  const { getFontSizeByKey, getFontSize } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
+  const fontSizeValue = (value) => getFontSize(value);
 
   return StyleSheet.create({
     container: {
@@ -33,17 +37,17 @@ const createAuthStyles = () => {
       marginBottom: 16,
     },
     title: {
-      fontSize: 32,
+      fontSize: fontSize("xl2"),
       fontWeight: "700",
       color: colors.text,
       marginBottom: 8,
       textAlign: "center",
     },
     subtitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
       textAlign: "center",
-      lineHeight: 22,
+      lineHeight: fontSizeValue(22),
       marginBottom: 40,
     },
     // Error banner styles
@@ -60,7 +64,7 @@ const createAuthStyles = () => {
     },
     errorBannerText: {
       color: colors.danger,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
       textAlign: "center",
     },
@@ -72,7 +76,7 @@ const createAuthStyles = () => {
       marginBottom: 20,
     },
     inputLabel: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
       color: colors.text,
       marginBottom: 8,
@@ -85,7 +89,7 @@ const createAuthStyles = () => {
       borderWidth: 1.5,
       borderRadius: inputRadius,
       paddingHorizontal: 16,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       backgroundColor: colors.backgrounds.input,
       shadowColor: colors.shadow,
@@ -100,7 +104,7 @@ const createAuthStyles = () => {
     },
     inputPlaceholder: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "500",
     },
     inputFocused: {
@@ -116,7 +120,7 @@ const createAuthStyles = () => {
     },
     errorText: {
       color: colors.danger,
-      fontSize: 12,
+      fontSize: fontSize("sm"),
       marginTop: 6,
       marginLeft: 4,
     },
@@ -126,7 +130,7 @@ const createAuthStyles = () => {
     },
     forgotPasswordText: {
       color: colors.primary,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "500",
     },
     button: {
@@ -157,7 +161,7 @@ const createAuthStyles = () => {
     },
     buttonText: {
       color: "#ffffff",
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       letterSpacing: 0.5,
       textAlign: "center",
@@ -178,7 +182,7 @@ const createAuthStyles = () => {
     },
     dividerText: {
       color: colors.textMuted,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       marginHorizontal: 16,
     },
     socialButtonContainer: {
@@ -200,7 +204,7 @@ const createAuthStyles = () => {
     },
     socialButtonText: {
       color: colors.text,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "500",
     },
     signupContainer: {
@@ -211,11 +215,11 @@ const createAuthStyles = () => {
     },
     signupText: {
       color: colors.textMuted,
-      fontSize: 14,
+      fontSize: fontSize("base"),
     },
     signupLink: {
       color: colors.primary,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
       marginLeft: 4,
     },
@@ -235,7 +239,7 @@ const createAuthStyles = () => {
       paddingHorizontal: width > 400 ? 32 : 20,
     },
     responsiveTitle: {
-      fontSize: width > 400 ? 36 : 32,
+      fontSize: width > 400 ? fontSize("xl3") : fontSize("xl2"),
     },
     responsiveInput: {
       height: width > 400 ? 56 : 52,
@@ -244,13 +248,13 @@ const createAuthStyles = () => {
       height: width > 400 ? 56 : 52,
     },
     linkText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       color: colors.textMuted,
     },
     link: {
       color: colors.primary,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
     },
     linkContainer: {

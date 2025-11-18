@@ -365,6 +365,9 @@ export const TRANSLATIONS = {
       "Choose how ExpenseMeter speaks to you",
     "more.option.themes.title": "Themes",
     "more.option.themes.description": "Switch up the look & feel",
+    "more.option.fontSizes.title": "Font sizes",
+    "more.option.fontSizes.description":
+      "Adjust how large text appears across the app",
     "more.option.categories.title": "Edit Categories",
     "more.option.categories.description": "Manage your expense categories",
     "more.option.support.title": "Help & Support",
@@ -379,6 +382,22 @@ export const TRANSLATIONS = {
     "themes.section.current": "Current Theme",
     "themes.section.current.subtitle":
       "Tap a swatch below to instantly update your theme.",
+
+    "fontSizes.title": "Font sizes",
+    "fontSizes.description":
+      "Adjust the global text scale to match your comfort.",
+    "fontSizes.preview.title": "Main balance",
+    "fontSizes.preview.subtitle": "Monthly summary",
+    "fontSizes.preview.body":
+      "You have spent $1,240 of your $2,000 budget.",
+    "fontSizes.preview.caption": "Tap to view details",
+    "fontSizes.scaleLabel": "{percent}% of base size",
+    "fontSizes.slider.label": "Text scale",
+    "fontSizes.slider.value": "{value}",
+    "fontSizes.helper":
+      "Drag the slider to instantly preview text sizes.",
+    "fontSizes.notes":
+      "Font size updates everywhere and is saved on this device.",
 
     "support.title": "Support",
     "support.description":

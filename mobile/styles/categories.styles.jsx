@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createCategoriesStyles = () => {
   const { colors } = useTheme();
@@ -8,6 +9,8 @@ const createCategoriesStyles = () => {
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -26,7 +29,7 @@ const createCategoriesStyles = () => {
     title: {
       flex: 1,
       color: colors.text,
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "700",
       paddingLeft: 16,
     },
@@ -95,7 +98,7 @@ const createCategoriesStyles = () => {
       flex: 1,
     },
     categoryName: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
       marginBottom: 4,
@@ -157,12 +160,12 @@ const createCategoriesStyles = () => {
     },
     deleteButtonText: {
       color: colors.surface,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
     },
     editButtonText: {
       color: colors.surface,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
     },
     detailRow: {
@@ -172,15 +175,15 @@ const createCategoriesStyles = () => {
     },
     detailLabel: {
       color: colors.textMuted,
-      fontSize: 12,
+      fontSize: fontSize("sm"),
     },
     detailValue: {
       color: colors.text,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "500",
     },
     emptyText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
       textAlign: "center",
@@ -189,7 +192,7 @@ const createCategoriesStyles = () => {
       marginBottom: 20,
     },
     formTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       color: colors.text,
       marginBottom: 12,
@@ -199,7 +202,7 @@ const createCategoriesStyles = () => {
       borderRadius: 12,
       paddingHorizontal: 16,
       paddingVertical: 12,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       borderWidth: 1,
       borderColor: colors.border,
@@ -218,7 +221,7 @@ const createCategoriesStyles = () => {
       marginBottom: 16,
     },
     iconSelectorButtonText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
     },
     colorSelectorButton: {
@@ -234,7 +237,7 @@ const createCategoriesStyles = () => {
       marginBottom: 16,
     },
     colorSelectorButtonText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
     },
     colorPreview: {
@@ -258,7 +261,7 @@ const createCategoriesStyles = () => {
     },
     saveButtonText: {
       color: colors.surface,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       textAlign: "center",
     },
     footer: {
@@ -267,7 +270,7 @@ const createCategoriesStyles = () => {
       justifyContent: "center",
     },
     footerText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
     },
@@ -285,7 +288,7 @@ const createCategoriesStyles = () => {
       maxWidth: 400,
     },
     modalTitle: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       fontWeight: "600",
       color: colors.text,
       marginBottom: 16,
@@ -308,7 +311,7 @@ const createCategoriesStyles = () => {
       backgroundColor: colors.primary,
     },
     modalButtonText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
     },
     modalButtonTextCancel: {

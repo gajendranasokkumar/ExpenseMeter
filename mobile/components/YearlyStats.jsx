@@ -17,6 +17,7 @@ import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { formatToPieData } from "../utils/formatToPieData";
 import { PieChart } from "react-native-gifted-charts";
 import useLanguage from "../hooks/useLanguage";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -27,6 +28,8 @@ const YearlyStats = ({ year }) => {
   const { user } = useUser();
   const userId = user?._id;
   const { t } = useLanguage();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   const [isLoading, setIsLoading] = useState(false);
   const [yearlyData, setYearlyData] = useState({
@@ -179,10 +182,10 @@ const YearlyStats = ({ year }) => {
                         marginTop: 6,
                       }}
                     >
-                      <Text style={{ color: colors.income, fontSize: 12 }}>
+                      <Text style={{ color: colors.income, fontSize: fontSize("sm") }}>
                         + {formatAmountDisplay(income)}
                       </Text>
-                      <Text style={{ color: colors.expense, fontSize: 12 }}>
+                      <Text style={{ color: colors.expense, fontSize: fontSize("sm") }}>
                         - {formatAmountDisplay(expense)}
                       </Text>
                     </View>

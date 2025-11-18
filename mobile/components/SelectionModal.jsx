@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
 import useLanguage from "../hooks/useLanguage";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -22,6 +23,8 @@ const SelectionModal = ({
 }) => {
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const modalRadius = colors?.radii?.modal ?? (colors?.radii?.surface ?? 20);
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
@@ -42,12 +45,12 @@ const SelectionModal = ({
       alignItems: "center",
     },
     title: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.text,
       marginBottom: 8,
     },
     subtitle: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
       marginBottom: 24,
       textAlign: "center",
@@ -70,7 +73,7 @@ const SelectionModal = ({
       marginRight: 12,
     },
     buttonText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
     },
     cancelButton: {
@@ -79,7 +82,7 @@ const SelectionModal = ({
       borderRadius: pillRadius,
     },
     cancelText: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
       fontWeight: "700",
     },

@@ -3,11 +3,14 @@ import { Text, View, Image, ActivityIndicator, StatusBar } from "react-native";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [dest, setDest] = useState(null);
   const { colors } = useTheme();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,7 +61,7 @@ const Index = () => {
           <Text
             style={{
               color: colors.text,
-              fontSize: 22,
+              fontSize: fontSize("lg2"),
               fontWeight: "700",
               textAlign: "center",
               marginBottom: 6,
@@ -69,7 +72,7 @@ const Index = () => {
           <Text
             style={{
               color: colors.textMuted,
-              fontSize: 14,
+              fontSize: fontSize("base"),
               textAlign: "center",
               marginBottom: 16,
             }}

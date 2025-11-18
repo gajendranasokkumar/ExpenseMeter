@@ -1,10 +1,13 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 export const banksSummaryStyles = () => {
   const { colors } = useTheme();
   const cardRadius = colors?.radii?.card ?? 20;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   return StyleSheet.create({
     banksSummaryContainer: {
@@ -20,7 +23,7 @@ export const banksSummaryStyles = () => {
     },
     banksSummaryTitle: {
       marginTop: 25,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
       fontWeight: "bold",
       textAlign: "center",
@@ -37,13 +40,13 @@ export const banksSummaryStyles = () => {
       marginRight: 10,
     },
     bankSummaryItemName: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "bold",
       flex: 1,
     },
     bankSummaryItemBalance: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.text,
       fontWeight: "bold",
       textAlign: "right",
@@ -64,7 +67,7 @@ export const banksSummaryStyles = () => {
       paddingBottom: 25,
     },
     banksSummaryEmptyTitle: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
     },
   });

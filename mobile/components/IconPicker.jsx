@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
 import useLanguage from "../hooks/useLanguage";
 import { iconNames } from "../constants/Icons";
+import { useFontSize } from "../context/fontSizeContext";
 
 // Get all Ionicons names
 const getAllIonicons = () => { 
@@ -22,6 +23,8 @@ const getAllIonicons = () => {
 const IconPicker = ({ visible, onClose, onSelect, selectedIcon }) => {
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const [searchQuery, setSearchQuery] = useState("");
   const allIcons = useMemo(() => getAllIonicons(), []);
 
@@ -58,7 +61,7 @@ const IconPicker = ({ visible, onClose, onSelect, selectedIcon }) => {
       borderBottomColor: colors.border,
     },
     headerTitle: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       fontWeight: "600",
       color: colors.text,
     },
@@ -75,7 +78,7 @@ const IconPicker = ({ visible, onClose, onSelect, selectedIcon }) => {
       borderRadius: 12,
       paddingHorizontal: 16,
       paddingVertical: 12,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       borderWidth: 1,
       borderColor: colors.border,
@@ -114,7 +117,7 @@ const IconPicker = ({ visible, onClose, onSelect, selectedIcon }) => {
     emptyText: {
       textAlign: "center",
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       paddingVertical: 40,
     },
   });

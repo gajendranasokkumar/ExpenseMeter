@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import useTheme from '../hooks/useTheme';
+import { useFontSize } from '../context/fontSizeContext';
 
 const CustomDropdown = ({ 
   data, 
@@ -21,10 +22,12 @@ const CustomDropdown = ({
   selectedValue
 }) => {
   const { colors } = useTheme();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(selectedValue || null);
   
-  const dropdownStyles = getStyles(colors);
+  const dropdownStyles = getStyles(colors, fontSize);
 
   const handleSelect = (item) => {
     setSelectedItem(item);
@@ -92,7 +95,7 @@ const CustomDropdown = ({
   );
 };
 
-const getStyles = (colors) => StyleSheet.create({
+const getStyles = (colors, fontSize) => StyleSheet.create({
   container: {
     position: 'relative',
   },
@@ -109,12 +112,12 @@ const getStyles = (colors) => StyleSheet.create({
   },
   placeholderText: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: fontSize("md"),
     flex: 1,
   },
   arrow: {
     color: colors.text,
-    fontSize: 12,
+    fontSize: fontSize("sm"),
     marginLeft: 8,
   },
   modalOverlay: {
@@ -150,7 +153,7 @@ const getStyles = (colors) => StyleSheet.create({
   },
   dropdownItemText: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: fontSize("md"),
   },
 });
 

@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 
 const createCategoriesBudgetSummaryStyles = () => {
@@ -7,6 +8,8 @@ const createCategoriesBudgetSummaryStyles = () => {
   const cardRadius = colors?.radii?.card ?? 20;
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const styles = StyleSheet.create({    
     categoriesBudgetSummaryContainer: {
       flex: 1,
@@ -18,7 +21,7 @@ const createCategoriesBudgetSummaryStyles = () => {
       padding: 10,
     },
     categoriesBudgetSummaryTitle: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.textMuted,
       marginBottom: 15,
       borderBottomWidth: 1,
@@ -34,12 +37,12 @@ const createCategoriesBudgetSummaryStyles = () => {
       alignItems: "center",
     },
     categoriesBudgetSummaryCategory: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "bold",
     },
     categoriesBudgetSummaryBudgetAmountContainer: {
-        fontSize: 12,
+        fontSize: fontSize("sm"),
         color: colors.text,
     },
     categoriesBudgetSummaryBudgetAmount: {

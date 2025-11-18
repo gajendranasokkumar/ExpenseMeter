@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width } = Dimensions.get("window");
 
@@ -9,6 +10,8 @@ const createStatisticsStyles = () => {
   const { colors } = useTheme();
   const surfaceRadius = colors?.radii?.surface ?? (colors?.radii?.card ?? 20);
   const pillRadius = colors?.radii?.pill ?? 12;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -20,7 +23,7 @@ const createStatisticsStyles = () => {
       marginBottom: 20,
     },
     title: {
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "bold",
       color: colors.text,
       paddingHorizontal: 16,
@@ -56,7 +59,7 @@ const createStatisticsStyles = () => {
     activeTabName: {
       color: colors.primary,
       textAlign: "center",
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
     },
 
@@ -74,12 +77,12 @@ const createStatisticsStyles = () => {
       borderBottomColor: colors.border
     },
     topExpenseDataHeading: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.text,
       marginBottom: 5,
     },
     topExpenseDataValue: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.expense,
       textAlign: "center",
     },
@@ -125,10 +128,10 @@ const createStatisticsStyles = () => {
       alignItems: "flex-end",
     },
     legendLabel: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
     },
     legendValue: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
     },
 
     // MonthlyStats Styles starts here
@@ -141,7 +144,7 @@ const createStatisticsStyles = () => {
       flexGrow: 1,
     },
     header: {
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       textAlign: "center",
       marginVertical: 16,
       color: "#ffffff",
@@ -162,7 +165,7 @@ const createStatisticsStyles = () => {
       borderRightColor: colors.border,
     },
     weekDay: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
       color: colors.text,
       textTransform: "capitalize",
@@ -198,7 +201,7 @@ const createStatisticsStyles = () => {
       borderRightColor: colors.border,
     },
     dayText: {
-      fontSize: 12,
+      fontSize: fontSize("sm"),
       color: colors.text,
       marginBottom: 8,
     },
@@ -206,7 +209,7 @@ const createStatisticsStyles = () => {
       color: colors.text,
     },
     infoText: {
-      fontSize: 10,
+      fontSize: fontSize("xs"),
       color: colors.primary,
       lineHeight: 20,
     },
@@ -220,7 +223,7 @@ const createStatisticsStyles = () => {
       padding: 10,
       textAlign: "center",
       color: colors.text,
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       marginBottom: 15,
       borderWidth: 1,
       borderColor: colors.border,

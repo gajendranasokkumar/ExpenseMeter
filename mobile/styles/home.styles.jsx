@@ -1,10 +1,13 @@
 import { StyleSheet, Dimensions } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width, height } = Dimensions.get("window");
 
 const createHomeStyles = () => {
   const { colors } = useTheme();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const cardRadius = colors?.radii?.card ?? 20;
   const surfaceRadius = colors?.radii?.surface ?? cardRadius;
   const buttonRadius = colors?.radii?.button ?? 16;
@@ -42,12 +45,12 @@ const createHomeStyles = () => {
     },
     headerTitle: {
       color: colors.text,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       fontWeight: "700",
     },
     headerSubtitle: {
       color: colors.textMuted,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "400",
       marginBottom: 5,
     },
@@ -65,7 +68,7 @@ const createHomeStyles = () => {
       position: "relative",
     },
     notificationIconText: {
-      fontSize: 10,
+      fontSize: fontSize("xs"),
       height: 12,
       width: 12,
       position: "absolute",
@@ -105,12 +108,12 @@ const createHomeStyles = () => {
       paddingBottom: 18,
     },
     mainBalanceTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "400",
       color: colors.textMuted,
     },
     mainBalanceValue: {
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "700",
       color: colors.text,
       fontFamily: "Poppins-SemiBold",
@@ -134,13 +137,13 @@ const createHomeStyles = () => {
       alignItems: "flex-end",
     },
     expensesTitle: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "400",
       color: colors.textMuted,
       fontFamily: "Poppins-SemiBold",
     },
     expensesValue: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       fontWeight: "400",
       color: colors.text,
       flexDirection: "row",
@@ -168,7 +171,7 @@ const createHomeStyles = () => {
       gap: 5,
     },
     currentMonth: {
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       color: colors.text,
     },
     currentMonthSeparator: {
@@ -178,7 +181,7 @@ const createHomeStyles = () => {
       borderRadius: pillRadius,
     },
     currentYear: {
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       color: colors.text,
     },
     budgetSummaryContainer: {
@@ -193,7 +196,7 @@ const createHomeStyles = () => {
       marginBottom: 5,
     },
     budgetSummaryTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
       paddingBottom: 10,
     },
@@ -207,7 +210,7 @@ const createHomeStyles = () => {
       borderTopStartRadius: 10,
     },
     burgetSUmmaryPercentText: {
-      fontSize: 18,
+      fontSize: fontSize("md3"),
       color: colors.text,
     },
     budgetSummaryContent: {
@@ -226,17 +229,17 @@ const createHomeStyles = () => {
       alignItems: "flex-end",
     },
     budgetSummaryAmountTitle: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
     },
     budgetSummaryAmountLeft: {
       marginTop: 5,
-      fontSize: 18,
+      fontSize: fontSize("md3"),
       color: colors.expenseMuted,
     },
     budgetSummaryAmountRight: {
       marginTop: 5,
-      fontSize: 18,
+      fontSize: fontSize("md3"),
       color: colors.incomeMuted,
     },
     progressBar: {
@@ -289,7 +292,7 @@ const createHomeStyles = () => {
       marginBottom: 10,
     },
     notificationModalContentHeaderTitle: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.text,
     },
     notificationModalContentHeaderClose: {
@@ -304,7 +307,7 @@ const createHomeStyles = () => {
       gap: 15,
     },
     notificationModalContentEmpty: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
       textAlign: "center",
     },
@@ -312,7 +315,7 @@ const createHomeStyles = () => {
       padding: 10,
     },
     notificationModalContentFooterText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
       textAlign: "center",
     },
@@ -329,16 +332,16 @@ const createHomeStyles = () => {
       backgroundColor: colors.bg,
     },
     notificationItemTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
     },
     notificationItemMessage: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
       marginBottom: 3,
     },
     notificationItemCreatedAt: {
-      fontSize: 12,
+      fontSize: fontSize("sm"),
       color: colors.textMuted,
       textAlign: "right",
     },
@@ -356,7 +359,7 @@ const createHomeStyles = () => {
     },
     infoText: {
       color: colors.textMuted,
-      fontSize: 12,
+      fontSize: fontSize("sm"),
     },
     infoIcon: {
       color: colors.warning,
@@ -373,7 +376,7 @@ const createHomeStyles = () => {
     },
     deleteAllButtonText: {
       color: colors.text,
-      fontSize: 14,
+      fontSize: fontSize("base"),
     },
     budgetFailureTitleContainer: {
       justifyContent: 'center',
@@ -389,12 +392,12 @@ const createHomeStyles = () => {
     },
     budgetFailureTitle: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       textAlign: 'center',
     },
     budgetFailureTitleButton: {
       color: colors.primary,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       textAlign: 'center',
       marginTop: 15,
       textDecorationLine: 'underline',
@@ -407,12 +410,12 @@ const createHomeStyles = () => {
     },
     remainingBudgetTitle: {
       marginBottom: 5,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       textAlign: 'center',
       color: colors.textMuted,
     },
     remainingBudgetAmount: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.text,
       textDecorationLine: 'underline',
     },

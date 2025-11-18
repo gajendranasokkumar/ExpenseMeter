@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createAddTransactionStyles = () => {
   const { colors } = useTheme();
@@ -7,6 +8,8 @@ const createAddTransactionStyles = () => {
   const surfaceRadius = colors?.radii?.surface ?? cardRadius;
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   return StyleSheet.create({
     container: {
@@ -27,7 +30,7 @@ const createAddTransactionStyles = () => {
     },
     headerTitle: {
       color: colors.text,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
     },
     controlsContainer: {
       flexDirection: "row",
@@ -49,7 +52,7 @@ const createAddTransactionStyles = () => {
     },
     controlsTitle: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     controlsActive: {
       backgroundColor: colors.surface,
@@ -72,7 +75,7 @@ const createAddTransactionStyles = () => {
       margin: 10,
     },
     amountInput: {
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       color: colors.text,
       flex: 1,
     },
@@ -90,7 +93,7 @@ const createAddTransactionStyles = () => {
       margin: 10,
     },
     dateText: {
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       color: colors.text,
       flex: 1,
     },
@@ -118,7 +121,7 @@ const createAddTransactionStyles = () => {
     },
     categoriesHeaderText: {
       color: colors.text,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     categoriesList: {
       marginTop: 10,
@@ -138,7 +141,7 @@ const createAddTransactionStyles = () => {
    },
     categoryText: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     notesContainer: {
       marginTop: 20,
@@ -159,11 +162,11 @@ const createAddTransactionStyles = () => {
     },
     notesHeaderText: {
       color: colors.text,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     notesInput: {
       color: colors.text,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       flex: 1,
     },
     saveButton: {
@@ -180,7 +183,7 @@ const createAddTransactionStyles = () => {
     },
     saveButtonText: {
       color: colors.surface,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       textAlign: "center",
     },
     errorContainer: {
@@ -197,7 +200,7 @@ const createAddTransactionStyles = () => {
     },
     errorText: {
       color: colors.danger,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       textAlign: "center",
     },
   });

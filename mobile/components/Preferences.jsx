@@ -5,11 +5,14 @@ import useTheme, { THEMES, THEME_NAMES } from "../hooks/useTheme";
 import createSettingsStyles from "../styles/settings.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useLanguage from "../hooks/useLanguage";
+import { useFontSize } from "../context/fontSizeContext";
 
 const Preferences = () => {
   const styles = createSettingsStyles();
   const { colors, currentTheme, setTheme, availableThemes, themeNames } = useTheme();
   const { t } = useLanguage();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const circleRadius = colors?.radii?.circle ?? 999;
 
   return (
@@ -80,7 +83,7 @@ const Preferences = () => {
               </View>
               <Text
                 style={{
-                  fontSize: 11,
+                  fontSize: fontSize("xs2"),
                   color: colors.textMuted,
                   textAlign: "center",
                   fontWeight: isSelected ? "600" : "400",

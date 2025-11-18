@@ -5,11 +5,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, TouchableOpacity } from "react-native";
 import SelectionModal from "../../components/SelectionModal";
+import { useFontSize } from "../../context/fontSizeContext";
 
 const TabsLayout = () => {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   const [showSelectionModal, setShowSelectionModal] = useState(false);
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   const handleTransactionPress = () => {
     router.push("/(tabs)/addTransaction");
   };
@@ -47,7 +50,7 @@ const TabsLayout = () => {
             fontWeight: "600",
           },
           headerShown: false,
-          tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+          tabBarLabelStyle: { fontSize: fontSize("sm"), fontWeight: "600" },
         }}
       >
         <Tabs.Screen
@@ -139,6 +142,12 @@ const TabsLayout = () => {
         />
         <Tabs.Screen
           name="themes"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name="fontsizes"
           options={{
             href: null,
           }}

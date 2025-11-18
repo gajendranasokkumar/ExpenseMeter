@@ -11,10 +11,12 @@ import { router } from "expo-router";
 import useTheme from "../../hooks/useTheme";
 import createMoreStyles from "../../styles/more.styles";
 import useLanguage from "../../hooks/useLanguage";
+import { useFontSize } from "../../context/fontSizeContext";
 
 const More = () => {
   const { colors, currentTheme, themeNames } = useTheme();
   const { currentLanguage, languageMeta, t } = useLanguage();
+  const { currentPreset } = useFontSize();
   const styles = createMoreStyles();
 
   const sections = useMemo(
@@ -49,6 +51,18 @@ const More = () => {
             onPress: () => router.push("/(tabs)/themes"),
           },
           {
+            key: "fontsizes",
+            title: t("more.option.fontSizes.title", {
+              defaultValue: "Font sizes",
+            }),
+            description: t("more.option.fontSizes.description", {
+              defaultValue: "Adjust how large text appears across the app",
+            }),
+            icon: "text-outline",
+            trailingText: currentPreset?.name ?? "Medium",
+            onPress: () => router.push("/(tabs)/fontsizes"),
+          },
+          {
             key: "categories",
             title: t("more.option.categories.title"),
             description: t("more.option.categories.description"),
@@ -71,7 +85,7 @@ const More = () => {
         ],
       },
     ],
-    [currentLanguage, currentTheme, languageMeta, t, themeNames]
+    [currentLanguage, currentTheme, currentPreset, languageMeta, t, themeNames]
   );
 
   return (

@@ -22,10 +22,13 @@ import { TRANSACTION_ROUTES, BUDGET_ROUTES, CATEGORY_ROUTES } from "../../consta
 import SingleBudget from "../../components/SingleBudget";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import useLanguage from "../../hooks/useLanguage";
+import { useFontSize } from "../../context/fontSizeContext";
 
 const Transactions = () => {
   const { colors } = useTheme();
   const styles = createHistoryStyles();
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   // Transaction states
   const [transactionsRefreshing, setTransactionsRefreshing] = useState(false);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
@@ -485,7 +488,7 @@ const Transactions = () => {
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
             <TouchableWithoutFeedback>
             <View style={{ width: "90%", maxWidth: 420, backgroundColor: colors.surface, borderRadius: 16, padding: 16 }}>
-              <Text style={{ color: colors.text, fontSize: 18, marginBottom: 12 }}>
+              <Text style={{ color: colors.text, fontSize: fontSize("md3"), marginBottom: 12 }}>
                 {t("history.filters.title", { defaultValue: "Filter by date" })}
               </Text>
               <View style={{ gap: 12 }}>

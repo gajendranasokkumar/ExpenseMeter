@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import SafeScreen from "../components/SafeScreen";
 import { UserProvider } from "../context/userContext";
 import { TransactionsProvider } from "../context/transactionsContext";
+import { FontSizeProvider } from "../context/fontSizeContext";
 import PushNotification from "react-native-push-notification";
 // SMS modal is handled via the /sms route, not here
 
@@ -16,11 +17,13 @@ const RootLayout = () => {
     <UserProvider>
       <LanguageProvider>
         <ThemeProvider>
-          <TransactionsProvider>
-            <SafeScreen>
-              <Layout />
-            </SafeScreen>
-          </TransactionsProvider>
+          <FontSizeProvider>
+            <TransactionsProvider>
+              <SafeScreen>
+                <Layout />
+              </SafeScreen>
+            </TransactionsProvider>
+          </FontSizeProvider>
         </ThemeProvider>
       </LanguageProvider>
     </UserProvider>

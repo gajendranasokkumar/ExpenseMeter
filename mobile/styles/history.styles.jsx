@@ -1,11 +1,14 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createHistoryStyles = () => {
   const { colors } = useTheme();
   const surfaceRadius = colors?.radii?.surface ?? (colors?.radii?.card ?? 20);
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -36,7 +39,7 @@ const createHistoryStyles = () => {
     },
     controlsTitle: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     controlsActive: {
       backgroundColor: colors.surface,
@@ -56,7 +59,7 @@ const createHistoryStyles = () => {
     },
     headerTitle: {
       color: colors.text,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
     },
     footer: {
       flexDirection: 'row',
@@ -67,7 +70,7 @@ const createHistoryStyles = () => {
     },
     footerText: {
       color: colors.textMuted,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     emptyContainer: {
       flex: 1,
@@ -82,7 +85,7 @@ const createHistoryStyles = () => {
     emptyText: {
       color: colors.textMuted,
       marginTop: 24,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     transactionContainerForTrans: {
       flexDirection: 'row',
@@ -130,7 +133,7 @@ const createHistoryStyles = () => {
       flex: 1,
     },
     transactionCenterTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
     },
     transactionRight: {
@@ -140,10 +143,10 @@ const createHistoryStyles = () => {
       marginRight: 8,
     },
     transactionRightAmount: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     transactionCenterDate: {
-      fontSize: 12,
+      fontSize: fontSize("sm"),
       color: colors.textMuted,
     },
     optionsIcon: {
@@ -166,7 +169,7 @@ const createHistoryStyles = () => {
     },
     infoText: {
       color: colors.textMuted,
-      fontSize: 12,
+      fontSize: fontSize("sm"),
     },
     infoIcon: {
       color: colors.warning,

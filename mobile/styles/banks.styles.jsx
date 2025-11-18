@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createBanksStyles = () => {
   const { colors } = useTheme();
@@ -8,6 +9,8 @@ const createBanksStyles = () => {
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -20,7 +23,7 @@ const createBanksStyles = () => {
       marginBottom: 24,
     },
     title: {
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       color: colors.text,
     },
     section: {
@@ -63,7 +66,7 @@ const createBanksStyles = () => {
       marginBottom: 10,
     },
     carouselName: {
-      fontSize: 18,
+      fontSize: fontSize("md3"),
       color: colors.text,
       fontWeight: "600",
     },
@@ -91,7 +94,7 @@ const createBanksStyles = () => {
       marginTop: 10,
     },
     carouselIfsc: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.text,
       fontWeight: "400",
     },
@@ -140,7 +143,7 @@ const createBanksStyles = () => {
       borderRadius: pillRadius,
     },
     ifscBadgeText: {
-      fontSize: 12,
+      fontSize: fontSize("sm"),
       color: colors.textMuted,
       letterSpacing: 0.3,
     },
@@ -185,7 +188,7 @@ const createBanksStyles = () => {
     },
     deleteButtonText: {
       color: colors.surface,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
     },
     detailRow: {
@@ -195,15 +198,15 @@ const createBanksStyles = () => {
     },
     detailLabel: {
       color: colors.textMuted,
-      fontSize: 12,
+      fontSize: fontSize("sm"),
     },
     detailValue: {
       color: colors.text,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "500",
     },
     emptyCarouselText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
       textAlign: "center",
@@ -212,7 +215,7 @@ const createBanksStyles = () => {
       marginBottom: 20,
     },
     dropdownTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       color: colors.text,
       marginBottom: 12,
@@ -233,7 +236,7 @@ const createBanksStyles = () => {
       marginRight: 12,
     },
     bankName: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "500",
     },
@@ -248,13 +251,13 @@ const createBanksStyles = () => {
       marginVertical: 2,
     },
     ifscName: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "500",
       flex: 1,
     },
     ifsc: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: "#B0B0B0",
       fontWeight: "400",
       fontFamily: "monospace",
@@ -273,7 +276,7 @@ const createBanksStyles = () => {
     },
     saveButtonText: {
       color: colors.surface,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
       textAlign: "center",
     },
     footer: {
@@ -282,7 +285,7 @@ const createBanksStyles = () => {
       justifyContent: "center",
     },
     footerText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
     },

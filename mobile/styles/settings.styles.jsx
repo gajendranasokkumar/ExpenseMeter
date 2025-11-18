@@ -1,5 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -9,6 +10,8 @@ const createSettingsStyles = () => {
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
   const circleRadius = colors?.radii?.circle ?? 999;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   return StyleSheet.create({
     container: {
@@ -29,7 +32,7 @@ const createSettingsStyles = () => {
     title: {
       flex: 1,
       color: colors.text,
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "700",
       paddingLeft: 16,
     },
@@ -61,11 +64,11 @@ const createSettingsStyles = () => {
       marginBottom: 15,
     },
     sectionTitle: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.text,
     },
     sectionTitleDanger: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.danger,
     },
     settingItem: {
@@ -90,7 +93,7 @@ const createSettingsStyles = () => {
       marginRight: 16,
     },
     settingText: {
-      fontSize: 17,
+      fontSize: fontSize("md2"),
       fontWeight: "600",
       color: colors.text,
     },
@@ -113,11 +116,11 @@ const createSettingsStyles = () => {
       height: 24,
     },
     profileSectionName: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       color: colors.text,
     },
     profileSectionEmail: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.textMuted,
     },
     profileSectionNameContainer: {
@@ -184,13 +187,13 @@ const createSettingsStyles = () => {
       backgroundColor: colors.primary,
     },
     profileSectionName: {
-      fontSize: 20,
+      fontSize: fontSize("lg"),
       fontWeight: "700",
       color: colors.text,
       marginBottom: 5,
     },
     profileSectionEmail: {
-      fontSize: 18,
+      fontSize: fontSize("md3"),
       color: colors.textMuted,
     },
     profileSectionNameEditable: {

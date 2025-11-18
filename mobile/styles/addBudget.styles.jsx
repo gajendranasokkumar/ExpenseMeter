@@ -1,9 +1,12 @@
 import { StyleSheet } from "react-native";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createStyles = (colors) => {
   const inputRadius = colors?.radii?.input ?? 16;
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   return StyleSheet.create({
     container: {
@@ -30,14 +33,14 @@ const createStyles = (colors) => {
     },
     headerTitle: {
       color: colors.text,
-      fontSize: 24,
+      fontSize: fontSize("lg3"),
     },
     inputGroup: {
       marginBottom: 20,
     },
     inputLabel: {
       color: colors.text,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       marginBottom: 8,
     },
@@ -48,7 +51,7 @@ const createStyles = (colors) => {
       borderRadius: inputRadius,
       padding: 16,
       color: colors.text,
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     dateInputContainer: {
       marginBottom: 20,
@@ -64,7 +67,7 @@ const createStyles = (colors) => {
       justifyContent: "space-between",
     },
     dateInputText: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
     },
     dateInputTextPlaceholder: {
       color: colors.textMuted,
@@ -94,7 +97,7 @@ const createStyles = (colors) => {
       borderColor: colors.border,
     },
     categoryButtonText: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "500",
     },
     categoryButtonTextSelected: {
@@ -126,7 +129,7 @@ const createStyles = (colors) => {
       borderColor: colors.border,
     },
     periodButtonText: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       fontWeight: "600",
     },
     periodButtonTextSelected: {
@@ -144,7 +147,7 @@ const createStyles = (colors) => {
     },
     submitButtonText: {
       color: colors.surface,
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "700",
     },
   });

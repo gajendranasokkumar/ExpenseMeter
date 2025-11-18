@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import useTheme from "../hooks/useTheme";
+import { useFontSize } from "../context/fontSizeContext";
 
 const createMoreStyles = () => {
   const { colors } = useTheme();
@@ -7,6 +8,8 @@ const createMoreStyles = () => {
   const surfaceRadius = colors?.radii?.surface ?? cardRadius;
   const buttonRadius = colors?.radii?.button ?? 16;
   const pillRadius = colors?.radii?.pill ?? 12;
+  const { getFontSizeByKey } = useFontSize();
+  const fontSize = (key) => getFontSizeByKey(key);
 
   return StyleSheet.create({
     container: {
@@ -23,19 +26,19 @@ const createMoreStyles = () => {
     masterTitle: {
       flex: 1,
       color: colors.text,
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "700",
     },
     title: {
       flex: 1,
       color: colors.text,
-      fontSize: 28,
+      fontSize: fontSize("xl"),
       fontWeight: "700",
       paddingLeft: 16,
     },
     subtitle: {
       color: colors.textMuted,
-      fontSize: 14,
+      fontSize: fontSize("base"),
       marginTop: 8,
       textAlign: "center",
     },
@@ -60,7 +63,7 @@ const createMoreStyles = () => {
       marginBottom: 15,
     },
     sectionTitle: {
-      fontSize: 13,
+      fontSize: fontSize("sm2"),
       fontWeight: "700",
       color: colors.textMuted,
       marginBottom: 12,
@@ -100,12 +103,12 @@ const createMoreStyles = () => {
       flex: 1,
     },
     optionTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       fontWeight: "600",
       color: colors.text,
     },
     optionDescription: {
-      fontSize: 13,
+      fontSize: fontSize("sm2"),
       color: colors.textMuted,
       marginTop: 4,
     },
@@ -115,7 +118,7 @@ const createMoreStyles = () => {
       marginLeft: 12,
     },
     trailingText: {
-      fontSize: 13,
+      fontSize: fontSize("sm2"),
       color: colors.textMuted,
       marginRight: 8,
       fontWeight: "600",
@@ -144,12 +147,12 @@ const createMoreStyles = () => {
       paddingHorizontal: 16,
     },
     listRowTitle: {
-      fontSize: 16,
+      fontSize: fontSize("md"),
       color: colors.text,
       fontWeight: "600",
     },
     listRowSubtitle: {
-      fontSize: 13,
+      fontSize: fontSize("sm2"),
       color: colors.textMuted,
       marginTop: 4,
     },
@@ -168,7 +171,7 @@ const createMoreStyles = () => {
       opacity: 0.5,
     },
     sectionDescription: {
-      fontSize: 14,
+      fontSize: fontSize("base"),
       color: colors.textMuted,
       marginBottom: 16,
     },
