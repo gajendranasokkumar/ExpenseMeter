@@ -12,6 +12,7 @@ import { categories as CATEGORY_CONST } from "../constants/Categories";
 import ProgressBar from "./ProgressBar";
 import useLanguage from "../hooks/useLanguage";
 import { useFontSize } from "../context/fontSizeContext";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const { width } = Dimensions.get("window");
 
@@ -21,6 +22,7 @@ const TotalStats = () => {
   const { t } = useLanguage();
   const { getFontSizeByKey } = useFontSize();
   const fontSize = (key) => getFontSizeByKey(key);
+  const { currencyCode } = useCurrencyPreference();
 
   const { user } = useUser();
   const userId = user?._id;
@@ -109,7 +111,9 @@ const TotalStats = () => {
                 defaultValue: "Total income (all time)",
               })}
             </Text>
-            <Text style={{ color: colors.income, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalIncome)}</Text>
+            <Text style={{ color: colors.income, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>
+              {formatAmountDisplay(totalIncome, currencyCode)}
+            </Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
@@ -118,14 +122,18 @@ const TotalStats = () => {
                 defaultValue: "Total expense (all time)",
               })}
             </Text>
-            <Text style={{ color: colors.expense, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(totalExpense)}</Text>
+            <Text style={{ color: colors.expense, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>
+              {formatAmountDisplay(totalExpense, currencyCode)}
+            </Text>
           </View>
           <View style={{ width: 1, backgroundColor: colors.border }} />
           <View style={{ flex: 1, padding: 14 }}>
             <Text style={{ color: colors.text, opacity: 0.8 }}>
               {t("statistics.total.net", { defaultValue: "Net" })}
             </Text>
-            <Text style={{ color: netSaving >= 0 ? colors.income : colors.expense, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>{formatAmountDisplay(netSaving)}</Text>
+            <Text style={{ color: netSaving >= 0 ? colors.income : colors.expense, fontSize: fontSize("sm"), fontWeight: "600", marginTop: 2 }}>
+              {formatAmountDisplay(netSaving, currencyCode)}
+            </Text>
           </View>
         </View>
       </View>
@@ -141,7 +149,9 @@ const TotalStats = () => {
                 defaultValue: "Average monthly spend",
               })}
             </Text>
-            <Text style={{ color: colors.text, fontSize: fontSize("md3"), fontWeight: '600', marginTop: 2 }}>{formatAmountDisplay(avgMonthlySpend)}</Text>
+            <Text style={{ color: colors.text, fontSize: fontSize("md3"), fontWeight: '600', marginTop: 2 }}>
+              {formatAmountDisplay(avgMonthlySpend, currencyCode)}
+            </Text>
           </View>
         </View>
         <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg, flexDirection: 'row', alignItems: 'center' }}>
@@ -154,7 +164,9 @@ const TotalStats = () => {
                 defaultValue: "Average daily spend",
               })}
             </Text>
-            <Text style={{ color: colors.text, fontSize: fontSize("md3"), fontWeight: '600', marginTop: 2 }}>{formatAmountDisplay(avgDailySpend)}</Text>
+            <Text style={{ color: colors.text, fontSize: fontSize("md3"), fontWeight: '600', marginTop: 2 }}>
+              {formatAmountDisplay(avgDailySpend, currencyCode)}
+            </Text>
           </View>
         </View>
       </View>
@@ -172,7 +184,9 @@ const TotalStats = () => {
                 defaultValue: "Best income year",
               })}
             </Text>
-            <Text style={{ color: colors.income, fontSize: fontSize("base"), fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(bestIncomeYear?.income || 0)}</Text>
+            <Text style={{ color: colors.income, fontSize: fontSize("base"), fontWeight: "700", marginTop: 6 }}>
+              {formatAmountDisplay(bestIncomeYear?.income || 0, currencyCode)}
+            </Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{bestIncomeYear?.year ?? '-'}</Text>
           </View>
           <View style={{ flex: 1, padding: 14, borderWidth: 1, borderColor: colors.border, borderRadius: 12, backgroundColor: colors.bg }}>
@@ -181,7 +195,9 @@ const TotalStats = () => {
                 defaultValue: "Highest expense year",
               })}
             </Text>
-            <Text style={{ color: colors.expense, fontSize: fontSize("base"), fontWeight: "700", marginTop: 6 }}>{formatAmountDisplay(highestExpenseYear?.expense || 0)}</Text>
+            <Text style={{ color: colors.expense, fontSize: fontSize("base"), fontWeight: "700", marginTop: 6 }}>
+              {formatAmountDisplay(highestExpenseYear?.expense || 0, currencyCode)}
+            </Text>
             <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4 }}>{highestExpenseYear?.year ?? '-'}</Text>
           </View>
         </View>
@@ -239,7 +255,9 @@ const TotalStats = () => {
                   </Text>
                 </View>
                 <View>
-                  <Text style={{ color: colors.text, fontWeight: '700' }}>{formatAmountDisplay(c.value)}</Text>
+                  <Text style={{ color: colors.text, fontWeight: '700' }}>
+                    {formatAmountDisplay(c.value, currencyCode)}
+                  </Text>
                 </View>
               </View>
             );

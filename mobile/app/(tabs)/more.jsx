@@ -15,6 +15,7 @@ import createMoreStyles from "../../styles/more.styles";
 import useLanguage from "../../hooks/useLanguage";
 import { useFontSize } from "../../context/fontSizeContext";
 import { useNotificationPreferences } from "../../context/notificationPreferencesContext";
+import useCurrencyPreference from "../../hooks/useCurrencyPreference";
 
 const More = () => {
   const { colors, currentTheme, themeNames } = useTheme();
@@ -26,6 +27,7 @@ const More = () => {
     isUpdatingPersistentNotification,
     setPersistentNotificationEnabled,
   } = useNotificationPreferences();
+  const { currency } = useCurrencyPreference();
   const styles = createMoreStyles();
 
   const sections = useMemo(
@@ -40,6 +42,20 @@ const More = () => {
             description: t("more.option.settings.description"),
             icon: "settings-outline",
             onPress: () => router.push("/(tabs)/settings"),
+          },
+          {
+            key: "currency",
+            title: t("more.option.currencies.title", {
+              defaultValue: "Currency",
+            }),
+            description: t("more.option.currencies.description", {
+              defaultValue: "Choose how monetary values are displayed",
+            }),
+            icon: "cash-outline",
+            trailingText: currency
+              ? `${currency.symbol} ${currency.code}`
+              : "INR",
+            onPress: () => router.push("/(tabs)/currencies"),
           },
           {
             key: "languages",
@@ -120,6 +136,7 @@ const More = () => {
       },
     ],
     [
+      currency,
       currentLanguage,
       currentTheme,
       currentPreset,

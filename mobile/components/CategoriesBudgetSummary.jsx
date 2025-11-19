@@ -10,6 +10,7 @@ import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { LinearGradient } from "expo-linear-gradient";
 import ProgressBar from "./ProgressBar";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const CategoriesBudgetSummary = () => {
   const { user } = useUser();
@@ -22,6 +23,7 @@ const CategoriesBudgetSummary = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { colors } = useTheme();
   const styles = createCategoriesBudgetSummaryStyles();
+  const { currencyCode } = useCurrencyPreference();
 
   const getCategoriesBudgetSummary = useCallback(async () => {
     try {
@@ -74,17 +76,17 @@ const CategoriesBudgetSummary = () => {
                   style={styles.categoriesBudgetSummaryBudgetAmountContainer}
                 >
                   <Text style={styles.categoriesBudgetSummaryBudgetAmount}>
-                    {formatAmountDisplay(category.budgetAmount)}
+                    {formatAmountDisplay(category.budgetAmount, currencyCode)}
                   </Text>{" "}
                   /
                   <Text style={styles.categoriesBudgetSummaryTotalExpenses}>
                     {" "}
-                    {formatAmountDisplay(category.totalExpenses)}
+                    {formatAmountDisplay(category.totalExpenses, currencyCode)}
                   </Text>{" "}
                   /
                   <Text style={styles.categoriesBudgetSummaryRemainingBudget}>
                     {" "}
-                    {formatAmountDisplay(category.remainingBudget)}
+                    {formatAmountDisplay(category.remainingBudget, currencyCode)}
                   </Text>
                 </Text>
               </View>

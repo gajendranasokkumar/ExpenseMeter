@@ -18,6 +18,7 @@ import { formatToPieData } from "../utils/formatToPieData";
 import { PieChart } from "react-native-gifted-charts";
 import useLanguage from "../hooks/useLanguage";
 import { useFontSize } from "../context/fontSizeContext";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -30,6 +31,7 @@ const YearlyStats = ({ year }) => {
   const { t } = useLanguage();
   const { getFontSizeByKey } = useFontSize();
   const fontSize = (key) => getFontSizeByKey(key);
+  const { currencyCode } = useCurrencyPreference();
 
   const [isLoading, setIsLoading] = useState(false);
   const [yearlyData, setYearlyData] = useState({
@@ -106,7 +108,7 @@ const YearlyStats = ({ year }) => {
               <Text
                 style={[styles.topExpenseDataValue, { color: colors.income }]}
               >
-                {formatAmountDisplay(yearlyData.totalIncome || 0)}
+                {formatAmountDisplay(yearlyData.totalIncome || 0, currencyCode)}
               </Text>
             </View>
             <View style={styles.topExpenseDataContainer}>
@@ -116,7 +118,7 @@ const YearlyStats = ({ year }) => {
                 })}
               </Text>
               <Text style={styles.topExpenseDataValue}>
-                {formatAmountDisplay(yearlyData.totalExpense || 0)}
+                {formatAmountDisplay(yearlyData.totalExpense || 0, currencyCode)}
               </Text>
             </View>
           </View>
@@ -183,10 +185,10 @@ const YearlyStats = ({ year }) => {
                       }}
                     >
                       <Text style={{ color: colors.income, fontSize: fontSize("sm") }}>
-                        + {formatAmountDisplay(income)}
+                        + {formatAmountDisplay(income, currencyCode)}
                       </Text>
                       <Text style={{ color: colors.expense, fontSize: fontSize("sm") }}>
-                        - {formatAmountDisplay(expense)}
+                        - {formatAmountDisplay(expense, currencyCode)}
                       </Text>
                     </View>
                   </View>
@@ -257,7 +259,8 @@ const YearlyStats = ({ year }) => {
                           { color: colors.text || "#fff" },
                         ]}
                       >
-                        {formatAmountDisplay(item.value)} ( {item.percentage} )
+                        {formatAmountDisplay(item.value, currencyCode)} ({" "}
+                        {item.percentage} )
                       </Text>
                     </View>
                   </View>

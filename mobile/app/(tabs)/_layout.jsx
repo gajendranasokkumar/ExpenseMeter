@@ -141,6 +141,12 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
+          name="currencies"
+          options={{
+            href: null,
+          }}
+        />
+        <Tabs.Screen
           name="themes"
           options={{
             href: null,

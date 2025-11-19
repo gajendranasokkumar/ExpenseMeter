@@ -8,6 +8,7 @@ import api from "../utils/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import useLanguage from "../hooks/useLanguage";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const HomeStats = () => {
   const [summary, setSummary] = useState({
@@ -20,6 +21,7 @@ const HomeStats = () => {
   const styles = createHomeStyles();
   const { colors } = useTheme();
   const { t } = useLanguage();
+  const { currencyCode } = useCurrencyPreference();
 
   const fetchSummary = useCallback(async () => {
     try {
@@ -57,7 +59,9 @@ const HomeStats = () => {
                   defaultValue: "Main Balance",
                 })}
               </Text>
-              <Text style={styles.mainBalanceValue}>{formatAmountDisplay(summary.balance)}</Text>
+              <Text style={styles.mainBalanceValue}>
+                {formatAmountDisplay(summary.balance, currencyCode)}
+              </Text>
           </View>
           <View style={styles.expensesContainer}>
               <View style={styles.expensesHeader}>
@@ -65,7 +69,9 @@ const HomeStats = () => {
                       <Ionicons name="arrow-down-circle-outline" size={14} color={colors.textMuted} />
                       {` ${t("home.stats.income", { defaultValue: "Income" })}`}
                   </Text>
-                  <Text style={[styles.expensesValue, { color: colors.income }]}>+ {formatAmountDisplay(summary.income)}</Text>
+                  <Text style={[styles.expensesValue, { color: colors.income }]}>
+                    + {formatAmountDisplay(summary.income, currencyCode)}
+                  </Text>
               </View>
               <View style={styles.expensesHeader2}>
                   <Text style={styles.expensesTitle}>
@@ -74,7 +80,13 @@ const HomeStats = () => {
                         defaultValue: "Expenses",
                       })}`}
                   </Text>
-                  <Text style={[styles.expensesValue, { color: colors.expense }]}>- {formatAmountDisplay(formarExpenseAmount(summary.expenses))}</Text>
+                  <Text style={[styles.expensesValue, { color: colors.expense }]}>
+                    -{" "}
+                    {formatAmountDisplay(
+                      formarExpenseAmount(summary.expenses),
+                      currencyCode
+                    )}
+                  </Text>
               </View>
           </View>
       </View>

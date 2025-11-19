@@ -6,10 +6,12 @@ import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { categories } from "../constants/Categories";
 import { formatDate } from "../utils/formatDate";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const SingleTransaction = ({ transaction, onDelete, userCategories = [] }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
+  const { currencyCode } = useCurrencyPreference();
 
   const getIcon = (category, categoryId) => {
     // If category_id exists, it's a custom category - use the icon from userCategories
@@ -53,11 +55,11 @@ const SingleTransaction = ({ transaction, onDelete, userCategories = [] }) => {
         <View style={styles.transactionRight}>
           {transaction.amount > 0 ? (
             <Text style={[styles.transactionRightAmount, { color: colors.incomeMuted }]}>
-              + {formatAmountDisplay(transaction.amount)}
+              + {formatAmountDisplay(transaction.amount, currencyCode)}
             </Text>
           ) : (
             <Text style={[styles.transactionRightAmount, { color: colors.expenseMuted }]}>
-              - {formatAmountDisplay(Math.abs(transaction.amount))}
+              - {formatAmountDisplay(Math.abs(transaction.amount), currencyCode)}
             </Text>
           )}
         </View>

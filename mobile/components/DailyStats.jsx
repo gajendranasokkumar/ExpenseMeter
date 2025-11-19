@@ -17,6 +17,7 @@ import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatToPieData } from "../utils/formatToPieData";
 import useLanguage from "../hooks/useLanguage";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const { width } = Dimensions.get("window");
 const chartRadius = Math.min(Math.round(width * 0.35), 140);
@@ -27,6 +28,7 @@ const DailyStats = ({ day, month, year }) => {
   const { user } = useUser();
   const userId = user?._id;
   const { t } = useLanguage();
+  const { currencyCode } = useCurrencyPreference();
   const [isLoading, setIsLoading] = useState(false);
   const [dailyData, setDailyData] = useState({});
 
@@ -76,8 +78,8 @@ const DailyStats = ({ day, month, year }) => {
                 style={[styles.topExpenseDataValue, { color: colors.income }]}
               >
                 {dailyData.totalIncome
-                  ? formatAmountDisplay(dailyData.totalIncome)
-                  : formatAmountDisplay(0)}
+                  ? formatAmountDisplay(dailyData.totalIncome, currencyCode)
+                  : formatAmountDisplay(0, currencyCode)}
               </Text>
             </View>
             <View style={styles.topExpenseDataContainer}>
@@ -88,8 +90,8 @@ const DailyStats = ({ day, month, year }) => {
               </Text>
               <Text style={styles.topExpenseDataValue}>
                 {dailyData.totalExpense
-                  ? formatAmountDisplay(dailyData.totalExpense)
-                  : formatAmountDisplay(0)}
+                  ? formatAmountDisplay(dailyData.totalExpense, currencyCode)
+                  : formatAmountDisplay(0, currencyCode)}
               </Text>
             </View>
           </View>
@@ -139,7 +141,8 @@ const DailyStats = ({ day, month, year }) => {
                           { color: colors.text || "#fff" },
                         ]}
                       >
-                        {formatAmountDisplay(item.value)} ( {item.percentage} )
+                        {formatAmountDisplay(item.value, currencyCode)} ({" "}
+                        {item.percentage} )
                       </Text>
                     </View>
                   </View>

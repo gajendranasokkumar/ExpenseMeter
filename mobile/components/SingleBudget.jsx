@@ -7,10 +7,12 @@ import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { categories } from "../constants/Categories";
 import { formatDate } from "../utils/formatDate";
 import ProgressBar from "./ProgressBar";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const SingleBudget = ({ budget, onDelete, showProgressbar=false, userCategories = [] }) => {
   const styles = createHistoryStyles();
   const { colors } = useTheme();
+  const { currencyCode } = useCurrencyPreference();
 
   const getIcon = (category, categoryId) => {
     // If category_id exists, it's a custom category - use the icon from userCategories
@@ -70,7 +72,7 @@ const SingleBudget = ({ budget, onDelete, showProgressbar=false, userCategories 
                 { color: colors.incomeMuted },
               ]}
             >
-              {formatAmountDisplay(budget.amount)}
+              {formatAmountDisplay(budget.amount, currencyCode)}
             </Text>
             <Text
               style={[
@@ -78,7 +80,7 @@ const SingleBudget = ({ budget, onDelete, showProgressbar=false, userCategories 
                 { color: colors.expenseMuted },
               ]}
             >
-              {formatAmountDisplay(budget.amountSpent)}
+              {formatAmountDisplay(budget.amountSpent, currencyCode)}
             </Text>
           </View>
         </View>

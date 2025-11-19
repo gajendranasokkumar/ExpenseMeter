@@ -368,6 +368,9 @@ export const TRANSLATIONS = {
     "more.option.fontSizes.title": "Font sizes",
     "more.option.fontSizes.description":
       "Adjust how large text appears across the app",
+    "more.option.currencies.title": "Currency",
+    "more.option.currencies.description":
+      "Choose how monetary values are displayed",
     "more.option.categories.title": "Edit Categories",
     "more.option.categories.description": "Manage your expense categories",
     "more.option.notifications.title": "Persistent notification",
@@ -380,6 +383,9 @@ export const TRANSLATIONS = {
     "languages.title": "Languages",
     "languages.description":
       "Set your preferred language for menus and communication.",
+    "currencies.title": "Currency",
+    "currencies.description":
+      "Select which currency to use when displaying your totals.",
 
     "themes.title": "Themes",
     "themes.section.current": "Current Theme",

@@ -7,10 +7,12 @@ import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import useTheme from "../hooks/useTheme";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const BankSummary = () => {
   const styles = banksSummaryStyles();
   const { colors } = useTheme();
+  const { currencyCode } = useCurrencyPreference();
   const [bankSummary, setBankSummary] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
@@ -61,7 +63,7 @@ const BankSummary = () => {
               />
               <Text style={styles.bankSummaryItemName}>{bank.name}</Text>
               <Text style={styles.bankSummaryItemBalance}>
-                {formatAmountDisplay(bank.availableBalance)}
+                {formatAmountDisplay(bank.availableBalance, currencyCode)}
               </Text>
             </View>
           </View>

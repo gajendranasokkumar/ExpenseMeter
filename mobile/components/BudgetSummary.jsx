@@ -16,6 +16,7 @@ import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { getCurrentMonth } from "../utils/formatDate";
 import useLanguage from "../hooks/useLanguage";
+import useCurrencyPreference from "../hooks/useCurrencyPreference";
 
 const BudgetSummary = () => {
   const styles = createHomeStyles();
@@ -23,6 +24,7 @@ const BudgetSummary = () => {
   const { user } = useUser();
   const userId = user?._id;
   const { t } = useLanguage();
+  const { currencyCode } = useCurrencyPreference();
   const [budget, setBudget] = useState({});
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -177,7 +179,7 @@ const BudgetSummary = () => {
                 })}
               </Text>
               <Text style={styles.budgetSummaryAmountLeft}>
-                {formatAmountDisplay(budget.currentExpenses)}
+                {formatAmountDisplay(budget.currentExpenses, currencyCode)}
               </Text>
             </View>
             <View style={styles.budgetSummaryContentRight}>
@@ -187,7 +189,7 @@ const BudgetSummary = () => {
                 })}
               </Text>
               <Text style={styles.budgetSummaryAmountRight}>
-                {formatAmountDisplay(budget.budgetLimit)}
+                {formatAmountDisplay(budget.budgetLimit, currencyCode)}
               </Text>
             </View>
           </View>
@@ -209,7 +211,7 @@ const BudgetSummary = () => {
                   defaultValue: "You can spend ",
                 })}
                 <Text style={styles.remainingBudgetAmount}>
-                  {formatAmountDisplay(budget.remainingBudget)}
+                  {formatAmountDisplay(budget.remainingBudget, currencyCode)}
                 </Text>
                 {t("home.budget.remainingPositive.suffix", {
                   defaultValue: " more this month.",
