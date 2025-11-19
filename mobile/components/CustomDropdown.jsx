@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   Modal,
   FlatList,
   StyleSheet,
+  TextInput,
 } from 'react-native';
 import { Image } from 'expo-image';
 import useTheme from '../hooks/useTheme';
@@ -19,13 +20,31 @@ const CustomDropdown = ({
   style,
   dropdownStyle,
   placeholderStyle,
-  selectedValue
+  selectedValue,
+  enableSearch = true,
+  searchPlaceholder = "Search...",
 }) => {
   const { colors } = useTheme();
   const { getFontSizeByKey } = useFontSize();
   const fontSize = (key) => getFontSizeByKey(key);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(selectedValue || null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const normalizedData = useMemo(() => Array.isArray(data) ? data : [], [data]);
+  const filteredData = useMemo(() => {
+    if (!enableSearch) {
+      return normalizedData;
+    }
+    const query = searchQuery.trim().toLowerCase();
+    if (!query.length) {
+      return normalizedData;
+    }
+    return normalizedData.filter((item) => {
+      const label = (item.name || item.label || "").toString().toLowerCase();
+      const ifsc = item.ifsc?.toString().toLowerCase();
+      return label.includes(query) || (ifsc && ifsc.includes(query));
+    });
+  }, [normalizedData, searchQuery, enableSearch]);
   
   const dropdownStyles = getStyles(colors, fontSize);
 
@@ -34,6 +53,15 @@ const CustomDropdown = ({
     setIsVisible(false);
     onSelect(item);
   };
+
+  const handleOpen = () => {
+    setSearchQuery("");
+    setIsVisible(true);
+  };
+
+  useEffect(() => {
+    setSelectedItem(selectedValue || null);
+  }, [selectedValue]);
 
   const renderDropdownItem = ({ item }) => {
     if (renderItem) {
@@ -61,7 +89,7 @@ const CustomDropdown = ({
     <View style={[dropdownStyles.container, style]}>
       <TouchableOpacity
         style={[dropdownStyles.dropdownButton, dropdownStyle]}
-        onPress={() => setIsVisible(true)}
+        onPress={handleOpen}
       >
         <Text style={[dropdownStyles.placeholderText, placeholderStyle]}>
           {selectedItem ? (selectedItem.name || selectedItem.label) : placeholder}
@@ -81,12 +109,34 @@ const CustomDropdown = ({
           onPress={() => setIsVisible(false)}
         >
           <View style={dropdownStyles.modalContent}>
+            {enableSearch ? (
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder={searchPlaceholder}
+                placeholderTextColor={colors.textMuted}
+                style={dropdownStyles.searchInput}
+              />
+            ) : null}
             <FlatList
-              data={data}
-              keyExtractor={(item) => item.id?.toString() || item.value?.toString()}
+              data={filteredData}
+              keyExtractor={(item, index) => {
+                if (item.id != null) {
+                  return `${item.id}-${index}`;
+                }
+                if (item.value != null) {
+                  return `${item.value}-${index}`;
+                }
+                return `option-${index}`;
+              }}
               renderItem={renderDropdownItem}
               showsVerticalScrollIndicator={false}
               style={dropdownStyles.dropdownList}
+              ListEmptyComponent={() => (
+                <View style={dropdownStyles.emptyState}>
+                  <Text style={dropdownStyles.emptyStateText}>No results</Text>
+                </View>
+              )}
             />
           </View>
         </TouchableOpacity>
@@ -145,6 +195,16 @@ const getStyles = (colors, fontSize) => StyleSheet.create({
   dropdownList: {
     maxHeight: 300,
   },
+  searchInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    margin: 12,
+    fontSize: fontSize("md"),
+    color: colors.text,
+  },
   dropdownItem: {
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -154,6 +214,14 @@ const getStyles = (colors, fontSize) => StyleSheet.create({
   dropdownItemText: {
     color: colors.text,
     fontSize: fontSize("md"),
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  emptyStateText: {
+    color: colors.textMuted,
+    fontSize: fontSize("sm"),
   },
 });
 

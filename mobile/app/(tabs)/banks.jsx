@@ -11,7 +11,7 @@ import {
   UIManager,
 } from "react-native";
 import { Image } from "expo-image";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createBanksStyles from "../../styles/banks.styles";
@@ -20,7 +20,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { BANK_ROUTES } from "../../constants/endPoints";
 import api from "../../utils/api";
 import { useFocusEffect } from "@react-navigation/native";
-import { defaultBanks, IfscCodes } from "../../constants/BankNamesAndIfsc";
+import { getBankOptions, fetchIfscOptions } from "../../utils/ifscData";
+import { getBankLogoSource, extractBankCode } from "../../utils/bankLogos";
 import { useUser } from "../../context/userContext";
 import useLanguage from "../../hooks/useLanguage";
 
@@ -32,12 +33,64 @@ const Banks = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [banks, setBanks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const bankOptions = useMemo(() => getBankOptions(), []);
+  const [ifscOptions, setIfscOptions] = useState([]);
+  const [isIfscLoading, setIsIfscLoading] = useState(false);
+  const [ifscError, setIfscError] = useState(null);
 
   const { t } = useLanguage();
 
   const { user } = useUser();
   const userId = user?._id;
   
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadIfscOptions = async () => {
+      if (!selectedBank?.code) {
+        setIfscOptions([]);
+        setSelectedIfsc(null);
+        setIfscError(null);
+        return;
+      }
+
+      setIsIfscLoading(true);
+      setIfscError(null);
+      try {
+        const options = await fetchIfscOptions({ bankCode: selectedBank.code });
+        if (isActive) {
+          setIfscOptions(options);
+          setSelectedIfsc(options.length === 1 ? options[0] : null);
+        }
+      } catch (error) {
+        if (isActive) {
+          setIfscOptions([]);
+          setSelectedIfsc(null);
+          const message =
+            error?.message ||
+            t("banks.alerts.ifscFetchError", {
+              defaultValue: "Unable to load IFSC codes for this bank.",
+            });
+          setIfscError(message);
+          Alert.alert(
+            t("common.error", { defaultValue: "Error" }),
+            message
+          );
+        }
+      } finally {
+        if (isActive) {
+          setIsIfscLoading(false);
+        }
+      }
+    };
+
+    loadIfscOptions();
+
+    return () => {
+      isActive = false;
+    };
+  }, [selectedBank, t]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -53,7 +106,7 @@ const Banks = () => {
       }
       const response = await api.post(BANK_ROUTES.CREATE_BANK, {
         name: selectedBank.name,
-        logo: selectedBank.logo,
+        logo: "",
         ifsc: selectedIfsc.ifsc,
         userId: userId,
       });
@@ -164,6 +217,8 @@ const Banks = () => {
     });
   };
 
+  const isIfscDropdownDisabled = !selectedBank || isIfscLoading;
+
   return (
     <LinearGradient
       colors={colors.gradients.background}
@@ -186,9 +241,10 @@ const Banks = () => {
               <TouchableOpacity activeOpacity={0.85} style={styles.bankListItem} >
                 <View style={styles.bankCard}>
                   <View style={styles.bankLeft}>
-                    {item.logo ? (
-                      <Image source={{ uri: item.logo }} style={styles.carouselImage} />
-                    ) : null}
+                    <Image
+                      source={getBankLogoSource(extractBankCode(item))}
+                      style={styles.carouselImage}
+                    />
                     <View style={styles.bankText}>
                       <Text style={styles.bankName}>
                         {item.name}
@@ -277,14 +333,17 @@ const Banks = () => {
                 })}
               </Text>
               <CustomDropdown
-                data={defaultBanks}
+                data={bankOptions}
                 onSelect={setSelectedBank}
                 placeholder={t("banks.form.selectBankPlaceholder", {
                   defaultValue: "Choose a bank",
                 })}
                 renderItem={(item) => (
                   <View style={styles.bankContainer}>
-                    <Image source={{ uri: item.logo }} style={styles.bankLogo} />
+                    <Image
+                      source={getBankLogoSource(extractBankCode(item))}
+                      style={styles.bankLogo}
+                    />
                     <Text style={styles.bankName}>{item.name}</Text>
                   </View>
                 )}
@@ -297,20 +356,53 @@ const Banks = () => {
                   defaultValue: "Select IFSC Code",
                 })}
               </Text>
-              <CustomDropdown
-                data={IfscCodes}
-                onSelect={setSelectedIfsc}
-                placeholder={t("banks.form.selectIfscPlaceholder", {
-                  defaultValue: "Choose an IFSC code",
-                })}
-                renderItem={(item) => (
-                  <View style={styles.ifscContainer}>
-                    <Text style={styles.ifscName}>{item.name}</Text>
-                    <Text style={styles.ifsc}>{item.ifsc}</Text>
-                  </View>
-                )}
-                selectedValue={selectedIfsc}
-              />
+              <View
+                style={[
+                  styles.dropdownDisabledWrapper,
+                  isIfscDropdownDisabled ? styles.dropdownDisabled : null,
+                ]}
+                pointerEvents={isIfscDropdownDisabled ? "none" : "auto"}
+              >
+                <CustomDropdown
+                  data={ifscOptions}
+                  onSelect={setSelectedIfsc}
+                  placeholder={
+                    !selectedBank
+                      ? t("banks.form.selectBankFirst", {
+                          defaultValue: "Choose a bank first",
+                        })
+                      : isIfscLoading
+                      ? t("banks.form.loadingIfsc", {
+                          defaultValue: "Loading IFSC options...",
+                        })
+                      : t("banks.form.selectIfscPlaceholder", {
+                          defaultValue: "Choose an IFSC code",
+                        })
+                  }
+                  renderItem={(item) => (
+                    <View style={styles.ifscContainer}>
+                      <Text style={styles.ifscName}>{item.name}</Text>
+                      <Text style={styles.ifsc}>{item.ifsc}</Text>
+                    </View>
+                  )}
+                  selectedValue={selectedIfsc}
+                />
+              </View>
+              {isIfscLoading ? (
+                <View style={styles.helperRow}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text style={styles.helperText}>
+                    {t("banks.form.loadingIfsc", {
+                      defaultValue: "Fetching IFSC codes...",
+                    })}
+                  </Text>
+                </View>
+              ) : null}
+              {!isIfscLoading && ifscError ? (
+                <Text style={[styles.helperText, styles.helperTextError]}>
+                  {ifscError}
+                </Text>
+              ) : null}
             </View>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={isSaving}>
               {isSaving ? (

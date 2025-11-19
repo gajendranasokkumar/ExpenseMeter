@@ -235,6 +235,12 @@ const createBanksStyles = () => {
       borderRadius: circleRadius,
       marginRight: 12,
     },
+    dropdownDisabledWrapper: {
+      width: "100%",
+    },
+    dropdownDisabled: {
+      opacity: 0.6,
+    },
     bankName: {
       fontSize: fontSize("md"),
       color: colors.text,
@@ -261,6 +267,20 @@ const createBanksStyles = () => {
       color: "#B0B0B0",
       fontWeight: "400",
       fontFamily: "monospace",
+    },
+    helperRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      marginTop: 8,
+    },
+    helperText: {
+      marginTop: 8,
+      color: colors.textMuted,
+      fontSize: fontSize("sm"),
+    },
+    helperTextError: {
+      color: colors.danger,
     },
     saveButton: {
       marginTop: 20,

@@ -199,6 +199,7 @@ const Statistics = () => {
                     placeholder={t("statistics.filters.day", {
                       defaultValue: "Day",
                     })}
+                    enableSearch={false}
                     onSelect={setSelectedDay}
                   />
                 </View>
@@ -213,6 +214,7 @@ const Statistics = () => {
                     placeholder={t("statistics.filters.month", {
                       defaultValue: "Month",
                     })}
+                    enableSearch={false}
                     onSelect={setSelectedMonth}
                   />
                 </View>
@@ -228,6 +230,7 @@ const Statistics = () => {
                     placeholder={t("statistics.filters.year", {
                       defaultValue: "Year",
                     })}
+                    enableSearch={false}
                     onSelect={setSelectedYear}
                   />
                 </View>

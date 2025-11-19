@@ -8,6 +8,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import useTheme from "../hooks/useTheme";
 import useCurrencyPreference from "../hooks/useCurrencyPreference";
+import { getBankLogoSource, extractBankCode } from "../utils/bankLogos";
 
 const BankSummary = () => {
   const styles = banksSummaryStyles();
@@ -58,7 +59,7 @@ const BankSummary = () => {
           <View key={bank._id}>
             <View style={styles.bankSummaryItem}>
               <Image
-                source={{ uri: bank.logo }}
+                source={getBankLogoSource(extractBankCode(bank))}
                 style={styles.bankSummaryItemLogo}
               />
               <Text style={styles.bankSummaryItemName}>{bank.name}</Text>
