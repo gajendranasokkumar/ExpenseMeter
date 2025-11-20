@@ -82,7 +82,12 @@ const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, end
       const start = new Date(b.start_date);
       const end = new Date(b.end_date);
 
-      if (b.category === 'Monthly Budget') {
+      const isMonthlyBudget =
+        typeof b.category === 'string' &&
+        (b.category === 'Monthly Budget' ||
+          b.category.toLowerCase().startsWith('budget for '));
+
+      if (isMonthlyBudget) {
         // Sum all expenses across all categories within the budget window
         const spentAll = transactions.reduce((sum, tx) => {
           const d = new Date(tx.date);

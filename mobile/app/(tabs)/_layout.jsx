@@ -176,6 +176,12 @@ const TabsLayout = () => {
             href: null,
           }}
         />
+        <Tabs.Screen
+          name="exportData"
+          options={{
+            href: null,
+          }}
+        />
       </Tabs>
 
       <SelectionModal

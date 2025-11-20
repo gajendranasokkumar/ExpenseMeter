@@ -373,6 +373,9 @@ export const TRANSLATIONS = {
       "Choose how monetary values are displayed",
     "more.option.categories.title": "Edit Categories",
     "more.option.categories.description": "Manage your expense categories",
+    "more.option.exportData.title": "Export data",
+    "more.option.exportData.description":
+      "Download Excel backups or share via WhatsApp",
     "more.option.notifications.title": "Persistent notification",
     "more.option.notifications.description":
       "Keep a pinned alert so Expense Meter is always one tap away.",
@@ -420,6 +423,53 @@ export const TRANSLATIONS = {
 
     "settings.title": "Settings",
     "preferences.themeLabel": "Theme",
+    "exportData.title": "Export data",
+    "exportData.description":
+      "Generate a detailed Excel backup of every record tied to your account.",
+    "exportData.meta.lastGenerated": "Last generated",
+    "exportData.meta.never": "No exports yet",
+    "exportData.meta.fileSize": "File size",
+    "exportData.meta.recordCounts": "Records included",
+    "exportData.actions.download": "Download Excel",
+    "exportData.actions.generating": "Preparing...",
+    "exportData.actions.share": "Share to WhatsApp",
+    "exportData.actions.sharing": "Opening WhatsApp...",
+    "exportData.actions.shareDialogTitle": "Share Expense Meter export",
+    "exportData.actions.saveToDevice": "Save to device",
+    "exportData.actions.savingToDevice": "Saving...",
+    "exportData.share.title": "Share via WhatsApp",
+    "exportData.share.description":
+      "We will open WhatsApp so you can pick the chat where this Excel should go.",
+    "exportData.share.message":
+      "Expense Meter export generated on {date}.",
+    "exportData.alerts.missingUser":
+      "We could not find your profile. Please sign in again.",
+    "exportData.alerts.fetchError":
+      "Unable to load export data. Please try again.",
+    "exportData.alerts.fileMissing":
+      "Generate the Excel file before sharing.",
+    "exportData.alerts.shareUnavailable":
+      "Sharing is not supported on this device.",
+    "exportData.alerts.whatsappMissing":
+      "Install WhatsApp to use this feature.",
+    "exportData.alerts.saveDenied":
+      "You need to choose a folder to store the Excel file.",
+    "exportData.alerts.saveSuccessTitle": "Saved to device",
+    "exportData.alerts.saveSuccessBody":
+      "The Excel file is now available in the folder you selected.",
+    "exportData.alerts.saveError":
+      "Unable to save the file to that location. Please try again.",
+    "exportData.alerts.successTitle": "Excel saved",
+    "exportData.alerts.successBody":
+      "We saved the file to your secure storage. Use the share button to send it to WhatsApp.",
+    "exportData.counts.transactions": "Transactions",
+    "exportData.counts.budgets": "Budgets",
+    "exportData.counts.banks": "Banks",
+    "exportData.counts.categories": "Categories",
+    "exportData.counts.notifications": "Notifications",
+    "exportData.summary.balance": "Net balance",
+    "exportData.summary.income": "Total income",
+    "exportData.summary.expense": "Total expense",
   },
   hi: {
     common: {
@@ -692,6 +742,9 @@ export const TRANSLATIONS = {
       "पूरे ऐप में पाठ को आरामदायक रखें",
     "more.option.categories.title": "श्रेणियाँ संपादित करें",
     "more.option.categories.description": "अपने खर्च की श्रेणियों को व्यवस्थित करें",
+    "more.option.exportData.title": "डेटा निर्यात करें",
+    "more.option.exportData.description":
+      "Excel डाउनलोड करें या WhatsApp पर साझा करें",
     "more.option.notifications.title": "स्थायी सूचना",
     "more.option.notifications.description":
       "Expense Meter तक तुरंत पहुँच के लिए सूचना पिन रखें।",
@@ -718,6 +771,53 @@ export const TRANSLATIONS = {
 
     "settings.title": "सेटिंग्स",
     "preferences.themeLabel": "थीम",
+    "exportData.title": "डेटा निर्यात करें",
+    "exportData.description":
+      "अपने खाते से जुड़ी हर जानकारी का विस्तृत Excel बैकअप तैयार करें।",
+    "exportData.meta.lastGenerated": "अंतिम निर्यात",
+    "exportData.meta.never": "अभी तक कोई निर्यात नहीं",
+    "exportData.meta.fileSize": "फ़ाइल आकार",
+    "exportData.meta.recordCounts": "रिकॉर्ड शामिल",
+    "exportData.actions.download": "Excel डाउनलोड करें",
+    "exportData.actions.generating": "तैयार किया जा रहा है...",
+    "exportData.actions.share": "WhatsApp पर साझा करें",
+    "exportData.actions.sharing": "WhatsApp खोला जा रहा है...",
+    "exportData.actions.saveToDevice": "डिवाइस में सहेजें",
+    "exportData.actions.savingToDevice": "सहेजा जा रहा है...",
+    "exportData.actions.shareDialogTitle": "Expense Meter निर्यात साझा करें",
+    "exportData.share.title": "WhatsApp पर साझा करें",
+    "exportData.share.description":
+      "हम WhatsApp खोलेंगे ताकि आप वह चैट चुन सकें जहाँ Excel भेजना है।",
+    "exportData.share.message":
+      "Expense Meter निर्यात {date} को बनाया गया।",
+    "exportData.alerts.missingUser":
+      "आपकी प्रोफ़ाइल नहीं मिली। कृपया दोबारा साइन इन करें।",
+    "exportData.alerts.fetchError":
+      "निर्यात डेटा लोड नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "exportData.alerts.fileMissing":
+      "साझा करने से पहले Excel फ़ाइल तैयार करें।",
+    "exportData.alerts.shareUnavailable":
+      "इस डिवाइस पर साझा करना समर्थित नहीं है।",
+    "exportData.alerts.whatsappMissing":
+      "कृपया इस सुविधा के लिए WhatsApp इंस्टॉल करें।",
+    "exportData.alerts.saveDenied":
+      "Excel फ़ाइल रखने के लिए आपको एक फ़ोल्डर चुनना होगा।",
+    "exportData.alerts.saveSuccessTitle": "डिवाइस में सहेजा गया",
+    "exportData.alerts.saveSuccessBody":
+      "फ़ाइल अब आपके चुने हुए फ़ोल्डर में उपलब्ध है।",
+    "exportData.alerts.saveError":
+      "उस स्थान पर फ़ाइल सहेजी नहीं जा सकी। कृपया पुनः प्रयास करें।",
+    "exportData.alerts.successTitle": "Excel सहेजा गया",
+    "exportData.alerts.successBody":
+      "हमने फ़ाइल को सुरक्षित संग्रहण में सहेजा। WhatsApp पर भेजने के लिए शेयर बटन का उपयोग करें।",
+    "exportData.counts.transactions": "लेन-देन",
+    "exportData.counts.budgets": "बजट",
+    "exportData.counts.banks": "बैंक",
+    "exportData.counts.categories": "श्रेणियाँ",
+    "exportData.counts.notifications": "सूचनाएँ",
+    "exportData.summary.balance": "शुद्ध शेष",
+    "exportData.summary.income": "कुल आय",
+    "exportData.summary.expense": "कुल खर्च",
   },
   es: {
     common: {
@@ -1019,6 +1119,9 @@ export const TRANSLATIONS = {
       "Elige cómo te habla ExpenseMeter",
     "more.option.themes.title": "Temas",
     "more.option.themes.description": "Cambia el aspecto y la experiencia",
+    "more.option.exportData.title": "Exportar datos",
+    "more.option.exportData.description":
+      "Descarga un Excel o compártelo por WhatsApp",
     "more.option.support.title": "Ayuda y soporte",
     "more.option.support.description":
       "Preguntas frecuentes, contacto y reporte de problemas",
@@ -1043,6 +1146,53 @@ export const TRANSLATIONS = {
 
     "settings.title": "Configuración",
     "preferences.themeLabel": "Tema",
+    "exportData.title": "Exportar datos",
+    "exportData.description":
+      "Genera una copia de seguridad en Excel con toda la información asociada a tu cuenta.",
+    "exportData.meta.lastGenerated": "Última generación",
+    "exportData.meta.never": "Sin exportaciones",
+    "exportData.meta.fileSize": "Tamaño del archivo",
+    "exportData.meta.recordCounts": "Registros incluidos",
+    "exportData.actions.download": "Descargar Excel",
+    "exportData.actions.generating": "Preparando...",
+    "exportData.actions.share": "Compartir por WhatsApp",
+    "exportData.actions.sharing": "Abriendo WhatsApp...",
+    "exportData.actions.saveToDevice": "Guardar en el dispositivo",
+    "exportData.actions.savingToDevice": "Guardando...",
+    "exportData.actions.shareDialogTitle": "Compartir exportación de Expense Meter",
+    "exportData.share.title": "Compartir por WhatsApp",
+    "exportData.share.description":
+      "Abriremos WhatsApp para que elijas el chat donde enviar el Excel.",
+    "exportData.share.message":
+      "Exportación de Expense Meter generada el {date}.",
+    "exportData.alerts.missingUser":
+      "No encontramos tu perfil. Vuelve a iniciar sesión.",
+    "exportData.alerts.fetchError":
+      "No se pudieron cargar los datos de exportación. Inténtalo de nuevo.",
+    "exportData.alerts.fileMissing":
+      "Genera el archivo Excel antes de compartir.",
+    "exportData.alerts.shareUnavailable":
+      "El uso compartido no está disponible en este dispositivo.",
+    "exportData.alerts.whatsappMissing":
+      "Instala WhatsApp para usar esta función.",
+    "exportData.alerts.saveDenied":
+      "Debes elegir una carpeta para guardar el archivo de Excel.",
+    "exportData.alerts.saveSuccessTitle": "Guardado en el dispositivo",
+    "exportData.alerts.saveSuccessBody":
+      "El archivo ya está disponible en la carpeta seleccionada.",
+    "exportData.alerts.saveError":
+      "No pudimos guardar el archivo en ese lugar. Inténtalo de nuevo.",
+    "exportData.alerts.successTitle": "Excel guardado",
+    "exportData.alerts.successBody":
+      "Guardamos el archivo en el almacenamiento seguro. Usa el botón compartir para enviarlo por WhatsApp.",
+    "exportData.counts.transactions": "Transacciones",
+    "exportData.counts.budgets": "Presupuestos",
+    "exportData.counts.banks": "Bancos",
+    "exportData.counts.categories": "Categorías",
+    "exportData.counts.notifications": "Notificaciones",
+    "exportData.summary.balance": "Balance neto",
+    "exportData.summary.income": "Ingresos totales",
+    "exportData.summary.expense": "Gastos totales",
   },
   fr: {
     common: {
@@ -1350,6 +1500,9 @@ export const TRANSLATIONS = {
       "Choisissez comment ExpenseMeter vous parle",
     "more.option.themes.title": "Thèmes",
     "more.option.themes.description": "Changez l'apparence et l'ambiance",
+    "more.option.exportData.title": "Exporter les données",
+    "more.option.exportData.description":
+      "Téléchargez un Excel ou partagez-le sur WhatsApp",
     "more.option.support.title": "Aide et support",
     "more.option.support.description":
       "FAQ, contact et signalement de problèmes",
@@ -1374,6 +1527,54 @@ export const TRANSLATIONS = {
 
     "settings.title": "Paramètres",
     "preferences.themeLabel": "Thème",
+    "exportData.title": "Exporter les données",
+    "exportData.description":
+      "Générez une sauvegarde Excel détaillée de toutes les données liées à votre compte.",
+    "exportData.meta.lastGenerated": "Dernière génération",
+    "exportData.meta.never": "Aucun export",
+    "exportData.meta.fileSize": "Taille du fichier",
+    "exportData.meta.recordCounts": "Enregistrements inclus",
+    "exportData.actions.download": "Télécharger l'Excel",
+    "exportData.actions.generating": "Préparation...",
+    "exportData.actions.share": "Partager sur WhatsApp",
+    "exportData.actions.sharing": "Ouverture de WhatsApp...",
+    "exportData.actions.saveToDevice": "Enregistrer sur l’appareil",
+    "exportData.actions.savingToDevice": "Enregistrement...",
+    "exportData.actions.shareDialogTitle":
+      "Partager l'export Expense Meter",
+    "exportData.share.title": "Partager sur WhatsApp",
+    "exportData.share.description":
+      "Nous ouvrirons WhatsApp pour que vous choisissiez la conversation où envoyer l’Excel.",
+    "exportData.share.message":
+      "Export Expense Meter généré le {date}.",
+    "exportData.alerts.missingUser":
+      "Impossible de trouver votre profil. Veuillez vous reconnecter.",
+    "exportData.alerts.fetchError":
+      "Impossible de charger les données d'exportation. Réessayez.",
+    "exportData.alerts.fileMissing":
+      "Générez le fichier Excel avant de partager.",
+    "exportData.alerts.shareUnavailable":
+      "Le partage n'est pas disponible sur cet appareil.",
+    "exportData.alerts.whatsappMissing":
+      "Installez WhatsApp pour utiliser cette fonctionnalité.",
+    "exportData.alerts.saveDenied":
+      "Vous devez choisir un dossier pour stocker le fichier Excel.",
+    "exportData.alerts.saveSuccessTitle": "Enregistré sur l’appareil",
+    "exportData.alerts.saveSuccessBody":
+      "Le fichier est maintenant disponible dans le dossier sélectionné.",
+    "exportData.alerts.saveError":
+      "Impossible d’enregistrer le fichier à cet emplacement. Réessayez.",
+    "exportData.alerts.successTitle": "Excel enregistré",
+    "exportData.alerts.successBody":
+      "Nous avons enregistré le fichier dans votre stockage sécurisé. Utilisez le bouton partager pour l'envoyer sur WhatsApp.",
+    "exportData.counts.transactions": "Transactions",
+    "exportData.counts.budgets": "Budgets",
+    "exportData.counts.banks": "Banques",
+    "exportData.counts.categories": "Catégories",
+    "exportData.counts.notifications": "Notifications",
+    "exportData.summary.balance": "Solde net",
+    "exportData.summary.income": "Revenus totaux",
+    "exportData.summary.expense": "Dépenses totales",
   },
 };
 

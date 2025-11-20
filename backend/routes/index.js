@@ -9,6 +9,7 @@ const budgetRoutes = require('./budget.route');
 const bankRoutes = require('./bank.route');
 const statisticsRoute = require('./statistics.route');
 const categoryRoutes = require('./category.route');
+const exportRoutes = require('./export.route');
 
 router.get('/', homeController.getHome);
 router.use('/users', userRoutes);
@@ -18,6 +19,7 @@ router.use('/budgets', budgetRoutes);
 router.use('/banks', bankRoutes);
 router.use('/statistics', statisticsRoute);
 router.use('/categories', categoryRoutes);
+router.use('/export', exportRoutes);
 
 module.exports = router;
         

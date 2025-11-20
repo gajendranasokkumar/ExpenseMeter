@@ -95,6 +95,17 @@ const More = () => {
             onPress: () => router.push("/(tabs)/categories"),
           },
           {
+            key: "export-data",
+            title: t("more.option.exportData.title", {
+              defaultValue: "Export data",
+            }),
+            description: t("more.option.exportData.description", {
+              defaultValue: "Download Excel backups or share via WhatsApp",
+            }),
+            icon: "cloud-download-outline",
+            onPress: () => router.push("/(tabs)/exportData"),
+          },
+          {
             key: "persistent-notification",
             title: t("more.option.notifications.title", {
               defaultValue: "Persistent notification",
