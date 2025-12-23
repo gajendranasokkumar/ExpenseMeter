@@ -1,7 +1,7 @@
 const { CronJob } = require("cron");
 const https = require("https");
 
-const job = new CronJob("*/14 * * * *", function () {
+const job = new CronJob("*/30 * * * *", function () {
   https
     .get('https://expensemeter-backend.onrender.com', (res) => {
       if (res.statusCode === 200) console.log("✅ GET request sent successfully");
