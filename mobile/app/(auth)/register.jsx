@@ -11,8 +11,7 @@ import { router } from "expo-router";
 import createAuthStyles from "../../styles/auth.styles";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import ReactLogo from "../../assets/images/logo.png";
-import { API_URL, AUTH_ROUTES } from "../../constants/endPoints";
-import axios from "axios";
+import * as authService from "../../services/authService";
 
 const Register = () => {
   const styles = createAuthStyles();
@@ -73,18 +72,14 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`${API_URL}${AUTH_ROUTES.REGISTER}`, {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      });
+      await authService.register(formData.name, formData.email, formData.password);
       Alert.alert(
         "Success!",
         "Account created successfully. Please log in.",
         [{ text: "OK", onPress: router.replace("/(auth)/login") }]
       );
     } catch (error) {
-      setErrorMessage(error?.response?.data?.message || "Registration failed. Please try again.");
+      setErrorMessage(error?.response?.data?.message || error?.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }

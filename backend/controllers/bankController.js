@@ -8,7 +8,7 @@ class BankController {
             return res.status(400).json({ message: "Name, logo and IFSC are required" });
         }
         try {
-            const bank = await bankService.createBank(bankData.name, bankData.logo, bankData.ifsc, userId);
+            const bank = await bankService.createBank(bankData.name, bankData.logo, bankData.ifsc, userId, bankData.isSavings);
             res.status(201).json({
                 message: "Bank created successfully",
                 data: bank

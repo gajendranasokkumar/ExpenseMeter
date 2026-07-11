@@ -5,6 +5,7 @@ const verifyToken = require('../middlewares/VerifyToken');
 
 router.post('/all', verifyToken, bankController.getAllBanks);
 router.post('/', verifyToken, bankController.createBank);
+router.put('/:id/savings', verifyToken, bankController.setSavingsStatus);
 router.get('/:id/user/:userId', verifyToken, bankController.getBankById);
 router.put('/:id', verifyToken, bankController.updateBankById);
 router.delete('/:id/user/:userId', verifyToken, bankController.deleteBankById);

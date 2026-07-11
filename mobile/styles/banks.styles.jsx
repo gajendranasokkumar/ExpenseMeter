@@ -220,6 +220,26 @@ const createBanksStyles = () => {
       color: colors.text,
       marginBottom: 12,
     },
+    transferInput: {
+      backgroundColor: colors.surface,
+      borderRadius: pillRadius,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      fontSize: fontSize("md"),
+      color: colors.text,
+    },
+    checkboxRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 8,
+    },
+    checkboxLabel: {
+      fontSize: fontSize("md"),
+      color: colors.text,
+    },
     bankContainer: {
       flexDirection: "row",
       alignItems: "center",

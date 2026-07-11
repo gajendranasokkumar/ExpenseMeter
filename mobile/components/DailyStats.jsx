@@ -11,8 +11,7 @@ import { PieChart } from "react-native-gifted-charts";
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
-import api from "../utils/api";
-import { STATISTICS_ROUTES } from "../constants/endPoints";
+import * as statisticsService from "../services/statisticsService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatToPieData } from "../utils/formatToPieData";
@@ -35,11 +34,8 @@ const DailyStats = ({ day, month, year }) => {
   const getDailyStats = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await api.post(
-        `${STATISTICS_ROUTES.GET_DAILY_STATS.replace(":id", userId)}`,
-        { day, month, year }
-      );
-      setDailyData(response.data);
+      const response = await statisticsService.daily(userId, day, month, year);
+      setDailyData(response);
     } catch (error) {
       console.log(error)
       setDailyData({});

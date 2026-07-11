@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../utils/api";
-import { USER_ROUTES } from "../constants/endPoints";
+import * as userService from "../services/userService";
 
 const UserContext = createContext();
 
@@ -18,9 +17,9 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const getUser = async () => {
-    const response = await api.get(`${USER_ROUTES.GET_USER_BY_ID.replace(":id", user._id)}`);
-    await AsyncStorage.setItem("user", JSON.stringify(response.data));
-    setUser(response.data);
+    const response = await userService.getById(user._id);
+    await AsyncStorage.setItem("user", JSON.stringify(response));
+    setUser(response);
   };
 
   return <UserContext.Provider value={{ user, setUser, getUser }}>{children}</UserContext.Provider>;

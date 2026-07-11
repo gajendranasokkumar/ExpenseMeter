@@ -61,6 +61,16 @@ const createAddTransactionStyles = () => {
     controlsActiveText: {
       color: colors.primary,
     },
+    transferCheckboxRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      marginTop: 16,
+    },
+    transferCheckboxLabel: {
+      color: colors.text,
+      fontSize: fontSize("md"),
+    },
     amountInputContainer: {
       marginTop: 20,
       padding: 10,

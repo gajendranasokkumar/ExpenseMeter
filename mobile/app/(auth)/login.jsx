@@ -4,10 +4,9 @@ import createAuthStyles from "../../styles/auth.styles";
 import ReactLogo from "../../assets/images/logo.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Link, router } from "expo-router";
-import { API_URL, AUTH_ROUTES } from "../../constants/endPoints";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUser } from "../../context/userContext";
+import * as authService from "../../services/authService";
 
 const Login = () => {
   const styles = createAuthStyles();
@@ -28,18 +27,15 @@ const Login = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(`${API_URL}${AUTH_ROUTES.LOGIN}`, {
-        email: formData.email,
-        password: formData.password,
-      });
-      await AsyncStorage.setItem("token", response.data.jwtToken);
-      await AsyncStorage.setItem("user", JSON.stringify(response.data.data));
-      setUser(response.data.data);
+      const response = await authService.login(formData.email, formData.password);
+      await AsyncStorage.setItem("token", response.jwtToken);
+      await AsyncStorage.setItem("user", JSON.stringify(response.data));
+      setUser(response.data);
       router.replace("/(tabs)");
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error?.response?.data || error?.message);
       setErrorMessage(
-        error?.response?.data?.message || "Login failed. Please try again."
+        error?.response?.data?.message || error?.message || "Login failed. Please try again."
       );
     } finally {
       setIsLoading(false);

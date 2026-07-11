@@ -7,8 +7,7 @@ import { useUser } from "../context/userContext";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from "expo-file-system";
-import api from "../utils/api";
-import { USER_ROUTES } from "../constants/endPoints";
+import * as userService from "../services/userService";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ProfileSection = () => {
@@ -40,7 +39,7 @@ const ProfileSection = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const response = await api.put(`${USER_ROUTES.UPDATE_USER_BY_ID.replace(":id", user._id)}`, {
+      const response = await userService.update(user._id, {
         name: editedName,
         email: editedEmail,
         avatar: avatar,

@@ -12,6 +12,9 @@ router.get('/user/:userId', transactionController.getTransactionsByUserId);
 // POST /transactions
 router.post('/', transactionController.createTransaction);
 
+// POST /transactions/transfer (transfer money between two banks)
+router.post('/transfer', transactionController.transferBetweenBanks);
+
 // DELETE /transactions/:id
 router.delete('/:id', transactionController.deleteTransaction);
 

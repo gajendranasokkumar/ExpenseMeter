@@ -1,8 +1,7 @@
 
-import api from '../utils/api';
 import { Alert } from 'react-native';
 import { useUser } from '../context/userContext';
-import { TRANSACTION_ROUTES } from '../constants/endPoints';
+import * as transactionService from '../services/transactionService';
 
 const useTransations = () => {
   const { user } = useUser();
@@ -15,11 +14,11 @@ const useTransations = () => {
       Alert.alert('Are you sure you want to delete this transaction?', 'This action cannot be undone', [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete', onPress: () => {
-          api.delete(`${TRANSACTION_ROUTES.DELETE_TRANSACTION.replace(":id", id)}`);
+          transactionService.remove(id);
         } },
       ]);
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert('Error', error?.response?.data?.message || error?.message);
     }
   };
 
@@ -29,20 +28,20 @@ const useTransations = () => {
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete', onPress: () => {
           if (!userId) return;
-          api.delete(`${TRANSACTION_ROUTES.DELETE_ALL_TRANSACTIONS.replace(":id", userId)}`);
+          transactionService.removeAllByUser(userId);
         } },
       ]);
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert('Error', error?.response?.data?.message || error?.message);
     }
   };
 
   const createTransaction = async (title, amount, category) => {
     try {
-      const response = await api.post(`${TRANSACTION_ROUTES.CREATE_TRANSACTION}`, { title, amount, category, user_id: userId });
+      const response = await transactionService.create({ title, amount, category, user_id: userId });
       Alert.alert('Success', 'Transaction created successfully');
     } catch (error) {
-      Alert.alert('Error', error.response.data.message);
+      Alert.alert('Error', error?.response?.data?.message || error?.message);
     }
   };
 

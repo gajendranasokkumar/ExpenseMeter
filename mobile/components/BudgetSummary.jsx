@@ -10,8 +10,7 @@ import createHomeStyles from "../styles/home.styles";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import { LinearGradient } from "expo-linear-gradient";
 import useTheme from "../hooks/useTheme";
-import { BUDGET_ROUTES } from "../constants/endPoints";
-import api from "../utils/api";
+import * as budgetService from "../services/budgetService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { getCurrentMonth } from "../utils/formatDate";
@@ -70,18 +69,15 @@ const BudgetSummary = () => {
   const getCurrentMonthBudget = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await api.get(
-        `${BUDGET_ROUTES.GET_BUDGETS_BY_USER_ID_AND_CATEGORY_FOR_CURRENT_MONTH.replace(
-          ":id",
-          userId
-        )
-          .replace(":category", "Monthly Budget")
-          .replace(":currentMonth", getCurrentMonth())}`
+      const response = await budgetService.getMonthlyForCurrentMonth(
+        userId,
+        "Monthly Budget",
+        getCurrentMonth()
       );
       setBudget({
-        budgetLimit: response.data.amount,
-        currentExpenses: response.data.totalAmountSpentonThisMonth,
-        remainingBudget: response.data.amount - response.data.totalAmountSpentonThisMonth,
+        budgetLimit: response.amount,
+        currentExpenses: response.totalAmountSpentonThisMonth,
+        remainingBudget: response.amount - response.totalAmountSpentonThisMonth,
       });
     } catch (error) {
       setBudget({});
@@ -101,9 +97,7 @@ const BudgetSummary = () => {
   const handleSetBudgetAsPrevious = async () => {
     try {
       setIsLoading(true);
-      await api.post(
-        `${BUDGET_ROUTES.CREATE_MONTHLY_BUDGET_AS_PREVIOUS.replace(":id", userId).replace(":month", getCurrentMonth())}`
-      );
+      await budgetService.setAsPrevious(userId, getCurrentMonth());
       Alert.alert(
         t("common.success", { defaultValue: "Success" }),
         t("home.budget.alerts.setPreviousSuccess", {
@@ -115,6 +109,7 @@ const BudgetSummary = () => {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("home.budget.alerts.setPreviousError", {
             defaultValue: "Failed to set budget as previous month.",
           })

@@ -18,8 +18,7 @@ import * as XLSX from "xlsx";
 import useTheme from "../../hooks/useTheme";
 import useLanguage from "../../hooks/useLanguage";
 import createExportDataStyles from "../../styles/exportData.styles";
-import api from "../../utils/api";
-import { EXPORT_ROUTES } from "../../constants/endPoints";
+import * as exportService from "../../services/exportService";
 import { useUser } from "../../context/userContext";
 
 const formatDateTime = (value, fallback = "--") => {
@@ -235,9 +234,7 @@ const ExportData = () => {
     }
     try {
       setIsGenerating(true);
-      const route = EXPORT_ROUTES.USER_EXPORT.replace(":id", user._id);
-      const response = await api.get(route);
-      const payload = response.data;
+      const payload = await exportService.exportUser(user._id);
       const workbook = buildWorkbook(payload);
       const fileInfo = await saveWorkbookAsync(workbook);
       setLatestFile({

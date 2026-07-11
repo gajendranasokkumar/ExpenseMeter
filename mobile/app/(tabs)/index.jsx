@@ -9,11 +9,11 @@ import HomeStats from "../../components/HomeStats";
 import BudgetSummary from "../../components/BudgetSummary";
 import CurrentMonth from "../../components/CurrentMonth";
 import NotificationModal from "../../components/NotificationModal";
-import api from "../../utils/api";
-import { NOTIFICATION_ROUTES } from "../../constants/endPoints";
+import * as notificationService from "../../services/notificationService";
 import { useFocusEffect } from "@react-navigation/native";
 import CategoriesBudgetSummary from "../../components/CategoriesBudgetSummary";
 import BankSummary from "../../components/BankSummary";
+import SavingsSummary from "../../components/SavingsSummary";
 import useLanguage from "../../hooks/useLanguage";
 
 const Home = () => {
@@ -27,13 +27,8 @@ const Home = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await api.get(
-        `${NOTIFICATION_ROUTES.GET_UNREAD_NOTIFICATIONS_BY_USER_ID.replace(
-          ":id",
-          user?._id
-        )}`
-      );
-      setNotificationCount(response.data.length);
+      const unread = await notificationService.getUnread(user?._id);
+      setNotificationCount(unread.length);
     } catch (error) {
       // ignore error
       console.log(error);
@@ -86,6 +81,7 @@ const Home = () => {
         <HomeStats />
         <CurrentMonth />
         <BudgetSummary />
+        <SavingsSummary />
         <BankSummary />
         <Ionicons name="arrow-down-circle" size={50} style={styles.arrowDownIcon} />
         <CategoriesBudgetSummary />

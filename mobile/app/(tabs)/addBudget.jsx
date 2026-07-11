@@ -15,8 +15,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import createStyles from "../../styles/addBudget.styles";
-import api from "../../utils/api";
-import { BUDGET_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
+import * as categoryService from "../../services/categoryService";
+import * as budgetService from "../../services/budgetService";
 import { useUser } from "../../context/userContext";
 import { getCurrentMonth, computeEndDate } from "../../utils/formatDate";
 import { categories } from "../../constants/Categories";
@@ -108,10 +108,7 @@ const AddBudget = () => {
   const fetchUserCategories = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      const userCats = res?.data?.data || [];
+      const userCats = (await categoryService.getAll(userId)) || [];
       setUserCategories(userCats);
       
       // Combine default categories with user categories
@@ -240,7 +237,7 @@ const AddBudget = () => {
       );
       const category_id = selectedUserCategory ? selectedUserCategory._id : null;
       
-      const response = await api.post(BUDGET_ROUTES.CREATE_BUDGET, {
+      const response = await budgetService.create({
         ...formData,
         category_id,
         user_id: userId,
@@ -274,6 +271,7 @@ const AddBudget = () => {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("budget.add.alerts.createError", {
             defaultValue: "Unable to create budget.",
           })

@@ -2,8 +2,7 @@ import { View, Text, ActivityIndicator } from "react-native";
 import React, { useCallback, useState } from "react";
 import createCategoriesBudgetSummaryStyles from "../styles/categoriesBudgetSummary.styles";
 import { useUser } from "../context/userContext";
-import { BUDGET_ROUTES } from "../constants/endPoints";
-import api from "../utils/api";
+import * as budgetService from "../services/budgetService";
 import { useFocusEffect } from "@react-navigation/native";
 import { getCurrentMonth, getCurrentYear } from "../utils/formatDate";
 import useTheme from "../hooks/useTheme";
@@ -28,13 +27,12 @@ const CategoriesBudgetSummary = () => {
   const getCategoriesBudgetSummary = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await api.get(
-        `${BUDGET_ROUTES.GET_BUDGETS_AND_EXPENSES_BY_CATEGORY_FOR_MONTH_AND_YEAR.replace(
-          ":id",
-          userId
-        )}?month=${period.month}&year=${period.year}`
+      const response = await budgetService.getCategoriesSummary(
+        userId,
+        period.month,
+        period.year
       );
-      setCategoriesBudgetSummary(response.data.categories);
+      setCategoriesBudgetSummary(response.categories);
     } catch (error) {
       console.log(error);
     } finally {

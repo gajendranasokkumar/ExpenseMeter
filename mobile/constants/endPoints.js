@@ -20,6 +20,8 @@ export const TRANSACTION_ROUTES = {
   UPDATE_TRANSACTION: "/transactions/:id",
   DELETE_TRANSACTION: "/transactions/:id",
   DELETE_ALL_TRANSACTIONS: "/transactions/user/:id",
+  GET_SUMMARY_BY_USER_ID: "/transactions/summary/:id",
+  TRANSFER: "/transactions/transfer",
 };
 
 export const NOTIFICATION_ROUTES = {

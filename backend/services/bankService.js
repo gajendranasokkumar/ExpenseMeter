@@ -1,7 +1,7 @@
 const bankModel = require("../models/Bank.model");
 const transactionModel = require("../models/Transaction.model");
 
-const createBank = async (name, logo, ifsc, userId) => {
+const createBank = async (name, logo, ifsc, userId, isSavings = false) => {
     // Check if bank already exists
     const existingBank = await bankModel.findOne({ 
         $or: [{ name }, { ifsc }] 
@@ -10,7 +10,7 @@ const createBank = async (name, logo, ifsc, userId) => {
         throw new Error("Bank already exists with this name or IFSC code");
     }
     
-    const bank = await bankModel.create({ name, logo, ifsc, user_id: userId });
+    const bank = await bankModel.create({ name, logo, ifsc, user_id: userId, isSavings: !!isSavings });
     return bank;
 };
 
@@ -72,6 +72,18 @@ const permanentlyDeleteBankById = async (id, userId) => {
     return bank;
 };
 
+const setSavingsStatus = async (id, userId, isSavings) => {
+    const bank = await bankModel.findByIdAndUpdate(
+        id,
+        { isSavings: !!isSavings, updatedAt: Date.now() },
+        { new: true }
+    );
+    if (!bank) {
+        throw new Error("Bank not found");
+    }
+    return bank;
+};
+
 const getBankSummaryByUserId = async (userId) => {
     const banks = await bankModel.find({ user_id: userId });
     const transactions = await transactionModel.find({ user_id: userId });
@@ -92,5 +104,6 @@ module.exports = {
     updateBankById,
     deleteBankById,
     permanentlyDeleteBankById,
-    getBankSummaryByUserId
+    getBankSummaryByUserId,
+    setSavingsStatus
 };

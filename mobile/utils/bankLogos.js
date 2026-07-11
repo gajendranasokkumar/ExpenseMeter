@@ -21,7 +21,6 @@ const bankLogoMap = {
     "KVBL": require("../assets/images/bankLogos/KVBL.jpg"),  // Karur Vysya Bank
     "CIUB": require("../assets/images/bankLogos/CIUB.png"),  // City Union Bank
     "TMBL": require("../assets/images/bankLogos/TMBL.png"),  // Tamilnad Mercantile Bank
-    "DBSS": require("../assets/images/bankLogos/DBSS.png"),  // DBS Bank (Acquired LVB)
     "SIBL": require("../assets/images/bankLogos/SIBL.png"), // South Indian Bank
     "CSBK": require("../assets/images/bankLogos/CSBK.png"), // CSB Bank
   };

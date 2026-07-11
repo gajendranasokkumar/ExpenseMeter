@@ -1,6 +1,7 @@
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
@@ -17,8 +18,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import createBanksStyles from "../../styles/banks.styles";
 import CustomDropdown from "../../components/CustomDropdown";
 import { Ionicons } from "@expo/vector-icons";
-import { BANK_ROUTES } from "../../constants/endPoints";
-import api from "../../utils/api";
+import * as bankService from "../../services/bankService";
+import * as transactionService from "../../services/transactionService";
 import { useFocusEffect } from "@react-navigation/native";
 import { getBankOptions, fetchIfscOptions } from "../../utils/ifscData";
 import { getBankLogoSource, extractBankCode } from "../../utils/bankLogos";
@@ -37,6 +38,14 @@ const Banks = () => {
   const [ifscOptions, setIfscOptions] = useState([]);
   const [isIfscLoading, setIsIfscLoading] = useState(false);
   const [ifscError, setIfscError] = useState(null);
+  const [isSavingsAccount, setIsSavingsAccount] = useState(false);
+
+  // Bank transfer section
+  const [bankBalances, setBankBalances] = useState([]);
+  const [transferFrom, setTransferFrom] = useState(null);
+  const [transferTo, setTransferTo] = useState(null);
+  const [transferAmount, setTransferAmount] = useState("");
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const { t } = useLanguage();
 
@@ -104,11 +113,12 @@ const Banks = () => {
         );
         return;
       }
-      const response = await api.post(BANK_ROUTES.CREATE_BANK, {
+      const response = await bankService.create({
         name: selectedBank.name,
         logo: "",
         ifsc: selectedIfsc.ifsc,
         userId: userId,
+        isSavings: isSavingsAccount,
       });
       Alert.alert(
         t("common.success", { defaultValue: "Success" }),
@@ -119,10 +129,12 @@ const Banks = () => {
       getAllBanks();
       setSelectedBank(null);
       setSelectedIfsc(null);
+      setIsSavingsAccount(false);
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("banks.alerts.createError", {
             defaultValue: "Unable to create bank.",
           })
@@ -135,14 +147,13 @@ const Banks = () => {
   const getAllBanks = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await api.post(BANK_ROUTES.GET_ALL_BANKS, {
-        userId: userId,
-      });
-      setBanks(response.data.data);
+      const list = await bankService.getAll(userId);
+      setBanks(list);
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("banks.alerts.fetchError", {
             defaultValue: "Unable to load banks.",
           })
@@ -152,9 +163,82 @@ const Banks = () => {
     }
   }, [t, userId]);
 
+  const fetchBankBalances = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const summary = await bankService.summary(userId);
+      setBankBalances(summary || []);
+    } catch (error) {
+      setBankBalances([]);
+    }
+  }, [userId]);
+
   useFocusEffect(useCallback(() => {
     getAllBanks();
-  }, [getAllBanks]));
+    fetchBankBalances();
+  }, [getAllBanks, fetchBankBalances]));
+
+  const handleTransfer = async () => {
+    if (!transferFrom || !transferTo) {
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("banks.transfer.validation.selectBanks", {
+          defaultValue: "Please select both source and destination banks",
+        })
+      );
+      return;
+    }
+    if ((transferFrom._id || transferFrom.id) === (transferTo._id || transferTo.id)) {
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("banks.transfer.validation.sameBank", {
+          defaultValue: "Source and destination banks must be different",
+        })
+      );
+      return;
+    }
+    const amount = Number(transferAmount);
+    if (!amount || Number.isNaN(amount) || amount <= 0) {
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        t("banks.transfer.validation.amount", {
+          defaultValue: "Please enter a valid amount",
+        })
+      );
+      return;
+    }
+    try {
+      setIsTransferring(true);
+      await transactionService.transfer({
+        user_id: userId,
+        fromBank: transferFrom._id || transferFrom.id,
+        toBank: transferTo._id || transferTo.id,
+        amount,
+      });
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("banks.transfer.alerts.success", {
+          defaultValue: "Transfer completed successfully",
+        })
+      );
+      setTransferFrom(null);
+      setTransferTo(null);
+      setTransferAmount("");
+      getAllBanks();
+      fetchBankBalances();
+    } catch (error) {
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          error?.message ??
+          t("banks.transfer.alerts.error", {
+            defaultValue: "Unable to complete the transfer.",
+          })
+      );
+    } finally {
+      setIsTransferring(false);
+    }
+  };
 
   const handleDelete = async (bankId) => {
     Alert.alert(
@@ -178,17 +262,13 @@ const Banks = () => {
 
   const handleDeleteBank = async (bankId) => {
     try {
-      await api.delete(
-        BANK_ROUTES.PERMANENTLY_DELETE_BANK.replace(":id", bankId).replace(
-          ":userId",
-          userId
-        )
-      );
+      await bankService.removePermanent(bankId, userId);
       getAllBanks();
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("banks.alerts.deleteError", {
             defaultValue: "Unable to delete bank.",
           })
@@ -318,7 +398,8 @@ const Banks = () => {
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={getAllBanks} />
           }
-          ListHeaderComponent={() => (
+          keyboardShouldPersistTaps="handled"
+          ListHeaderComponent={(
             <>
             <View style={styles.header}>
               <Text style={styles.title}>
@@ -404,6 +485,22 @@ const Banks = () => {
                 </Text>
               ) : null}
             </View>
+            <TouchableOpacity
+              style={styles.checkboxRow}
+              onPress={() => setIsSavingsAccount((prev) => !prev)}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={isSavingsAccount ? "checkbox" : "square-outline"}
+                size={24}
+                color={isSavingsAccount ? colors.primary : colors.textMuted}
+              />
+              <Text style={styles.checkboxLabel}>
+                {t("banks.form.savingsAccount", {
+                  defaultValue: "This is a savings account",
+                })}
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={isSaving}>
               {isSaving ? (
                 <>
@@ -422,6 +519,112 @@ const Banks = () => {
               )}
             </TouchableOpacity>
           </LinearGradient>
+
+          {bankBalances.length >= 2 ? (
+            <LinearGradient colors={colors.gradients.surface} style={styles.section}>
+              <View style={styles.header}>
+                <Text style={styles.title}>
+                  {t("banks.transfer.title", { defaultValue: "Bank Transfer" })}
+                </Text>
+                <Text style={styles.helperText}>
+                  {t("banks.transfer.subtitle", {
+                    defaultValue:
+                      "Move money between your banks. Balances update automatically.",
+                  })}
+                </Text>
+              </View>
+
+              <View style={styles.dropdownContainer}>
+                <Text style={styles.dropdownTitle}>
+                  {t("banks.transfer.from", { defaultValue: "From" })}
+                </Text>
+                <CustomDropdown
+                  data={bankBalances}
+                  onSelect={setTransferFrom}
+                  placeholder={t("banks.transfer.selectSource", {
+                    defaultValue: "Select source bank",
+                  })}
+                  selectedValue={transferFrom}
+                  isItemDisabled={(item) =>
+                    (item._id || item.id) === (transferTo?._id || transferTo?.id)
+                  }
+                  renderItem={(item) => (
+                    <View style={styles.ifscContainer}>
+                      <Text style={styles.ifscName}>{item.name}</Text>
+                      <Text style={styles.ifsc}>
+                        {Number(item.availableBalance || 0).toLocaleString()}
+                      </Text>
+                    </View>
+                  )}
+                />
+              </View>
+
+              <View style={styles.dropdownContainer}>
+                <Text style={styles.dropdownTitle}>
+                  {t("banks.transfer.to", { defaultValue: "To" })}
+                </Text>
+                <CustomDropdown
+                  data={bankBalances}
+                  onSelect={setTransferTo}
+                  placeholder={t("banks.transfer.selectDestination", {
+                    defaultValue: "Select destination bank",
+                  })}
+                  selectedValue={transferTo}
+                  isItemDisabled={(item) =>
+                    (item._id || item.id) === (transferFrom?._id || transferFrom?.id)
+                  }
+                  renderItem={(item) => (
+                    <View style={styles.ifscContainer}>
+                      <Text style={styles.ifscName}>{item.name}</Text>
+                      <Text style={styles.ifsc}>
+                        {Number(item.availableBalance || 0).toLocaleString()}
+                      </Text>
+                    </View>
+                  )}
+                />
+              </View>
+
+              <View style={styles.dropdownContainer}>
+                <Text style={styles.dropdownTitle}>
+                  {t("banks.transfer.amount", { defaultValue: "Amount" })}
+                </Text>
+                <TextInput
+                  style={styles.transferInput}
+                  value={transferAmount}
+                  onChangeText={setTransferAmount}
+                  keyboardType="numeric"
+                  placeholder={t("banks.transfer.amountPlaceholder", {
+                    defaultValue: "Enter amount",
+                  })}
+                  placeholderTextColor={colors.textMuted}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleTransfer}
+                disabled={isTransferring}
+              >
+                {isTransferring ? (
+                  <>
+                    <ActivityIndicator size="small" color={colors.surface} />
+                    <Text style={styles.saveButtonText}>
+                      {t("banks.transfer.processing", {
+                        defaultValue: "Transferring...",
+                      })}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="swap-horizontal" size={24} color={colors.surface} />
+                    <Text style={styles.saveButtonText}>
+                      {t("banks.transfer.action", { defaultValue: "Transfer" })}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </LinearGradient>
+          ) : null}
           </>
           )}
           ListEmptyComponent={() => (
@@ -431,7 +634,7 @@ const Banks = () => {
               </Text>
             </View>
           )}
-          ListFooterComponent={() => (
+          ListFooterComponent={(
             <View style={styles.footer}>
               <Text style={styles.footerText}>
                 {t("banks.footer", { defaultValue: "End of banks" })}

@@ -1,5 +1,6 @@
 const Transaction = require('../models/Transaction.model');
 const NotificationService = require('./notificationService');
+const Bank = require('../models/Bank.model');
 // let summarycount = 0;
 // let tracscount = 0;
 
@@ -77,7 +78,7 @@ const deleteAllTransactionsByUserId = async (userId) => {
 
 const getSummaryByUserId = async (userId) => {
   const result = await Transaction.aggregate([
-    { $match: { user_id: typeof userId === 'string' ? new (require('mongoose').Types.ObjectId)(userId) : userId } },
+    { $match: { user_id: typeof userId === 'string' ? new (require('mongoose').Types.ObjectId)(userId) : userId, category: { $ne: 'Transfer' } } },
     {
       $group: {
         _id: null,
@@ -94,12 +95,63 @@ const getSummaryByUserId = async (userId) => {
   return { balance: summary.balance || 0, income: summary.income || 0, expenses: summary.expenses || 0 };
 };
 
+const transferBetweenBanks = async ({ user_id, fromBank, toBank, amount, date, note }) => {
+  if (!user_id || !fromBank || !toBank || amount === undefined) {
+    throw new Error('user_id, fromBank, toBank and amount are required');
+  }
+  if (String(fromBank) === String(toBank)) {
+    throw new Error('Source and destination banks must be different');
+  }
+  const transferAmount = Math.abs(Number(amount));
+  if (!transferAmount || Number.isNaN(transferAmount)) {
+    throw new Error('Amount must be a positive number');
+  }
+
+  const [from, to] = await Promise.all([Bank.findById(fromBank), Bank.findById(toBank)]);
+  if (!from || !to) {
+    throw new Error('Bank not found');
+  }
+
+  // Ensure the source bank has enough available balance.
+  const fromTransactions = await Transaction.find({ user_id, bank: fromBank }).select('amount').lean();
+  const available = fromTransactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+  if (transferAmount > available) {
+    throw new Error('Insufficient balance in the source bank');
+  }
+
+  const txDate = date ? new Date(date) : new Date();
+
+  const outgoing = await Transaction.create({
+    user_id,
+    title: note || `Transfer to ${to.name}`,
+    amount: -transferAmount,
+    category: 'Transfer',
+    bank: fromBank,
+    date: txDate,
+  });
+  const incoming = await Transaction.create({
+    user_id,
+    title: note || `Transfer from ${from.name}`,
+    amount: transferAmount,
+    category: 'Transfer',
+    bank: toBank,
+    date: txDate,
+  });
+
+  await NotificationService.createNotification({
+    user_id,
+    title: 'Bank Transfer',
+    message: `Transferred ${transferAmount} from ${from.name} to ${to.name}`,
+  });
+
+  return { outgoing, incoming };
+};
+
 module.exports = {
   getTransactionsByUserId,
   createTransaction,
   deleteTransaction,
   deleteAllTransactionsByUserId,
   getSummaryByUserId,
+  transferBetweenBanks,
 };
-
-

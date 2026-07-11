@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
-import { STATISTICS_ROUTES } from "../constants/endPoints";
-import api from "../utils/api";
+import * as statisticsService from "../services/statisticsService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { MONTH_SHORT_NAMES } from "../utils/formatDate";
@@ -44,11 +43,11 @@ const YearlyStats = ({ year }) => {
   const fetchYearlyStats = useCallback(() => {
     if (!userId || !year) return;
     setIsLoading(true);
-    api
-      .post(STATISTICS_ROUTES.GET_YEARLY_STATS.replace(":id", userId), { year })
+    statisticsService
+      .yearly(userId, year)
       .then((response) => {
         setYearlyData(
-          { ...response.data, yearlyPieData: response.data.pieChartData } || {
+          { ...response, yearlyPieData: response.pieChartData } || {
             totalIncome: 0,
             totalExpense: 0,
             months: [],

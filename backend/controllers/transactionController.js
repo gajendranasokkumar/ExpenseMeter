@@ -75,8 +75,20 @@ class TransactionController {
       return res.status(400).json({ message: error.message });
     }
   }
-}
 
+  async transferBetweenBanks(req, res) {
+    try {
+      const { user_id, fromBank, toBank, amount, date, note } = req.body;
+      if (!user_id || !fromBank || !toBank || amount === undefined) {
+        return res.status(400).json({ message: 'user_id, fromBank, toBank and amount are required' });
+      }
+      const result = await transactionService.transferBetweenBanks({ user_id, fromBank, toBank, amount, date, note });
+      return res.status(201).json(result);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  }
+}
 module.exports = new TransactionController();
 
 

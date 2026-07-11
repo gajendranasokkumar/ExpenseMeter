@@ -1,8 +1,7 @@
 import { View, Text, ActivityIndicator, Image } from "react-native";
 import React, { useState, useCallback } from "react";
 import banksSummaryStyles from "../styles/banksSummary.styles";
-import api from "../utils/api";
-import { BANK_ROUTES } from "../constants/endPoints";
+import * as bankService from "../services/bankService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
@@ -22,12 +21,10 @@ const BankSummary = () => {
   const fetchBankSummary = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await api.get(
-        BANK_ROUTES.GET_BANK_SUMMARY_BY_USER_ID.replace(":id", userId)
-      );
-      setBankSummary(res.data.data);
+      const list = await bankService.summary(userId);
+      setBankSummary(list);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error?.response?.data?.message || error?.message);
     } finally {
       setIsLoading(false);
     }

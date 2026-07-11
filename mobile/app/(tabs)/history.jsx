@@ -14,11 +14,12 @@ import useTheme from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import createHistoryStyles from "../../styles/history.styles";
 import { Ionicons } from "@expo/vector-icons";
-import api from "../../utils/api";
+import * as transactionService from "../../services/transactionService";
+import * as budgetService from "../../services/budgetService";
+import * as categoryService from "../../services/categoryService";
 import { useUser } from "../../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import SingleTransaction from "../../components/SingleTransaction";
-import { TRANSACTION_ROUTES, BUDGET_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
 import SingleBudget from "../../components/SingleBudget";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import useLanguage from "../../hooks/useLanguage";
@@ -70,11 +71,13 @@ const Transactions = () => {
         params.append("page", pageToFetch);
         if (startDate) params.append("startDate", startDate.toISOString());
         if (endDate) params.append("endDate", endDate.toISOString());
-        const response = await api.get(
-          `${TRANSACTION_ROUTES.GET_TRANSACTIONS_BY_USER_ID.replace(":id", userId)}?${params.toString()}`
-        );
+        const response = await transactionService.getByUser(userId, {
+          page: pageToFetch,
+          startDate: startDate ? startDate.toISOString() : undefined,
+          endDate: endDate ? endDate.toISOString() : undefined,
+        });
 
-        const items = response.data.items || [];
+        const items = response.items || [];
 
         if (isRefreshing || pageToFetch === 1) {
           setTransactions(items);
@@ -82,8 +85,8 @@ const Transactions = () => {
           setTransactions((prev) => [...prev, ...items]);
         }
 
-        setTransactionsPage(response.data.page);
-        setTransactionsTotalPages(response.data.totalPages);
+        setTransactionsPage(response.page);
+        setTransactionsTotalPages(response.totalPages);
       } catch (error) {
         Alert.alert(
           t("common.error", { defaultValue: "Error" }),
@@ -113,11 +116,13 @@ const Transactions = () => {
         params.append("page", pageToFetch);
         if (startDate) params.append("startDate", startDate.toISOString());
         if (endDate) params.append("endDate", endDate.toISOString());
-        const response = await api.get(
-          `${BUDGET_ROUTES.GET_BUDGETS_BY_USER_ID.replace(":id", userId)}?${params.toString()}`
-        );
+        const response = await budgetService.getByUser(userId, {
+          page: pageToFetch,
+          startDate: startDate ? startDate.toISOString() : undefined,
+          endDate: endDate ? endDate.toISOString() : undefined,
+        });
 
-        const items = response.data.items || [];
+        const items = response.items || [];
 
         if (isRefreshing || pageToFetch === 1) {
           setBudgets(items);
@@ -125,8 +130,8 @@ const Transactions = () => {
           setBudgets((prev) => [...prev, ...items]);
         }
 
-        setBudgetsPage(response.data.page);
-        setBudgetsTotalPages(response.data.totalPages);
+        setBudgetsPage(response.page);
+        setBudgetsTotalPages(response.totalPages);
       } catch (error) {
         Alert.alert(
           t("common.error", { defaultValue: "Error" }),
@@ -147,10 +152,8 @@ const Transactions = () => {
   const fetchUserCategories = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      setUserCategories(res?.data?.data || []);
+      const list = await categoryService.getAll(userId);
+      setUserCategories(list || []);
     } catch (e) {
       // If error, just use empty array (will fall back to default categories)
       setUserCategories([]);
@@ -187,14 +190,13 @@ const Transactions = () => {
 
   const handleDeleteTransaction = async (transactionId) => {
     try {
-      await api.delete(
-        `${TRANSACTION_ROUTES.DELETE_TRANSACTION.replace(":id", transactionId)}`
-      );
+      await transactionService.remove(transactionId);
       fetchTransactions(1); // refresh after delete
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("history.alerts.deleteTransactionError", {
             defaultValue: "Something went wrong",
           })
@@ -204,14 +206,13 @@ const Transactions = () => {
 
   const handleDeleteBudget = async (budgetId) => {
     try {
-      await api.delete(
-        `${BUDGET_ROUTES.DELETE_BUDGET.replace(":id", budgetId)}`
-      );
+      await budgetService.remove(budgetId);
       fetchBudgets(1); // refresh after delete
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("history.alerts.deleteBudgetError", {
             defaultValue: "Something went wrong",
           })

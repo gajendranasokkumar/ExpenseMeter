@@ -8,6 +8,7 @@ exports.getDailyStats = async (userId, day, month, year) => {
 
   const transactions = await TransactionModel.find({
     user_id: userId,
+    category: { $ne: 'Transfer' },
     date: { $gte: startOfDay, $lte: endOfDay },
   }).lean();
 
@@ -43,6 +44,7 @@ exports.getMonthlySummary = async (userId, month, year) => {
 
   const transactions = await TransactionModel.find({
     user_id: userId,
+    category: { $ne: 'Transfer' },
     date: { $gte: startOfMonth, $lte: endOfMonth },
   }).lean();
 
@@ -69,6 +71,7 @@ exports.getYearlyStats = async (userId, year) => {
 
   const transactions = await TransactionModel.find({
     user_id: userId,
+    category: { $ne: 'Transfer' },
     date: { $gte: startOfYear, $lte: endOfYear },
   }).lean();
 
@@ -122,7 +125,7 @@ exports.getTotalStats = async (userId) => {
 
   // Compute yearly income/expense to find top years
   const yearlyAgg = await TransactionModel.aggregate([
-    { $match: { user_id: typeof userId === 'string' ? new (require('mongoose').Types.ObjectId)(userId) : userId, date: { $gte: startDate, $lte: endDate } } },
+    { $match: { user_id: typeof userId === 'string' ? new (require('mongoose').Types.ObjectId)(userId) : userId, category: { $ne: 'Transfer' }, date: { $gte: startDate, $lte: endDate } } },
     { $project: { year: { $year: "$date" }, amount: 1 } },
     {
       $group: {
@@ -182,6 +185,7 @@ const getStatsForRange = async (userId, startDate, endDate) => {
 
   const transactions = await TransactionModel.find({
     user_id: userId,
+    category: { $ne: 'Transfer' },
     date: { $gte: start, $lte: end },
   }).lean();
 

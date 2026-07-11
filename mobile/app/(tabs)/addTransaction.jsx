@@ -14,10 +14,11 @@ import createAddTransactionStyles from "../../styles/addTransaction.styles";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import api from "../../utils/api";
+import * as categoryService from "../../services/categoryService";
+import * as bankService from "../../services/bankService";
+import * as transactionService from "../../services/transactionService";
 import { useUser } from "../../context/userContext";
 import { useRouter } from "expo-router";
-import { TRANSACTION_ROUTES, BANK_ROUTES, CATEGORY_ROUTES } from "../../constants/endPoints";
 import { categories } from "../../constants/Categories";
 import CustomDropdown from "../../components/CustomDropdown";
 import { useFocusEffect } from "@react-navigation/native";
@@ -40,6 +41,8 @@ const AddTransaction = () => {
   const [selectedBank, setSelectedBank] = useState(null);
   const [userCategories, setUserCategories] = useState([]);
   const [allCategories, setAllCategories] = useState([]);
+  const [isTransfer, setIsTransfer] = useState(false);
+  const [sourceBank, setSourceBank] = useState(null);
   const { user } = useUser();
   const userId = user?._id;
   const router = useRouter();
@@ -50,13 +53,22 @@ const AddTransaction = () => {
     setError("");
   }, [selectedControl, amount, date, selectedCategory, selectedBank]);
 
+  useEffect(() => {
+    // Transfer option only applies to savings.
+    if (selectedControl !== "savings") {
+      setIsTransfer(false);
+      setSourceBank(null);
+    }
+    // Savings can only target a savings account; drop an invalid selection.
+    if (selectedControl === "savings" && selectedBank && !selectedBank.isSavings) {
+      setSelectedBank(null);
+    }
+  }, [selectedControl, selectedBank]);
+
   const fetchUserCategories = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      const userCats = res?.data?.data || [];
+      const userCats = (await categoryService.getAll(userId)) || [];
       setUserCategories(userCats);
       
       // Combine default categories with user categories
@@ -90,11 +102,8 @@ const AddTransaction = () => {
   const fetchBanks = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(BANK_ROUTES.GET_ALL_BANKS, {
-        userId: userId,
-      });
-      const list = res?.data?.data || [];
-      setBanks(list.map((b) => ({ id: b._id, name: b.name, logo: b.logo })));
+      const list = (await bankService.getAll(userId)) || [];
+      setBanks(list.map((b) => ({ id: b._id, name: b.name, logo: b.logo, isSavings: b.isSavings })));
     } catch (e) {
       // silently ignore
     }
@@ -118,48 +127,18 @@ const AddTransaction = () => {
     setShowDatePicker(true);
   };
 
-  const createTransaction = async (
-    amount,
-    category,
-    category_id,
-    bank,
-    date,
-    notes = ""
-  ) => {
-    try {
-      amount = selectedControl === "income" ? Number(amount) : -Number(amount);
-      if (notes === "") {
-        notes = selectedCategory.name;
-      }
-      // console.log(notes, amount, category, date, userId);
-      const response = await api.post(TRANSACTION_ROUTES.CREATE_TRANSACTION, {
-        title: notes,
-        amount,
-        category,
-        category_id,
-        bank,
-        date,
-        user_id: userId,
-      });
-      Alert.alert(
-        t("common.success", { defaultValue: "Success" }),
-        t("transactions.add.alerts.createSuccess", {
-          defaultValue: "Transaction created successfully",
-        })
-      );
-      router.replace("/history");
-    } catch (error) {
-      Alert.alert(
-        t("common.error", { defaultValue: "Error" }),
-        error?.response?.data?.message ??
-          t("transactions.add.alerts.createError", {
-            defaultValue: "Unable to create transaction.",
-          })
-      );
-    }
+  const resetForm = () => {
+    setSelectedControl(null);
+    setAmount("");
+    setDate(new Date());
+    setSelectedCategory(null);
+    setSelectedBank(null);
+    setNotes("");
+    setIsTransfer(false);
+    setSourceBank(null);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedControl) {
       setError(
         t("transactions.add.validation.type", {
@@ -187,15 +166,6 @@ const AddTransaction = () => {
       setIsError(true);
       return;
     }
-    if (!selectedCategory) {
-      setError(
-        t("transactions.add.validation.category", {
-          defaultValue: "Please select a category",
-        })
-      );
-      setIsError(true);
-      return;
-    }
     if (!selectedBank) {
       setError(
         t("transactions.add.validation.bank", {
@@ -205,31 +175,93 @@ const AddTransaction = () => {
       setIsError(true);
       return;
     }
+    if (selectedControl !== "savings" && !selectedCategory) {
+      setError(
+        t("transactions.add.validation.category", {
+          defaultValue: "Please select a category",
+        })
+      );
+      setIsError(true);
+      return;
+    }
+    if (selectedControl === "savings" && isTransfer) {
+      if (!sourceBank) {
+        setError(
+          t("transactions.add.validation.sourceBank", {
+            defaultValue: "Please select the source bank",
+          })
+        );
+        setIsError(true);
+        return;
+      }
+      if (sourceBank.id === selectedBank.id) {
+        setError(
+          t("transactions.add.validation.sameBank", {
+            defaultValue: "Source and destination banks must be different",
+          })
+        );
+        setIsError(true);
+        return;
+      }
+    }
 
     setIsError(false);
     setError("");
     setIsSaving(true);
 
-    // Determine if it's a custom category or default category
-    const categoryName = selectedCategory.name;
-    const categoryId = selectedCategory.isCustom ? selectedCategory._id : null;
+    try {
+      if (selectedControl === "savings" && isTransfer) {
+        // Move money from another bank into this (savings) bank.
+        await transactionService.transfer({
+          user_id: userId,
+          fromBank: sourceBank.id,
+          toBank: selectedBank.id,
+          amount: Number(amount),
+        });
+      } else if (selectedControl === "savings") {
+        // New money added to savings (counts as income, category "Savings").
+        await transactionService.create({
+          title: notes || "Savings",
+          amount: Number(amount),
+          category: "Savings",
+          bank: selectedBank.id,
+          date,
+          user_id: userId,
+        });
+      } else {
+        const signedAmount =
+          selectedControl === "income" ? Number(amount) : -Number(amount);
+        await transactionService.create({
+          title: notes || selectedCategory.name,
+          amount: signedAmount,
+          category: selectedCategory.name,
+          category_id: selectedCategory.isCustom ? selectedCategory._id : null,
+          bank: selectedBank.id,
+          date,
+          user_id: userId,
+        });
+      }
 
-    createTransaction(
-      amount,
-      categoryName,
-      categoryId,
-      selectedBank.id,
-      date,
-      notes
-    );
-
-    setIsSaving(false);
-    setSelectedControl(null);
-    setAmount("");
-    setDate(new Date());
-    setSelectedCategory(null);
-    setSelectedBank(null);
-    setNotes("");
+      Alert.alert(
+        t("common.success", { defaultValue: "Success" }),
+        t("transactions.add.alerts.createSuccess", {
+          defaultValue: "Transaction created successfully",
+        })
+      );
+      resetForm();
+      router.replace("/history");
+    } catch (error) {
+      Alert.alert(
+        t("common.error", { defaultValue: "Error" }),
+        error?.response?.data?.message ??
+          error?.message ??
+          t("transactions.add.alerts.createError", {
+            defaultValue: "Unable to create transaction.",
+          })
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -317,6 +349,36 @@ const AddTransaction = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <View style={[styles.controlsContainer, { marginTop: 10 }]}>
+          <TouchableOpacity
+            style={[
+              styles.controls,
+              selectedControl === "savings" && {
+                borderColor: colors.primary,
+              },
+            ]}
+            onPress={() => setSelectedControl("savings")}
+          >
+            <Ionicons
+              name={selectedControl === "savings" ? "wallet" : "wallet-outline"}
+              size={24}
+              style={styles.controlsIcon}
+              color={
+                selectedControl === "savings" ? colors.primary : colors.textMuted
+              }
+            />
+            <Text
+              style={[
+                styles.controlsTitle,
+                selectedControl === "savings" && { color: colors.primary },
+              ]}
+            >
+              {t("transactions.common.savings", {
+                defaultValue: "Savings",
+              })}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View
           style={[
@@ -353,7 +415,11 @@ const AddTransaction = () => {
           />
           <View style={{ flex: 1 }}>
             <CustomDropdown
-              data={banks}
+              data={
+                selectedControl === "savings"
+                  ? banks.filter((b) => b.isSavings)
+                  : banks
+              }
               selectedValue={selectedBank}
               onSelect={setSelectedBank}
               placeholder={t("transactions.add.form.selectBank", {
@@ -370,6 +436,59 @@ const AddTransaction = () => {
             />
           </View>
         </View>
+
+        {selectedControl === "savings" && (
+          <>
+            <TouchableOpacity
+              style={styles.transferCheckboxRow}
+              activeOpacity={0.7}
+              onPress={() => {
+                setIsTransfer((prev) => !prev);
+                setSourceBank(null);
+              }}
+            >
+              <Ionicons
+                name={isTransfer ? "checkbox" : "square-outline"}
+                size={24}
+                color={isTransfer ? colors.primary : colors.textMuted}
+              />
+              <Text style={styles.transferCheckboxLabel}>
+                {t("transactions.add.form.fromAnotherBank", {
+                  defaultValue: "From another bank (Transfer)",
+                })}
+              </Text>
+            </TouchableOpacity>
+
+            {isTransfer && (
+              <View style={styles.dateContainer}>
+                <Ionicons
+                  name="swap-horizontal-outline"
+                  size={24}
+                  style={styles.dateIcon}
+                  color={colors.textMuted}
+                />
+                <View style={{ flex: 1 }}>
+                  <CustomDropdown
+                    data={banks.filter((b) => b.id !== selectedBank?.id)}
+                    selectedValue={sourceBank}
+                    onSelect={setSourceBank}
+                    placeholder={t("transactions.add.form.selectSourceBank", {
+                      defaultValue: "Select source bank",
+                    })}
+                    dropdownStyle={{
+                      backgroundColor: "transparent",
+                      borderWidth: 0,
+                      paddingVertical: 0,
+                      paddingHorizontal: 0,
+                    }}
+                    placeholderStyle={styles.dateText}
+                    style={{}}
+                  />
+                </View>
+              </View>
+            )}
+          </>
+        )}
 
         <TouchableOpacity
           onPress={showDatePickerModal}
@@ -392,6 +511,7 @@ const AddTransaction = () => {
           )}
         </TouchableOpacity>
 
+        {selectedControl !== "savings" && (
         <View style={styles.categoriesContainer}>
           <View style={styles.categoriesHeader}>
             <Ionicons name="list-outline" size={24} color={colors.text} />
@@ -443,6 +563,7 @@ const AddTransaction = () => {
             ))}
           </View>
         </View>
+        )}
         <KeyboardAwareScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}

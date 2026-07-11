@@ -67,6 +67,7 @@ const getBudgetsByUserId = async (userId, { page = 1, limit = 10, startDate, end
     const transactions = await Transaction.find({
       user_id: userId,
       amount: { $lt: 0 },
+      category: { $ne: 'Transfer' },
       date: { $gte: minStart, $lte: maxEnd }
     }).select('amount category date').lean();
 
@@ -130,7 +131,8 @@ const getBudgetsByUserIdAndCategoryForCurrentMonth = async (userId, category, cu
       $gte: budget.start_date, 
       $lte: budget.end_date 
     },
-    amount: { $lt: 0 }
+    amount: { $lt: 0 },
+    category: { $ne: 'Transfer' }
   }).lean();
     
   const totalAmountSpent = matchingTransactions.reduce((sum, transaction) => sum + transaction.amount, 0);
@@ -182,7 +184,8 @@ const getBudgetsAndExpensesByCategoryForMonthAndYear = async (userId, month, yea
   const transactions = await Transaction.find({
     user_id: userId,
     date: { $gte: monthStart, $lte: monthEnd },
-    amount: { $lt: 0 }
+    amount: { $lt: 0 },
+    category: { $ne: 'Transfer' }
   }).lean();
 
   const expensesByCategory = transactions.reduce((acc, transaction) => {

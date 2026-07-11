@@ -3,8 +3,8 @@ import { View, Text, ScrollView, Dimensions, ActivityIndicator, Image } from "re
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
-import { STATISTICS_ROUTES, CATEGORY_ROUTES } from "../constants/endPoints";
-import api from "../utils/api";
+import * as statisticsService from "../services/statisticsService";
+import * as categoryService from "../services/categoryService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -58,10 +58,8 @@ const TotalStats = () => {
   const fetchUserCategories = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      setUserCategories(res?.data?.data || []);
+      const list = await categoryService.getAll(userId);
+      setUserCategories(list || []);
     } catch (e) {
       setUserCategories([]);
     }
@@ -70,9 +68,9 @@ const TotalStats = () => {
   const fetchTotalStats = useCallback(() => {
     if (!userId) return;
     setIsLoading(true);
-    api
-      .get(STATISTICS_ROUTES.GET_TOTAL_STATS.replace(":id", userId))
-      .then((res) => setTotalData(res.data || totalData))
+    statisticsService
+      .total(userId)
+      .then((res) => setTotalData(res || totalData))
       .catch(() => setTotalData({
         totals: { totalIncome: 0, totalExpense: 0, net: 0 },
         bestIncomeYear: null,

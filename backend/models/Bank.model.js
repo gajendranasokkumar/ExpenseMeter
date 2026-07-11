@@ -19,6 +19,10 @@ const bankSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
+    isSavings: {
+        type: Boolean,
+        default: false,
+    },
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

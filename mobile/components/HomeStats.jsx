@@ -4,7 +4,7 @@ import createHomeStyles from "../styles/home.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
 import { useUser } from "../context/userContext";
-import api from "../utils/api";
+import * as transactionService from "../services/transactionService";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatAmountDisplay } from "../utils/formatAmountDisplay";
 import useLanguage from "../hooks/useLanguage";
@@ -26,8 +26,8 @@ const HomeStats = () => {
   const fetchSummary = useCallback(async () => {
     try {
       if (!userId) return;
-      const response = await api.get(`/transactions/summary/${userId}`);
-      setSummary(response.data);
+      const response = await transactionService.summary(userId);
+      setSummary(response);
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),

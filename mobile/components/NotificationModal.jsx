@@ -13,8 +13,7 @@ import React, { useState, useCallback } from "react";
 import createHomeStyles from "../styles/home.styles";
 import { Ionicons } from "@expo/vector-icons";
 import useTheme from "../hooks/useTheme";
-import api from "../utils/api";
-import { NOTIFICATION_ROUTES } from "../constants/endPoints";
+import * as notificationService from "../services/notificationService";
 import { useUser } from "../context/userContext";
 import { formatDate } from "../utils/formatDate";
 import { useFocusEffect } from "@react-navigation/native";
@@ -41,14 +40,11 @@ const NotificationModal = ({ visible, onClose }) => {
         if (pageToFetch === 1 && !isRefreshing) setIsLoading(true);
         else if (pageToFetch > 1) setLoadingMore(true);
 
-        const response = await api.get(
-          `${NOTIFICATION_ROUTES.GET_NOTIFICATIONS_BY_USER_ID.replace(
-            ":id",
-            userId
-          )}?page=${pageToFetch}`
-        );
+        const response = await notificationService.getByUser(userId, {
+          page: pageToFetch,
+        });
 
-        const items = response.data.items || [];
+        const items = response.items || [];
 
         if (isRefreshing || pageToFetch === 1) {
           setNotifications(items);
@@ -56,8 +52,8 @@ const NotificationModal = ({ visible, onClose }) => {
           setNotifications((prev) => [...prev, ...items]);
         }
 
-        setPage(response.data.page);
-        setTotalPages(response.data.totalPages);
+        setPage(response.page);
+        setTotalPages(response.totalPages);
       } catch (error) {
         console.log(error);
       } finally {
@@ -87,9 +83,7 @@ const NotificationModal = ({ visible, onClose }) => {
             text: t("common.delete", { defaultValue: "Delete" }),
             style: "destructive",
             onPress: async () => {
-              await api.delete(
-                `${NOTIFICATION_ROUTES.DELETE_NOTIFICATION.replace(":id", id)}`
-              );
+              await notificationService.remove(id);
               await fetchNotifications(1);
             },
           },
@@ -102,9 +96,7 @@ const NotificationModal = ({ visible, onClose }) => {
 
   const markAsRead = async (id) => {
     try {
-      await api.put(
-        `${NOTIFICATION_ROUTES.UPDATE_NOTIFICATION_BY_ID.replace(":id", id)}`
-      );
+      await notificationService.markRead(id);
       await fetchNotifications(1); // refresh from first page
     } catch (error) {
       console.log(error);
@@ -128,7 +120,7 @@ const NotificationModal = ({ visible, onClose }) => {
           text: t("common.delete", { defaultValue: "Delete" }),
           style: "destructive",
           onPress: async () => {
-            await api.delete(`${NOTIFICATION_ROUTES.DELETE_ALL_NOTIFICATIONS}`);
+            await notificationService.removeAll(userId);
             await fetchNotifications(1);
           },
         },

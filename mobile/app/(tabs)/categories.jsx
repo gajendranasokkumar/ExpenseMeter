@@ -18,8 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import useTheme from "../../hooks/useTheme";
 import createCategoriesStyles from "../../styles/categories.styles";
-import { CATEGORY_ROUTES } from "../../constants/endPoints";
-import api from "../../utils/api";
+import * as categoryService from "../../services/categoryService";
 import { useFocusEffect } from "@react-navigation/native";
 import { useUser } from "../../context/userContext";
 import useLanguage from "../../hooks/useLanguage";
@@ -96,10 +95,8 @@ const Categories = () => {
     if (!userId) return;
     try {
       setIsLoading(true);
-      const response = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      setCategories(response.data.data || []);
+      const list = await categoryService.getAll(userId);
+      setCategories(list || []);
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
@@ -141,15 +138,12 @@ const Categories = () => {
     try {
       if (editingCategory) {
         // Update existing category
-        await api.put(
-          CATEGORY_ROUTES.UPDATE_CATEGORY.replace(":id", editingCategory._id),
-          {
-            name: categoryName.trim(),
-            icon: selectedIcon,
-            color: selectedColor,
-            userId: userId,
-          }
-        );
+        await categoryService.update(editingCategory._id, {
+          name: categoryName.trim(),
+          icon: selectedIcon,
+          color: selectedColor,
+          userId: userId,
+        });
         Alert.alert(
           t("common.success", { defaultValue: "Success" }),
           t("categories.alerts.createSuccess", {
@@ -158,7 +152,7 @@ const Categories = () => {
         );
       } else {
         // Create new category
-        await api.post(CATEGORY_ROUTES.CREATE_CATEGORY, {
+        await categoryService.create({
           name: categoryName.trim(),
           icon: selectedIcon,
           color: selectedColor,
@@ -177,6 +171,7 @@ const Categories = () => {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           (editingCategory
             ? t("categories.alerts.updateError", {
                 defaultValue: "Unable to update category.",
@@ -220,17 +215,13 @@ const Categories = () => {
 
   const handleDeleteCategory = async (categoryId) => {
     try {
-      await api.delete(
-        CATEGORY_ROUTES.PERMANENTLY_DELETE_CATEGORY.replace(":id", categoryId).replace(
-          ":userId",
-          userId
-        )
-      );
+      await categoryService.removePermanent(categoryId, userId);
       getAllCategories();
     } catch (error) {
       Alert.alert(
         t("common.error", { defaultValue: "Error" }),
         error?.response?.data?.message ??
+          error?.message ??
           t("categories.alerts.deleteError", {
             defaultValue: "Unable to delete category.",
           })

@@ -23,6 +23,7 @@ const CustomDropdown = ({
   selectedValue,
   enableSearch = true,
   searchPlaceholder = "Search...",
+  isItemDisabled,
 }) => {
   const { colors } = useTheme();
   const { getFontSizeByKey } = useFontSize();
@@ -64,11 +65,14 @@ const CustomDropdown = ({
   }, [selectedValue]);
 
   const renderDropdownItem = ({ item }) => {
+    const disabled = typeof isItemDisabled === "function" && isItemDisabled(item);
+
     if (renderItem) {
       return (
         <TouchableOpacity
-          style={[dropdownStyles.dropdownItem]}
+          style={[dropdownStyles.dropdownItem, disabled && dropdownStyles.dropdownItemDisabled]}
           onPress={() => handleSelect(item)}
+          disabled={disabled}
         >
           {renderItem(item)}
         </TouchableOpacity>
@@ -77,8 +81,9 @@ const CustomDropdown = ({
 
     return (
       <TouchableOpacity
-        style={[dropdownStyles.dropdownItem]}
+        style={[dropdownStyles.dropdownItem, disabled && dropdownStyles.dropdownItemDisabled]}
         onPress={() => handleSelect(item)}
+        disabled={disabled}
       >
         <Text style={dropdownStyles.dropdownItemText}>{item.name || item.label}</Text>
       </TouchableOpacity>
@@ -210,6 +215,9 @@ const getStyles = (colors, fontSize) => StyleSheet.create({
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+  },
+  dropdownItemDisabled: {
+    opacity: 0.4,
   },
   dropdownItemText: {
     color: colors.text,

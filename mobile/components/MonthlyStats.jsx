@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import createStatisticsStyles from "../styles/statistics.styles";
 import useTheme from "../hooks/useTheme";
-import { STATISTICS_ROUTES, CATEGORY_ROUTES } from "../constants/endPoints";
-import api from "../utils/api";
+import * as statisticsService from "../services/statisticsService";
+import * as categoryService from "../services/categoryService";
 import { useUser } from "../context/userContext";
 import { useFocusEffect } from "@react-navigation/native";
 import SingleBudget from "./SingleBudget";
@@ -38,10 +38,8 @@ const MonthlyStats = ({ month, year }) => {
   const fetchUserCategories = useCallback(async () => {
     if (!userId) return;
     try {
-      const res = await api.post(CATEGORY_ROUTES.GET_ALL_CATEGORIES, {
-        userId: userId,
-      });
-      setUserCategories(res?.data?.data || []);
+      const list = await categoryService.getAll(userId);
+      setUserCategories(list || []);
     } catch (e) {
       setUserCategories([]);
     }
@@ -50,15 +48,12 @@ const MonthlyStats = ({ month, year }) => {
   const fetchMonthlyStats = useCallback(() => {
     if (!userId || !month || !year) return;
     setIsLoading(true);
-    api
-      .post(STATISTICS_ROUTES.GET_MONTHLY_STATS.replace(":id", userId), {
-        month,
-        year,
-      })
+    statisticsService
+      .monthly(userId, month, year)
       .then((response) => {
-        setMonthlyData(() => response.data.summary);
-        setMonthlyBudget(() => response.data.budgetsOfTheMonth.items);
-        setMonthlyPieData(() => response.data.pieChartData);
+        setMonthlyData(() => response.summary);
+        setMonthlyBudget(() => response.budgetsOfTheMonth.items);
+        setMonthlyPieData(() => response.pieChartData);
       })
       .catch(() => setMonthlyData({}))
       .finally(() => setIsLoading(false));
