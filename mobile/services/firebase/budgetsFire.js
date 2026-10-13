@@ -27,6 +27,20 @@ const fetchUserExpenses = async (userId) => {
   );
 };
 
+// Returns a Set of category names that should be omitted from budget totals.
+const fetchOmittedCategoryNames = async (userId) => {
+  const { db, collection, query, where, getDocs } = fs();
+  const q = query(
+    collection(db, COLLECTIONS.categories),
+    where("user_id", "==", userId),
+    where("omitFromTotal", "==", true)
+  );
+  const snap = await getDocs(q);
+  const names = new Set();
+  snap.forEach((d) => { if (d.data().name) names.add(d.data().name); });
+  return names;
+};
+
 export const getByUser = async (userId, { page = 1, limit = 10, startDate, endDate } = {}) => {
   const pageNumber = Math.max(parseInt(page) || 1, 1);
   const pageSize = Math.min(Math.max(parseInt(limit) || 10, 1), 1000);
@@ -65,7 +79,11 @@ export const getByUser = async (userId, { page = 1, limit = 10, startDate, endDa
 
   let itemsWithSpend = pageItems;
   if (pageItems.length > 0) {
-    const transactions = await fetchUserExpenses(userId);
+    const [transactions, omittedNames] = await Promise.all([
+      fetchUserExpenses(userId),
+      fetchOmittedCategoryNames(userId),
+    ]);
+    const filteredTx = transactions.filter((tx) => !omittedNames.has(tx.category));
     itemsWithSpend = pageItems.map((b) => {
       const start = new Date(b.start_date);
       const end = new Date(b.end_date);
@@ -73,7 +91,7 @@ export const getByUser = async (userId, { page = 1, limit = 10, startDate, endDa
         typeof b.category === "string" &&
         (b.category === "Monthly Budget" || b.category.toLowerCase().startsWith("budget for "));
 
-      const amountSpent = transactions.reduce((sum, tx) => {
+      const amountSpent = filteredTx.reduce((sum, tx) => {
         const d = new Date(tx.date);
         if (d < start || d > end) return sum;
         if (!isMonthlyBudget && tx.category !== b.category) return sum;
@@ -97,8 +115,12 @@ export const getMonthlyForCurrentMonth = async (userId, category, currentMonth) 
   const start = new Date(budget.start_date);
   const end = new Date(budget.end_date);
 
-  const transactions = await fetchUserExpenses(userId);
-  const totalAmountSpent = transactions.reduce((sum, tx) => {
+  const [transactions, omittedNames] = await Promise.all([
+    fetchUserExpenses(userId),
+    fetchOmittedCategoryNames(userId),
+  ]);
+  const filteredTx = transactions.filter((tx) => !omittedNames.has(tx.category));
+  const totalAmountSpent = filteredTx.reduce((sum, tx) => {
     const d = new Date(tx.date);
     if (d >= start && d <= end) return sum + tx.amount;
     return sum;
@@ -116,7 +138,12 @@ export const getCategoriesSummary = async (userId, month, year) => {
     (b) => new Date(b.start_date) >= monthStart && new Date(b.end_date) <= monthEnd
   );
 
-  const transactions = (await fetchUserExpenses(userId)).filter((tx) => {
+  const [rawTransactions, omittedNames] = await Promise.all([
+    fetchUserExpenses(userId),
+    fetchOmittedCategoryNames(userId),
+  ]);
+  const transactions = rawTransactions.filter((tx) => {
+    if (omittedNames.has(tx.category)) return false;
     const d = new Date(tx.date);
     return d >= monthStart && d <= monthEnd;
   });

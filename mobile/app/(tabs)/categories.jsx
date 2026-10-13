@@ -82,6 +82,7 @@ const Categories = () => {
   const [categoryName, setCategoryName] = useState("");
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [omitFromTotal, setOmitFromTotal] = useState(false);
 
   if (Platform.OS === "android") {
     const isFabric =
@@ -120,6 +121,7 @@ const Categories = () => {
     setCategoryName("");
     setSelectedIcon(null);
     setSelectedColor(null);
+    setOmitFromTotal(false);
     setEditingCategory(null);
   };
 
@@ -142,6 +144,7 @@ const Categories = () => {
           name: categoryName.trim(),
           icon: selectedIcon,
           color: selectedColor,
+          omitFromTotal,
           userId: userId,
         });
         Alert.alert(
@@ -156,6 +159,7 @@ const Categories = () => {
           name: categoryName.trim(),
           icon: selectedIcon,
           color: selectedColor,
+          omitFromTotal,
           user_id: userId,
         });
         Alert.alert(
@@ -190,6 +194,7 @@ const Categories = () => {
     setCategoryName(category.name || "");
     setSelectedIcon(category.icon || null);
     setSelectedColor(category.color || null);
+    setOmitFromTotal(!!category.omitFromTotal);
     // Scroll to top or show form
   };
 
@@ -317,6 +322,36 @@ const Categories = () => {
             color={colors.textMuted}
           />
         </TouchableOpacity>
+
+        {/* Omit from total checkbox */}
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            paddingVertical: 12,
+            paddingHorizontal: 4,
+          }}
+          activeOpacity={0.7}
+          onPress={() => setOmitFromTotal((prev) => !prev)}
+        >
+          <Ionicons
+            name={omitFromTotal ? "checkbox" : "square-outline"}
+            size={24}
+            color={omitFromTotal ? colors.primary : colors.textMuted}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.colorSelectorButtonText, { color: colors.text }]}>
+              {t("categories.form.omitFromTotal", { defaultValue: "Omit from budget total" })}
+            </Text>
+            <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 2 }}>
+              {t("categories.form.omitFromTotalHint", {
+                defaultValue: "If checked, spending in this category won't count toward budget totals",
+              })}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
         {editingCategory && (
           <TouchableOpacity
             style={[
@@ -357,16 +392,9 @@ const Categories = () => {
             </>
           )}
         </TouchableOpacity>
-        {/* <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => resetForm()}
-            activeOpacity={0.8}
-            >
-            <Ionicons name="refresh-outline" size={22} color={colors.text} />
-        </TouchableOpacity> */}
       </View>
     </LinearGradient>
-  ), [editingCategory, categoryName, selectedIcon, selectedColor, isSaving, colors, t]);
+  ), [editingCategory, categoryName, selectedIcon, selectedColor, omitFromTotal, isSaving, colors, t]);
 
   return (
     <LinearGradient

@@ -28,7 +28,7 @@ const findByName = async (userId, name, excludeId) => {
   );
 };
 
-export const create = async ({ name, icon, color, user_id }) => {
+export const create = async ({ name, icon, color, user_id, omitFromTotal = false }) => {
   if (!name || !user_id) throw new Error("Name and user_id are required");
   const { db, collection, addDoc, serverTimestamp } = fs();
 
@@ -41,14 +41,15 @@ export const create = async ({ name, icon, color, user_id }) => {
     icon,
     color,
     user_id,
+    omitFromTotal: !!omitFromTotal,
     isActive: true,
     created_at: serverTimestamp(),
     updated_at: serverTimestamp(),
   });
-  return { _id: ref.id, id: ref.id, name, icon, color, user_id, isActive: true };
+  return { _id: ref.id, id: ref.id, name, icon, color, user_id, omitFromTotal: !!omitFromTotal, isActive: true };
 };
 
-export const update = async (id, userId, { name, icon, color, isActive }) => {
+export const update = async (id, userId, { name, icon, color, isActive, omitFromTotal }) => {
   const { db, doc, getDoc, updateDoc, serverTimestamp } = fs();
 
   if (name && (await findByName(userId, name, id))) {
@@ -66,6 +67,7 @@ export const update = async (id, userId, { name, icon, color, isActive }) => {
   if (icon !== undefined) updateFields.icon = icon;
   if (color !== undefined) updateFields.color = color;
   if (isActive !== undefined) updateFields.isActive = isActive;
+  if (omitFromTotal !== undefined) updateFields.omitFromTotal = !!omitFromTotal;
 
   await updateDoc(ref, updateFields);
   return { _id: id, id, ...snap.data(), ...updateFields };

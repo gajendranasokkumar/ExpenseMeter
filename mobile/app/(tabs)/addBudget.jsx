@@ -17,6 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import createStyles from "../../styles/addBudget.styles";
 import * as categoryService from "../../services/categoryService";
 import * as budgetService from "../../services/budgetService";
+import * as autoSchedulerService from "../../services/autoSchedulerService";
 import { useUser } from "../../context/userContext";
 import { getCurrentMonth, computeEndDate } from "../../utils/formatDate";
 import { categories } from "../../constants/Categories";
@@ -49,6 +50,9 @@ const AddBudget = () => {
     "Monthly Budget",
     ...categories.map((category) => category.name),
   ]);
+  // Auto-add
+  const [autoAdd, setAutoAdd] = useState(false);
+  const [autoFrequency, setAutoFrequency] = useState("monthly");
 
   const periods = [
     {
@@ -246,6 +250,28 @@ const AddBudget = () => {
         end_date: new Date(formData.end_date),
         isAllCategory: isAllCategory,
       });
+
+      // Save auto-schedule if requested
+      if (autoAdd) {
+        try {
+          await autoSchedulerService.createSchedule({
+            user_id: userId,
+            type: "budget",
+            frequency: autoFrequency,
+            payload: {
+              title: formData.title,
+              amount: parseFloat(formData.amount),
+              category: formData.category,
+              category_id,
+              period: formData.period,
+              isAllCategory,
+            },
+          });
+        } catch (_e) {
+          // Don't block the user if schedule creation fails
+        }
+      }
+
       Alert.alert(
         t("common.success", { defaultValue: "Success" }),
         t("budget.add.alerts.createSuccess", {
@@ -265,6 +291,8 @@ const AddBudget = () => {
       setShowStartDatePicker(false);
       setShowEndDatePicker(false);
       setIsAllCategory(false);
+      setAutoAdd(false);
+      setAutoFrequency("monthly");
       setIsLoading(false);
       router.back();
     } catch (error) {
@@ -466,6 +494,72 @@ const AddBudget = () => {
                 showEndDatePicker, 
                 showEndDatePickerModal, 
                 onEndDateChange
+              )}
+
+              {/* ── Auto-add Section ─────────────────────────────── */}
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  paddingVertical: 12,
+                  marginTop: 8,
+                }}
+                activeOpacity={0.7}
+                onPress={() => setAutoAdd((prev) => !prev)}
+              >
+                <Ionicons
+                  name={autoAdd ? "checkbox" : "square-outline"}
+                  size={24}
+                  color={autoAdd ? colors.primary : colors.textMuted}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ color: colors.text, fontWeight: "600", fontSize: 15 }}>
+                    {t("budget.add.form.autoAdd", { defaultValue: "Auto-add (Recurring)" })}
+                  </Text>
+                  <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 2 }}>
+                    {t("budget.add.form.autoAddHint", {
+                      defaultValue: "Automatically recreate this budget on a schedule",
+                    })}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {autoAdd && (
+                <View style={{ marginBottom: 12 }}>
+                  <Text style={styles.inputLabel}>
+                    {t("budget.add.form.autoFrequency", { defaultValue: "Repeat Every" })}
+                  </Text>
+                  <View style={styles.periodButtonRow}>
+                    {[
+                      { value: "daily", label: t("budget.period.daily", { defaultValue: "Daily" }) },
+                      { value: "weekly", label: t("budget.period.weekly", { defaultValue: "Weekly" }) },
+                      { value: "monthly", label: t("budget.period.monthly", { defaultValue: "Monthly" }) },
+                    ].map((freq) => (
+                      <TouchableOpacity
+                        key={freq.value}
+                        style={[
+                          styles.periodButton,
+                          autoFrequency === freq.value
+                            ? styles.periodButtonSelected
+                            : styles.periodButtonUnselected,
+                        ]}
+                        onPress={() => setAutoFrequency(freq.value)}
+                      >
+                        <Text
+                          style={[
+                            styles.periodButtonText,
+                            autoFrequency === freq.value
+                              ? styles.periodButtonTextSelected
+                              : styles.periodButtonTextUnselected,
+                          ]}
+                        >
+                          {freq.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
               )}
 
               <TouchableOpacity

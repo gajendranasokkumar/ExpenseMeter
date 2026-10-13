@@ -11,6 +11,7 @@ import { FontSizeProvider } from "../context/fontSizeContext";
 import PushNotification from "react-native-push-notification";
 import { NotificationPreferencesProvider } from "../context/notificationPreferencesContext";
 import { PERSISTENT_NOTIFICATION_CHANNEL_ID } from "../utils/persistentNotification";
+import useAutoScheduler from "../hooks/useAutoScheduler";
 // SMS modal is handled via the /sms route, not here
 
 const RootLayout = () => {
@@ -35,6 +36,7 @@ const RootLayout = () => {
 
 const Layout = () => {
   const { colors } = useTheme();
+  useAutoScheduler();
   useEffect(() => {
     const ensureSmsPermissions = async () => {
       if (Platform.OS === "android") {

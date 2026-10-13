@@ -9,6 +9,7 @@ export const COLLECTIONS = {
   banks: "banks",
   categories: "categories",
   notifications: "notifications",
+  auto_schedules: "auto_schedules",
 };
 
 // Convert whatever Firestore gives back for a date field into an ISO string,
